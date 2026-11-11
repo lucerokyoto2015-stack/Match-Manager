@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lucero Match Manager</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        lucero: {
+                            dark: '#0b1329',
+                            card: '#131c38',
+                            cyan: '#00f2fe',
+                            gold: '#f6d365',
+                            accent: '#1e294b',
+                            border: '#334155'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #0b1329;
+            color: #f8fafc;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        }
+        /* スクロールバーのカスタム */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: #0b1329; }
+        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 3px; }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col">
+
+    <!-- ヘッダー -->
+    <header class="bg-lucero-card border-b border-lucero-border px-4 py-3 sticky top-0 z-50 flex flex-wrap justify-between items-center gap-2">
+        <div class="flex items-center space-x-3">
+            <div class="w-8 h-8 rounded bg-gradient-to-tr from-lucero-gold to-lucero-cyan flex items-center justify-center font-bold text-lucero-dark">L</div>
+            <h1 class="text-lg font-bold tracking-wider text-lucero-gold">LUCERO MATCH MANAGER</h1>
+        </div>
+        <nav class="flex space-x-2">
+            <button onclick="switchTab('prep')" id="nav-prep" class="px-4 py-1.5 rounded-lg text-sm font-semibold bg-lucero-cyan text-lucero-dark transition shadow-md">前日準備</button>
+            <button onclick="switchTab('match')" id="nav-match" class="px-4 py-1.5 rounded-lg text-sm font-semibold bg-lucero-accent text-slate-300 hover:bg-slate-700 transition">試合当日記録</button>
+        </nav>
+    </header>
+
+    <!-- メインコンテンツ -->
+    <main class="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6">
+
+        <!-- ==================== ① 前日準備タブ ==================== -->
+        <section id="tab-prep" class="space-y-6">
+            <!-- モード選択バー -->
+            <div class="bg-lucero-card p-4 rounded-xl border border-lucero-border flex flex-wrap items-center justify-between gap-4">
+                <div class="flex items-center space-x-3">
+                    <span class="text-sm font-bold text-lucero-cyan">モード:</span>
+                    <select id="prep-mode" onchange="handlePrepModeChange()" class="bg-lucero-dark border border-lucero-border rounded-lg px-3 py-1.5 text-sm text-slate-200 focus:outline-none focus:border-lucero-cyan">
+                        <option value="new">新規作成</option>
+                        <option value="edit">現状のページを編集</option>
+                    </select>
+                </div>
+                <div id="new-sub-mode-container" class="flex items-center space-x-3">
+                    <span class="text-sm font-bold text-lucero-gold">新規データ:</span>
+                    <select id="new-type" class="bg-lucero-dark border border-lucero-border rounded-lg px-3 py-1.5 text-sm text-slate-200">
+                        <option value="blank">空白のデータから入れる</option>
+                        <option value="copy">過去の試合データをコピー</option>
+                    </select>
+                </div>
+                <div id="edit-select-container" class="hidden items-center space-x-3">
+                    <span class="text-sm font-bold text-lucero-gold">編集する試合:</span>
+                    <select
