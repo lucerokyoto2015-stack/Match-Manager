@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lucero Match Manager</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        lucero: {
+                            dark: '#0b1329',
+                            card: '#131c38',
+                            cyan: '#00f2fe',
+                            gold: '#f6d365',
+                            accent: '#1e294b',
+                            border: '#334155'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #0b1329;
+            color: #f8fafc;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        }
+        /* スクロールバーのカスタム */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: #0b1329; }
+        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 3px; }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col">
+
+    <!-- ヘッダー -->
+    <header class="bg-lucero-card border-b border-lucero-border px-4 py-3 sticky top-0 z-50 flex flex-wrap justify-between items-center gap-2">
+        <div class="flex items-center space-x-3">
+            <div class="w-8 h-8 rounded bg-gradient-to-tr from-lucero-gold to-lucero-cyan flex items-center justify-center font-bold text-lucero-dark">L</div>
+            <h1 class="text-lg font-bold tracking-wider text-lucero-gold">LUCERO MATCH MANAGER</h1>
+        </div>
+        <nav class="flex space-x-2">
+            <button onclick="switchTab('prep')" id="nav-prep" class="px-4 py-1.5 rounded-lg text-sm font-semibold bg-lucero-cyan text-lucero-dark transition shadow-md">前日準備</button>
+            <button onclick="switchTab('match')" id="nav-match" class="px-4 py-1.5 rounded-lg text-sm font-semibold bg-lucero-accent text-slate-300 hover:bg-slate-700 transition">試合当日記録</button>
+        </nav>
+    </header>
+
+    <!-- メインコンテンツ -->
+    <main class="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6">
+
+        <!-- ==================== ① 前日準備タブ ==================== -->
+        <section id="tab-prep" class="space-y-6">
+            <!-- モード選択バー -->
+            <div class="bg-lucero-card p-4 rounded-xl border border-lucero-border flex flex-wrap items-center justify-between gap-4">
+                <div class="flex items-center space-x-3">
+                    <span class="text-sm font-bold text-lucero-cyan">モード:</span>
+                    <select id="prep-mode" onchange="handlePrepModeChange()" class="bg-lucero-dark border border-lucero-border rounded-lg px-3 py-1.5 text-sm text-slate-200 focus:outline-none focus:border-lucero-cyan">
+                        <option value="new">新規作成</option>
+                        <option value="edit">現状のページを編集</option>
+                    </select>
+                </div>
+                <div id="new-sub-mode-container" class="flex items-center space-x-3">
+                    <span class="text-sm font-bold text-lucero-gold">新規データ:</span>
+                    <select id="new-type" class="bg-lucero-dark border border-lucero-border rounded-lg px-3 py-1.5 text-sm text-slate-200">
+                        <option value="blank">空白のデータから入れる</option>
+                        <option value="copy">過去の試合データをコピー</option>
+                    </select>
+                </div>
+                <div id="edit-select-container" class="hidden items-center space-x-3">
+                    <span class="text-sm font-bold text-lucero-gold">編集する試合:</span>
+                    <select id="target-match" class="bg-lucero-dark border border-lucero-border rounded-lg px-3 py-1.5 text-sm text-slate-200">
+                        <option value="match1">2026/06/12 vs FCルミナス (リーグ戦)</option>
+                        <option value="match2">2026/06/19 vs アトレチコ北区 (カップ戦)</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- 試合基本設定 -->
+            <div class="bg-lucero-card p-5 rounded-xl border border-lucero-border space-y-4">
+                <h2 class="text-base font-bold text-lucero-gold border-b border-lucero-border pb-2">1. 試合基本設定・MTG資料</h2>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-400 mb-1">大会名</label>
+                        <select class="w-full bg-lucero-dark border border-lucero-border rounded-lg p-2 text-sm">
+                            <option>都道府県リーグ 1部</option>
+                            <option>全国社会人サッカー選手権</option>
+                            <option>地域カップ戦</option>
+                            <option>トレーニングマッチ</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-400 mb-1">試合時間</label>
+                        <select class="w-full bg-lucero-dark border border-lucero-border rounded-lg p-2 text-sm">
+                            <option>45分ハーフ (45-15-45)</option>
+                            <option>40分ハーフ (40-10-40)</option>
+                            <option>30分ハーフ (30-10-30)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-400 mb-1">日付</label>
+                        <input type="date" value="2026-06-12" class="w-full bg-lucero-dark border border-lucero-border rounded-lg p-2 text-sm text-slate-200">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-400 mb-1">対戦相手</label>
+                        <input type="text" placeholder="例: FCルミナス" class="w-full bg-lucero-dark border border-lucero-border rounded-lg p-2 text-sm text-slate-200">
+                    </div>
+                    <div class="sm:col-span-2">
+                        <label class="block text-xs font-semibold text-slate-400 mb-1">会場</label>
+                        <input type="text" placeholder="例: ルセーロフィールド天然芝コート" class="w-full bg-lucero-dark border border-lucero-border rounded-lg p-2 text-sm text-slate-200">
+                    </div>
+                </div>
+            </div>
+
+            <!-- フォーメーション & スタメン / ベンチ / メンバー外 / リスト外 -->
+            <div class="bg-lucero-card p-5 rounded-xl border border-lucero-border space-y-4">
+                <div class="flex flex-wrap justify-between items-center gap-2 border-b border-lucero-border pb-2">
+                    <h2 class="text-base font-bold text-lucero-gold">2. メンバー編成 & フォーメーション配置</h2>
+                    <div class="flex items-center space-x-2">
+                        <span class="text-xs text-slate-400">システム選択:</span>
+                        <select id="formation-select" onchange="renderFormationSlots()" class="bg-lucero-dark border border-lucero-border rounded-lg px-3 py-1 text-sm text-lucero-cyan font-bold">
+                            <option value="4-4-2">4-4-2</option>
+                            <option value="4-3-3">4-3-3</option>
+                            <option value="3-5-2">3-5-2</option>
+                            <option value="3-4-3">3-4-3</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <!-- 左側：スタメン（ポジション固定＋選手バッヂ） -->
+                    <div class="lg:col-span-2 space-y-3">
+                        <h3 class="text-sm font-bold text-lucero-cyan">スタメン配置 (ポジション追従)</h3>
+                        <div id="formation-slots-container" class="grid grid-cols-1 sm:grid-cols-2 gap-3 bg-lucero-dark/50 p-4 rounded-xl border border-lucero-border">
+                            <!-- JSでポジションごとに動的生成 -->
+                        </div>
+                    </div>
+
+                    <!-- 右側：ベンチ・メンバー外・リスト外の管理 -->
+                    <div class="space-y-4">
+                        <div>
+                            <h3 class="text-sm font-bold text-lucero-cyan mb-2">ベンチメンバー</h3>
+                            <div id="bench-list-container" class="space-y-2 bg-lucero-dark/50 p-3 rounded-xl border border-lucero-border min-h-[100px]">
+                                <!-- 動的生成 -->
+                            </div>
+                        </div>
+                        <div>
+                            <h3 class="text-sm font-bold text-amber-400 mb-2">メンバー外（帯同・出場不可）</h3>
+                            <div id="out-match-container" class="space-y-2 bg-lucero-dark/50 p-3 rounded-xl border border-lucero-border min-h-[60px]"></div>
+                        </div>
+                        <div>
+                            <h3 class="text-sm font-bold text-rose-400 mb-2">リスト外（試合不帯同）</h3>
+                            <div id="out-list-container" class="space-y-2 bg-lucero-dark/50 p-3 rounded-xl border border-lucero-border min-h-[60px]"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 戦い方 & MTGの流れ (各5行テキストエリア) -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <!-- 攻守の戦い方 -->
+                <div class="bg-lucero-card p-5 rounded-xl border border-lucero-border space-y-4">
+                    <h2 class="text-base font-bold text-lucero-gold border-b border-lucero-border pb-2">3. 攻守の戦い方</h2>
+                    <div class="space-y-3">
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-400 mb-1">攻撃の戦い方 (5行)</label>
+                            <textarea rows="5" class="w-full bg-lucero-dark border border-lucero-border rounded-lg p-2.5 text-sm text-slate-200 focus:outline-none focus:border-lucero-cyan" placeholder="ビルドアップの狙い、サイドからの崩しなど..."></textarea>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-400 mb-1">守備の戦い方 (5行)</label>
+                            <textarea rows="5" class="w-full bg-lucero-dark border border-lucero-border rounded-lg p-2.5 text-sm text-slate-200 focus:outline-none focus:border-lucero-cyan" placeholder="守備ブロックの構築、ハイプレスのタイミングなど..."></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- MTGの流れ -->
+                <div class="bg-lucero-card p-5 rounded-xl border border-lucero-border space-y-4">
+                    <h2 class="text-base font-bold text-lucero-gold border-b border-lucero-border pb-2">4. MTGの流れ</h2>
+                    <div class="space-y-3">
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-400 mb-1">導入 (5行)</label>
+                            <textarea rows="5" class="w-full bg-lucero-dark border border-lucero-border rounded-lg p-2.5 text-sm text-slate-200" placeholder="本日のメンタリティ、共通意識の確認..."></textarea>
+                        </div>
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-400 mb-1">攻撃 (話す順番)</label>
+                                <select class="w-full bg-lucero-dark border border-lucero-border rounded-lg p-2 text-sm text-slate-200">
+                                    <option>1番目</option><option>2番目</option><option>3番目</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-400 mb-1">守備 (話す順番)</label>
+                                <select class="w-full bg-lucero-dark border border-lucero-border rounded-lg p-2 text-sm text-slate-200">
+                                    <option>2番目</option><option>1番目</option><option>3番目</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-400 mb-1">メンタル (話す順番)</label>
+                                <select class="w-full bg-lucero-dark border border-lucero-border rounded-lg p-2 text-sm text-slate-200">
+                                    <option>3番目</option><option>1番目</option><option>2番目</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-400 mb-1">詳細ポイント・全体指示 (5行)</label>
+                            <textarea rows="3" class="w-full bg-lucero-dark border border-lucero-border rounded-lg p-2.5 text-sm text-slate-200" placeholder="セットプレーの確認など..."></textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 当日タイムスケジュール & スタッフの役割 -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <!-- タイムスケジュール -->
+                <div class="bg-lucero-card p-5 rounded-xl border border-lucero-border space-y-4">
+                    <div class="flex justify-between items-center border-b border-lucero-border pb-2">
+                        <h2 class="text-base font-bold text-lucero-gold">5. 当日タイムスケジュール</h2>
+                        <button onclick="addScheduleRow()" class="bg-lucero-cyan/20 text-lucero-cyan border border-lucero-cyan/40 px-3 py-1 rounded text-xs font-bold hover:bg-lucero-cyan/30 transition">+ 行追加</button>
+                    </div>
+                    <div id="schedule-rows" class="space-y-2">
+                        <!-- 動的生成 -->
+                    </div>
+                </div>
+
+                <!-- スタッフの役割 -->
+                <div class="bg-lucero-card p-5 rounded-xl border border-lucero-border space-y-4">
+                    <div class="flex justify-between items-center border-b border-lucero-border pb-2">
+                        <h2 class="text-base font-bold text-lucero-gold">6. スタッフの役割</h2>
+                        <button onclick="addStaffRow()" class="bg-lucero-cyan/20 text-lucero-cyan border border-lucero-cyan/40 px-3 py-1 rounded text-xs font-bold hover:bg-lucero-cyan/30 transition">+ 行追加</button>
+                    </div>
+                    <div id="staff-rows" class="space-y-2">
+                        <!-- 動的生成 -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- 保存ボタン -->
+            <div class="flex justify-end pt-4">
+                <button onclick="alert('前日準備データをスプレッドシートに保存しました！')" class="bg-gradient-to-r from-lucero-gold to-amber-500 text-lucero-dark font-bold px-8 py-3 rounded-xl shadow-lg hover:opacity-90 transition">スプレッドシートに保存する</button>
+            </div>
+        </section>
+
+
+        <!-- ==================== ② 試合当日タブ ==================== -->
+        <section id="tab-match" class="hidden space-y-6">
+            <!-- 試合コントロールボード -->
+            <div class="bg-lucero-card p-5 rounded-xl border border-lucero-border flex flex-wrap items-center justify-between gap-4">
+                <div class="flex items-center space-x-4">
+                    <div>
+                        <span class="text-xs text-slate-400 block">対戦相手</span>
+                        <span class="text-base font-bold text-lucero-gold">vs FCルミナス</span>
+                    </div>
+                    <div class="h-8 w-px bg-lucero-border"></div>
+                    <div>
+                        <span class="text-xs text-slate-400 block">状態</span>
+                        <span id="match-status-badge" class="px-2.5 py-1 rounded text-xs font-bold bg-amber-500/20 text-amber-400 border border-amber-500/40">未開始</span>
+                    </div>
+                </div>
+
+                <!-- タイマー & AT設定 -->
+                <div class="flex flex-wrap items-center gap-3">
+                    <div class="text-3xl font-black font-mono tracking-wider text-lucero-cyan bg-lucero-dark px-4 py-1.5 rounded-xl border border-lucero-border" id="match-timer">00:00</div>
+                    
+                    <div class="flex flex-col text-xs">
+                        <span class="text-slate-400">後半AT</span>
+                        <select id="at-select" class="bg-lucero-dark border border-lucero-border rounded px-2 py-1 text-slate-200">
+                            <option value="0">+0分</option><option value="1">+1分</option><option value="2">+2分</option>
+                            <option value="3">+3分</option><option value="4">+4分</option><option value="5">+5分</option>
+                            <option value="6">+6分</option><option value="7">+7分</option><option value="8">+8分</option>
+                            <option value="9">+9分</option><option value="10">+10分</option>
+                        </select>
+                    </div>
+
+                    <button onclick="startMatch()" id="btn-start" class="bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold px-4 py-2 rounded-lg text-sm transition shadow-md">試合/後半開始</button>
+                    <button onclick="pauseMatch()" id="btn-pause" class="bg-slate-700 hover:bg-slate-600 text-slate-200 font-bold px-3 py-2 rounded-lg text-sm transition">一時停止</button>
+                    <button onclick="openCorrectionModal()" class="bg-lucero-accent hover:bg-slate-700 text-lucero-cyan border border-lucero-border px-3 py-2 rounded-lg text-sm transition">開始遅延修正</button>
+                </div>
+            </div>
+
+            <!-- ピッチ内選手 & 交代エリア & 交代済み選手 -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <!-- 左側：ピッチ上のスタメン（横長フルネームバッヂ） -->
+                <div class="lg:col-span-2 bg-lucero-card p-5 rounded-xl border border-lucero-border space-y-4">
+                    <h2 class="text-base font-bold text-lucero-cyan flex items-center justify-between">
+                        <span>ピッチ上 出場中選手 (タップで交代)</span>
+                        <span class="text-xs font-normal text-slate-400">※ベンチ選手をタップして重ねると交代できます</span>
+                    </h2>
+                    <div id="live-pitch-container" class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <!-- 動的生成 -->
+                    </div>
+                </div>
+
+                <!-- 右側：ベンチ & 交代済み選手 -->
+                <div class="space-y-6">
+                    <!-- ベンチメンバー -->
+                    <div class="bg-lucero-card p-5 rounded-xl border border-lucero-border space-y-3">
+                        <h2 class="text-base font-bold text-lucero-gold">ベンチメンバー (控)</h2>
+                        <div id="live-bench-container" class="space-y-2 min-h-[120px]">
+                            <!-- 動的生成 -->
+                        </div>
+                    </div>
+
+                    <!-- 交代済み選手 (再出場不可) -->
+                    <div class="bg-lucero-card p-5 rounded-xl border border-rose-500/40 space-y-3">
+                        <h2 class="text-base font-bold text-rose-400">交代済み選手 (再出場不可)</h2>
+                        <div id="subbed-out-container" class="space-y-2 min-h-[100px] bg-lucero-dark/40 p-3 rounded-lg border border-lucero-border">
+                            <p class="text-xs text-slate-500 text-center py-4">交代アウトした選手はここに格納されます</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- 修正モーダル -->
+    <div id="correction-modal" class="fixed inset-0 bg-black/70 hidden items-center justify-center z-50 p-4">
+        <div class="bg-lucero-card border border-lucero-border p-6 rounded-xl max-w-md w-full space-y-4">
+            <h3 class="text-lg font-bold text-lucero-gold">試合開始・後半開始の遅延修正</h3>
+            <p class="text-xs text-slate-300">開始ボタンを押し忘れた場合、何分遅れてスタートしたかを選択してください。</p>
+            <select id="correction-minutes" class="w-full bg-lucero-dark border border-lucero-border rounded-lg p-2.5 text-sm text-slate-200">
+                <option value="1">1分遅れ</option>
+                <option value="2">2分遅れ</option>
+                <option value="3">3分遅れ</option>
+                <option value="5">5分遅れ</option>
+                <option value="10">10分遅れ</option>
+            </select>
+            <div class="flex justify-end space-x-3 pt-2">
+                <button onclick="closeCorrectionModal()" class="px-4 py-2 rounded-lg bg-slate-700 text-sm font-semibold hover:bg-slate-600">キャンセル</button>
+                <button onclick="applyTimeCorrection()" class="px-4 py-2 rounded-lg bg-lucero-cyan text-lucero-dark text-sm font-bold hover:opacity-90">時間を補正する</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript ロジック -->
+    <script>
+        // サンプルデータ
+        let players = [
+            { id: 1, name: "GK 鈴木 健太", pos: "GK", status: "starter" },
+            { id: 2, name: "DF 佐藤 翔", pos: "CB", status: "starter" },
+            { id: 3, name: "DF 田中 蓮", pos: "CB", status: "starter" },
+            { id: 4, name: "DF 伊藤 大輝", pos: "SB", status: "starter" },
+            { id: 5, name: "DF 渡辺 湊", pos: "SB", status: "starter" },
+            { id: 6, name: "MF 中村 悠人", pos: "DMF", status: "starter" },
+            { id: 7, name: "MF 小林 樹", pos: "CMF", status: "starter" },
+            { id: 8, name: "MF 加藤 陸", pos: "OMF", status: "starter" },
+            { id: 9, name: "FW 高橋 隼人", pos: "WG", status: "starter" },
+            { id: 10, name: "FW 山田 蒼", pos: "WG", status: "starter" },
+            { id: 11, name: "FW 松本 蓮", pos: "CF", status: "starter" },
+            { id: 12, name: "GK 井上 拓海", pos: "GK", status: "bench" },
+            { id: 13, name: "DF 清水 湊斗", pos: "DF", status: "bench" },
+            { id: 14, name: "MF 山口 碧", pos: "MF", status: "bench" },
+            { id: 15, name: "FW 斎藤 陽向", pos: "FW", status: "bench" },
+            { id: 16, name: "MF 木村 奏太", pos: "MF", status: "out-match" },
+            { id: 17, name: "DF 林 琉生", pos: "DF", status: "out-list" }
+        ];
+
+        let selectedPlayerForSub = null;
+        let matchSeconds = 0;
+        let matchTimerInterval = null;
+        let isRunning = false;
+
+        // タブ切り替え
+        function switchTab(tab) {
+            document.getElementById('tab-prep').classList.toggle('hidden', tab !== 'prep');
+            document.getElementById('tab-match').classList.toggle('hidden', tab !== 'match');
+            document.getElementById('nav-prep').className = tab === 'prep' ? 'px-4 py-1.5 rounded-lg text-sm font-semibold bg-lucero-cyan text-lucero-dark shadow-md' : 'px-4 py-1.5 rounded-lg text-sm font-semibold bg-lucero-accent text-slate-300 hover:bg-slate-700';
+            document.getElementById('nav-match').className = tab === 'match' ? 'px-4 py-1.5 rounded-lg text-sm font-semibold bg-lucero-cyan text-lucero-dark shadow-md' : 'px-4 py-1.5 rounded-lg text-sm font-semibold bg-lucero-accent text-slate-300 hover:bg-slate-700';
+            if(tab === 'match') renderLiveMatch();
+        }
+
+        function handlePrepModeChange() {
+            const mode = document.getElementById('prep-mode').value;
+            document.getElementById('new-sub-mode-container').classList.toggle('hidden', mode !== 'new');
+            document.getElementById('edit-select-container').classList.toggle('hidden', mode !== 'edit');
+            document.getElementById('edit-select-container').classList.toggle('flex', mode === 'edit');
+        }
+
+        // フォーメーション枠のレンダリング
+        function renderFormationSlots() {
+            const system = document.getElementById('formation-select').value;
+            const container = document.getElementById('formation-slots-container');
+            container.innerHTML = '';
+
+            let positions = [];
+            if(system === '4-4-2') positions = ['GK', 'CB', 'CB', 'SB', 'SB', 'DMF', 'CMF', 'OMF', 'WG', 'WG', 'CF'];
+            else if(system === '4-3-3') positions = ['GK', 'CB', 'CB', 'SB', 'SB', 'DMF', 'CMF', 'CMF', 'WG', 'WG', 'CF'];
+            else if(system === '3-5-2') positions = ['GK', 'CB', 'CB', 'CB', 'WB', 'WB', 'DMF', 'CMF', 'CMF', 'CF', 'CF'];
+            else positions = ['GK', 'CB', 'CB', 'CB', 'DMF', 'DMF', 'OMF', 'WG', 'WG', 'CF', 'CF'];
+
+            positions.forEach((pos, idx) => {
+                const starter = players.filter(p => p.status === 'starter')[idx] || { name: '未割当選手', pos: pos };
+                const div = document.createElement('div');
+                div.className = 'bg-lucero-dark p-3 rounded-lg border border-lucero-border flex items-center justify-between gap-3';
+                div.innerHTML = `
+                    <span class="text-xs font-bold text-lucero-cyan bg-lucero-accent px-2 py-1 rounded w-14 text-center">${pos}</span>
+                    <select onchange="changeStarterPos(${idx}, this.value)" class="w-full bg-lucero-card border border-lucero-border rounded px-2 py-1.5 text-sm text-slate-200">
+                        ${players.map(p => `<option value="${p.id}" ${p.name === starter.name ? 'selected' : ''}>${p.name} (${p.pos})</option>`).join('')}
+                    </select>
+                `;
+                container.appendChild(div);
+            });
+
+            renderBenchAndOutLists();
+        }
+
+        function changeStarterPos(index, playerId) {
+            // 単純化のためここではスタメンリストの順序を更新
+            const targetPlayer = players.find(p => p.id == playerId);
+            if(targetPlayer) {
+                targetPlayer.status = 'starter';
+                renderFormationSlots();
+            }
+        }
+
+        function renderBenchAndOutLists() {
+            // ベンチ
+            const benchContainer = document.getElementById('bench-list-container');
+            benchContainer.innerHTML = players.filter(p => p.status === 'bench').map(p => `
+                <div class="bg-lucero-dark px-3 py-2 rounded-lg border border-lucero-border flex justify-between items-center text-sm">
+                    <span class="font-medium text-slate-200 truncate">${p.name}</span>
+                    <span class="text-xs text-lucero-gold bg-lucero-accent px-2 py-0.5 rounded">${p.pos}</span>
+                </div>
+            `).join('') || '<p class="text-xs text-slate-500 text-center py-2">ベンチ選手なし</p>';
+
+            // メンバー外
+            const outMatchContainer = document.getElementById('out-match-container');
+            outMatchContainer.innerHTML = players.filter(p => p.status === 'out-match').map(p => `
+                <div class="bg-lucero-dark px-3 py-1.5 rounded-lg border border-lucero-border flex justify-between items-center text-xs">
+                    <span class="text-slate-300">${p.name}</span>
+                    <span class="text-amber-400">帯同(出場不可)</span>
+                </div>
+            `).join('') || '<p class="text-xs text-slate-500 text-center py-1">なし</p>';
+
+            // リスト外
+            const outListContainer = document.getElementById('out-list-container');
+            outListContainer.innerHTML = players.filter(p => p.status === 'out-list').map(p => `
+                <div class="bg-lucero-dark px-3 py-1.5 rounded-lg border border-lucero-border flex justify-between items-center text-xs">
+                    <span class="text-slate-300">${p.name}</span>
+                    <span class="text-rose-400">不帯同</span>
+                </div>
+            `).join('') || '<p class="text-xs text-slate-500 text-center py-1">なし</p>';
+        }
+
+        // タイムスケジュール行の追加・削除
+        function addScheduleRow() {
+            const container = document.getElementById('schedule-rows');
+            const row = document.createElement('div');
+            row.className = 'flex items-center gap-2';
+            row.innerHTML = `
+                <input type="time" value="09:00" class="bg-lucero-dark border border-lucero-border rounded-lg p-2 text-sm text-slate-200 w-28">
+                <input type="text" placeholder="例: 会場到着・ミーティング開始" class="flex-1 bg-lucero-dark border border-lucero-border rounded-lg p-2 text-sm text-slate-200">
+                <button onclick="this.parentElement.remove()" class="text-rose-400 hover:text-rose-300 px-2 py-1 text-xs font-bold">削除</button>
+            `;
+            container.appendChild(row);
+        }
+
+        // スタッフ役割行の追加・削除
+        function addStaffRow() {
+            const container = document.getElementById('staff-rows');
+            const row = document.createElement('div');
+            row.className = 'grid grid-cols-4 gap-2 items-center';
+            row.innerHTML = `
+                <input type="text" placeholder="氏名" class="bg-lucero-dark border border-lucero-border rounded-lg p-2 text-sm text-slate-200">
+                <input type="text" placeholder="試合前" class="bg-lucero-dark border border-lucero-border rounded-lg p-2 text-sm text-slate-200">
+                <input type="text" placeholder="試合中" class="bg-lucero-dark border border-lucero-border rounded-lg p-2 text-sm text-slate-200">
+                <div class="flex items-center gap-1">
+                    <input type="text" placeholder="試合後" class="flex-1 bg-lucero-dark border border-lucero-border rounded-lg p-2 text-sm text-slate-200">
+                    <button onclick="this.parentElement.parentElement.remove()" class="text-rose-400 hover:text-rose-300 text-xs font-bold px-1">✕</button>
+                </div>
+            `;
+            container.appendChild(row);
+        }
+
+        // 試合当日ライブ画面のレンダリング
+        function renderLiveMatch() {
+            // ピッチ上スタメン
+            const pitchContainer = document.getElementById('live-pitch-container');
+            const starters = players.filter(p => p.status === 'starter');
+            pitchContainer.innerHTML = starters.map(p => `
+                <div onclick="selectPlayerForSub(${p.id})" class="bg-lucero-dark p-3 rounded-lg border ${selectedPlayerForSub === p.id ? 'border-lucero-cyan shadow-[0_0_10px_rgba(0,242,254,0.3)]' : 'border-lucero-border'} flex items-center justify-between cursor-pointer hover:border-lucero-cyan transition">
+                    <div class="flex items-center space-x-2">
+                        <span class="text-xs font-bold text-lucero-cyan bg-lucero-accent px-2 py-1 rounded">${p.pos}</span>
+                        <span class="font-bold text-sm text-slate-100">${p.name}</span>
+                    </div>
+                    <span class="text-xs bg-emerald-500/20 text-emerald-400 px-2 py-0.5 rounded font-semibold">出場中</span>
+                </div>
+            `).join('');
+
+            // ベンチ
+            const benchContainer = document.getElementById('live-bench-container');
+            const benchs = players.filter(p => p.status === 'bench');
+            benchContainer.innerHTML = benchs.map(p => `
+                <div onclick="executeSub(${p.id})" class="bg-lucero-dark p-2.5 rounded-lg border border-lucero-border flex justify-between items-center cursor-pointer hover:border-lucero-gold transition">
+                    <span class="text-sm font-medium text-slate-200">${p.name}</span>
+                    <span class="text-xs text-lucero-gold bg-lucero-accent px-2 py-0.5 rounded">${p.pos} (交代待機)</span>
+                </div>
+            `).join('') || '<p class="text-xs text-slate-500 text-center py-4">ベンチ選手なし</p>';
+
+            // 交代済み選手
+            const subbedOutContainer = document.getElementById('subbed-out-container');
+            const subbedOuts = players.filter(p => p.status === 'subbed-out');
+            subbedOutContainer.innerHTML = subbedOuts.map(p => `
+                <div class="bg-lucero-dark/80 px-3 py-2 rounded border border-rose-500/30 flex justify-between items-center text-xs">
+                    <span class="text-slate-400 line-through">${p.name}</span>
+                    <span class="text-rose-400 font-bold">交代アウト (再出場不可)</span>
+                </div>
+            `).join('') || '<p class="text-xs text-slate-500 text-center py-2">交代済み選手なし</p>';
+        }
+
+        let pendingStarterId = null;
+        function selectPlayerForSub(id) {
+            pendingStarterId = id;
+            selectedPlayerForSub = id;
+            renderLiveMatch();
+            // ベンチ選手をタップして交代を促すアラートや表示
+        }
+
+        function executeSub(benchId) {
+            if(!pendingStarterId) {
+                alert('先にピッチ上の交代アウトする選手をタップして選択してください。');
+                return;
+            }
+            if(confirm('この選手とメンバー交代を行いますか？')) {
+                const starter = players.find(p => p.id === pendingStarterId);
+                const bench = players.find(p => p.id === benchId);
+
+                // スタメンを交代済みへ
+                starter.status = 'subbed-out';
+                // ベンチ選手をスタメンへ（ポジション継承）
+                bench.status = 'starter';
+                bench.pos = starter.pos;
+
+                pendingStarterId = null;
+                selectedPlayerForSub = null;
+                renderLiveMatch();
+                alert('交代が完了しました！出場時間が自動記録されました。');
+            }
+        }
+
+        // タイマー制御
+        function startMatch() {
+            if(isRunning) return;
+            isRunning = true;
+            document.getElementById('match-status-badge').className = 'px-2.5 py-1 rounded text-xs font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/40';
+            document.getElementById('match-status-badge').innerText = '試合中';
+            matchTimerInterval = setInterval(() => {
+                matchSeconds++;
+                const mins = String(Math.floor(matchSeconds / 60)).padStart(2, '0');
+                const secs = String(matchSeconds % 60).padStart(2, '0');
+                document.getElementById('match-timer').innerText = `${mins}:${secs}`;
+            }, 1000);
+        }
+
+        function pauseMatch() {
+            isRunning = false;
+            clearInterval(matchTimerInterval);
+            document.getElementById('match-status-badge').className = 'px-2.5 py-1 rounded text-xs font-bold bg-amber-500/20 text-amber-400 border border-amber-500/40';
+            document.getElementById('match-status-badge').innerText = '一時停止';
+        }
+
+        function openCorrectionModal() {
+            document.getElementById('correction-modal').classList.remove('hidden');
+            document.getElementById('correction-modal').classList.add('flex');
+        }
+
+        function closeCorrectionModal() {
+            document.getElementById('correction-modal').classList.remove('flex');
+            document.getElementById('correction-modal').classList.add('hidden');
+        }
+
+        function applyTimeCorrection() {
+            const addMin = parseInt(document.getElementById('correction-minutes').value);
+            matchSeconds += addMin * 60;
+            const mins = String(Math.floor(matchSeconds / 60)).padStart(2, '0');
+            const secs = String(matchSeconds % 60).padStart(2, '0');
+            document.getElementById('match-timer').innerText = `${mins}:${secs}`;
+            closeCorrectionModal();
+            alert(`タイマーを ${addMin} 分進めて補正しました。`);
+        }
+
+        // 初期化実行
+        window.onload = function() {
+            renderFormationSlots();
+            // 初期スケジュール・スタッフ行追加
+            addScheduleRow();
+            addStaffRow();
+        };
+    </script>
+</body>
+</html>
