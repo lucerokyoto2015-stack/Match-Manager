@@ -233,7 +233,7 @@
 
             <!-- 当日タイムスケジュール & スタッフの役割 -->
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <!-- タイムスケジュール (スマホレスポンシブ対応) -->
+                <!-- タイムスケジュール (時間と内容が1行に収まるように調整) -->
                 <div class="bg-lucero-card p-5 rounded-xl border border-lucero-border space-y-4">
                     <div class="flex justify-between items-center border-b border-lucero-border pb-2">
                         <h2 class="text-base font-bold text-lucero-gold">5. 当日タイムスケジュール</h2>
@@ -566,23 +566,15 @@
             `).join('') || '<p class="text-xs text-slate-500 text-center py-1">なし</p>';
         }
 
-        // タイムスケジュール行追加（スマホレスポンシブ対応）
+        // タイムスケジュール行追加（スマホでも時間と内容が必ず1行に収まるフレックス・横並び固定レイアウト）
         function addScheduleRow() {
             const container = document.getElementById('schedule-rows');
             const row = document.createElement('div');
-            row.className = 'bg-lucero-dark/60 p-3 rounded-xl border border-lucero-border flex flex-col sm:flex-row items-stretch sm:items-center gap-2';
+            row.className = 'bg-lucero-dark/60 p-2.5 rounded-xl border border-lucero-border flex items-center gap-2';
             row.innerHTML = `
-                <div class="w-full sm:w-32">
-                    <label class="block text-[10px] text-slate-400 sm:hidden mb-0.5">時間</label>
-                    <input type="time" value="09:00" class="w-full bg-lucero-dark border border-lucero-border rounded-lg p-2 text-sm text-slate-200">
-                </div>
-                <div class="flex-1">
-                    <label class="block text-[10px] text-slate-400 sm:hidden mb-0.5">内容</label>
-                    <input type="text" placeholder="例: 会場到着・ミーティング開始" class="w-full bg-lucero-dark border border-lucero-border rounded-lg p-2 text-sm text-slate-200">
-                </div>
-                <div class="flex justify-end sm:justify-start">
-                    <button onclick="this.parentElement.closest('div.bg-lucero-dark\\/60').remove()" class="text-rose-400 hover:text-rose-300 px-2 py-1 text-xs font-bold">✕ 削除</button>
-                </div>
+                <input type="time" value="09:00" class="bg-lucero-dark border border-lucero-border rounded-lg px-2 py-1.5 text-xs sm:text-sm text-slate-200 w-28 shrink-0">
+                <input type="text" placeholder="例: 会場到着・ミーティング開始" class="flex-1 bg-lucero-dark border border-lucero-border rounded-lg px-2.5 py-1.5 text-xs sm:text-sm text-slate-200 min-w-0">
+                <button onclick="this.parentElement.remove()" class="text-rose-400 hover:text-rose-300 px-1.5 py-1 text-xs font-bold shrink-0">✕</button>
             `;
             container.appendChild(row);
         }
