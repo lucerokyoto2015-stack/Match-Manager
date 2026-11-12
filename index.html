@@ -233,13 +233,13 @@
 
             <!-- 当日タイムスケジュール & スタッフの役割 -->
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <!-- タイムスケジュール -->
+                <!-- タイムスケジュール (スマホレスポンシブ対応) -->
                 <div class="bg-lucero-card p-5 rounded-xl border border-lucero-border space-y-4">
                     <div class="flex justify-between items-center border-b border-lucero-border pb-2">
                         <h2 class="text-base font-bold text-lucero-gold">5. 当日タイムスケジュール</h2>
                         <button onclick="addScheduleRow()" class="bg-lucero-cyan/20 text-lucero-cyan border border-lucero-cyan/40 px-3 py-1 rounded text-xs font-bold hover:bg-lucero-cyan/30 transition">+ 行追加</button>
                     </div>
-                    <div id="schedule-rows" class="space-y-2"></div>
+                    <div id="schedule-rows" class="space-y-3"></div>
                 </div>
 
                 <!-- スタッフの役割 -->
@@ -304,7 +304,7 @@
                         <span class="text-[11px] sm:text-xs font-normal text-slate-400">※選手間タップで入替、ベンチタップで交代</span>
                     </h2>
 
-                    <!-- サッカーピッチ風コンテナ (スマホでもはみ出さない自動スケール設計) -->
+                    <!-- サッカーピッチ風コンテナ -->
                     <div id="live-pitch-visual" class="relative w-full aspect-[4/3] sm:aspect-[16/10] bg-gradient-to-b from-[#0e3b23] via-[#114b2c] to-[#0e3b23] rounded-2xl border-2 border-emerald-400/40 p-2 sm:p-4 shadow-inner overflow-hidden flex flex-col justify-between select-none">
                         <!-- ピッチライン装飾 -->
                         <div class="absolute inset-0 pointer-events-none flex items-center justify-center">
@@ -366,7 +366,6 @@
 
     <!-- JavaScript ロジック -->
     <script>
-        // サンプル選手データ (スタメン11名 + ベンチ最大9名 + メンバー外・リスト外)
         let players = [
             { id: 1, number: 1, name: "鈴木 健太", pos: "GK", status: "starter" },
             { id: 2, number: 3, name: "佐藤 翔", pos: "CB", status: "starter" },
@@ -379,7 +378,6 @@
             { id: 9, number: 7, name: "高橋 隼人", pos: "WG", status: "starter" },
             { id: 10, number: 11, name: "山田 蒼", pos: "WG", status: "starter" },
             { id: 11, number: 9, name: "松本 蓮", pos: "CF", status: "starter" },
-            // ベンチ (最大9名枠)
             { id: 12, number: 21, name: "井上 拓海", pos: "GK", status: "bench" },
             { id: 13, number: 14, name: "清水 湊斗", pos: "DF", status: "bench" },
             { id: 14, number: 15, name: "山口 碧", pos: "MF", status: "bench" },
@@ -389,7 +387,6 @@
             { id: 18, number: 24, name: "藤田 翔太", pos: "FW", status: "bench" },
             { id: 19, number: 25, name: "小川 陸", pos: "MF", status: "bench" },
             { id: 20, number: 26, name: "石井 蒼", pos: "DF", status: "bench" },
-            // その他
             { id: 21, number: 16, name: "木村 奏太", pos: "MF", status: "out-match" },
             { id: 22, number: 19, name: "林 琉生", pos: "DF", status: "out-list" }
         ];
@@ -436,7 +433,6 @@
             return ['GK', 'CB', 'CB', 'SB', 'SB', 'DMF', 'CMF', 'OMF', 'WG', 'WG', 'CF'];
         }
 
-        // 新規選手を追加する関数
         function addNewPlayer(statusType) {
             const newId = players.length > 0 ? Math.max(...players.map(p => p.id)) + 1 : 1;
             const defaultPos = statusType === 'bench' ? 'MF' : 'DF';
@@ -521,7 +517,6 @@
         }
 
         function renderBenchAndOutLists() {
-            // ベンチ (最大9名枠を綺麗に表示)
             const benchContainer = document.getElementById('bench-list-container');
             const benches = players.filter(p => p.status === 'bench');
             benchContainer.innerHTML = benches.map(p => {
@@ -540,7 +535,6 @@
                 `;
             }).join('') || '<p class="text-xs text-slate-500 text-center py-2">ベンチ選手なし</p>';
 
-            // メンバー外
             const outMatchContainer = document.getElementById('out-match-container');
             const outMatches = players.filter(p => p.status === 'out-match');
             outMatchContainer.innerHTML = outMatches.map(p => `
@@ -556,7 +550,6 @@
                 </div>
             `).join('') || '<p class="text-xs text-slate-500 text-center py-1">なし</p>';
 
-            // リスト外
             const outListContainer = document.getElementById('out-list-container');
             const outLists = players.filter(p => p.status === 'out-list');
             outListContainer.innerHTML = outLists.map(p => `
@@ -573,14 +566,23 @@
             `).join('') || '<p class="text-xs text-slate-500 text-center py-1">なし</p>';
         }
 
+        // タイムスケジュール行追加（スマホレスポンシブ対応）
         function addScheduleRow() {
             const container = document.getElementById('schedule-rows');
             const row = document.createElement('div');
-            row.className = 'flex items-center gap-2';
+            row.className = 'bg-lucero-dark/60 p-3 rounded-xl border border-lucero-border flex flex-col sm:flex-row items-stretch sm:items-center gap-2';
             row.innerHTML = `
-                <input type="time" value="09:00" class="bg-lucero-dark border border-lucero-border rounded-lg p-2 text-sm text-slate-200 w-28">
-                <input type="text" placeholder="例: 会場到着・ミーティング開始" class="flex-1 bg-lucero-dark border border-lucero-border rounded-lg p-2 text-sm text-slate-200">
-                <button onclick="this.parentElement.remove()" class="text-rose-400 hover:text-rose-300 px-2 py-1 text-xs font-bold">削除</button>
+                <div class="w-full sm:w-32">
+                    <label class="block text-[10px] text-slate-400 sm:hidden mb-0.5">時間</label>
+                    <input type="time" value="09:00" class="w-full bg-lucero-dark border border-lucero-border rounded-lg p-2 text-sm text-slate-200">
+                </div>
+                <div class="flex-1">
+                    <label class="block text-[10px] text-slate-400 sm:hidden mb-0.5">内容</label>
+                    <input type="text" placeholder="例: 会場到着・ミーティング開始" class="w-full bg-lucero-dark border border-lucero-border rounded-lg p-2 text-sm text-slate-200">
+                </div>
+                <div class="flex justify-end sm:justify-start">
+                    <button onclick="this.parentElement.closest('div.bg-lucero-dark\\/60').remove()" class="text-rose-400 hover:text-rose-300 px-2 py-1 text-xs font-bold">✕ 削除</button>
+                </div>
             `;
             container.appendChild(row);
         }
@@ -601,7 +603,6 @@
             container.appendChild(row);
         }
 
-        // 試合当日：スマホ完全対応＆自動サイズ調整ピッチ描画
         function renderLiveMatch() {
             const system = getCurrentSystem();
             const wrapper = document.getElementById('pitch-slots-wrapper');
@@ -675,7 +676,6 @@
 
                     const playerEl = document.createElement('div');
                     playerEl.onclick = () => handleMatchPlayerClick(p.id);
-                    // スマホでも絶対に収まるよう、サイズをレスポンシブ調整（w-8 h-8 から sm:w-12 sm:h-12）
                     playerEl.className = `flex flex-col items-center cursor-pointer transition transform hover:scale-105 ${isSelected ? 'scale-110 drop-shadow-[0_0_12px_rgba(0,242,254,0.9)]' : ''}`;
                     
                     playerEl.innerHTML = `
@@ -692,7 +692,6 @@
                 wrapper.appendChild(rowDiv);
             });
 
-            // ベンチ
             const benchContainer = document.getElementById('live-bench-container');
             const benches = players.filter(p => p.status === 'bench');
             benchContainer.innerHTML = benches.map(p => {
@@ -708,7 +707,6 @@
                 `;
             }).join('') || '<p class="text-xs text-slate-500 text-center py-4">ベンチ選手なし</p>';
 
-            // 交代済み選手
             const subbedOutContainer = document.getElementById('subbed-out-container');
             const subbedOuts = players.filter(p => p.status === 'subbed-out');
             subbedOutContainer.innerHTML = subbedOuts.map(p => `
@@ -726,7 +724,6 @@
             return { id: null, number: '-', name: '未割当', pos: pos };
         }
 
-        // 試合中の正確な判定ロジック（出場中同士ならポジション入替、出場中とベンチなら交代）
         function handleMatchPlayerClick(id) {
             if(!id) return;
 
@@ -742,7 +739,6 @@
 
                 if(p1 && p2) {
                     if(p1.status === 'starter' && p2.status === 'starter') {
-                        // 【修正点】出場中同士のタップ ＝ ポジションチェンジ（配置・名前・背番号入替）
                         const tempPos = p1.pos;
                         p1.pos = p2.pos;
                         p2.pos = tempPos;
@@ -757,7 +753,6 @@
 
                         alert(`ポジションを入れ替えました: ${p1.name} ⇄ ${p2.name}`);
                     } else if((p1.status === 'starter' && p2.status === 'bench') || (p1.status === 'bench' && p2.status === 'starter')) {
-                        // 出場中 ⇄ ベンチ ＝ 選手交代（Sub）
                         const starter = p1.status === 'starter' ? p1 : p2;
                         const bench = p1.status === 'bench' ? p1 : p2;
 
