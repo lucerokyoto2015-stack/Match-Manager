@@ -133,10 +133,12 @@
                     <div class="flex items-center space-x-2">
                         <span class="text-xs text-slate-400">システム選択:</span>
                         <select id="formation-select" onchange="renderFormationSlots()" class="bg-lucero-dark border border-lucero-border rounded-lg px-3 py-1 text-sm text-lucero-cyan font-bold">
-                            <option value="4-4-2">4-4-2</option>
                             <option value="4-3-3">4-3-3</option>
-                            <option value="3-5-2">3-5-2</option>
-                            <option value="3-4-3">3-4-3</option>
+                            <option value="4-2-3-1">4-2-3-1</option>
+                            <option value="4-4-2">4-4-2</option>
+                            <option value="4-1-2-1-2">4-1-2-1-2 (ダイヤ)</option>
+                            <option value="3-4-2-1">3-4-2-1</option>
+                            <option value="3-2-3-2">3-2-3-2</option>
                         </select>
                     </div>
                 </div>
@@ -234,7 +236,7 @@
                     <div id="schedule-rows" class="space-y-2"></div>
                 </div>
 
-                <!-- スタッフの役割 (スマホ・PCレスポンシブ対応) -->
+                <!-- スタッフの役割 -->
                 <div class="bg-lucero-card p-5 rounded-xl border border-lucero-border space-y-4">
                     <div class="flex justify-between items-center border-b border-lucero-border pb-2">
                         <h2 class="text-base font-bold text-lucero-gold">6. スタッフの役割</h2>
@@ -289,16 +291,16 @@
 
             <!-- ピッチビジュアル画面 & ベンチ・交代済みエリア -->
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                <!-- 左側：グラフィカル・サッカーピッチ（スタメン配置） -->
+                <!-- 左側：グラフィカル・サッカーピッチ（スタメン配置・フルネーム） -->
                 <div class="lg:col-span-2 bg-lucero-card p-5 rounded-xl border border-lucero-border space-y-4">
                     <h2 class="text-base font-bold text-lucero-cyan flex items-center justify-between">
-                        <span>ピッチ上 出場中選手 (タップで交代)</span>
-                        <span class="text-xs font-normal text-slate-400">※ベンチ選手をタップして重ねると交代できます</span>
+                        <span>ピッチ上 出場中選手 (タップで交代 / ポジションチェンジ)</span>
+                        <span class="text-xs font-normal text-slate-400">※選手同士のタップで位置入替、ベンチ選択で交代</span>
                     </h2>
 
                     <!-- サッカーピッチ風コンテナ -->
                     <div id="live-pitch-visual" class="relative w-full aspect-[4/3] sm:aspect-[16/10] bg-gradient-to-b from-[#0e3b23] via-[#114b2c] to-[#0e3b23] rounded-2xl border-2 border-emerald-400/40 p-4 shadow-inner overflow-hidden flex flex-col justify-between select-none">
-                        <!-- ピッチのライン装飾 -->
+                        <!-- ピッチライン装飾 -->
                         <div class="absolute inset-0 pointer-events-none flex items-center justify-center">
                             <div class="w-full h-px bg-white/20 absolute"></div>
                             <div class="w-28 h-28 sm:w-36 sm:h-36 rounded-full border border-white/20 absolute"></div>
@@ -307,7 +309,7 @@
                             <div class="absolute bottom-0 left-1/2 -translate-x-1/2 w-3/5 h-1/4 border-t border-x border-white/20 rounded-t-xl"></div>
                         </div>
 
-                        <!-- フォーメーション配置用レイヤー -->
+                        <!-- フォーメーション配置レイヤー -->
                         <div id="pitch-slots-wrapper" class="relative z-10 w-full h-full flex flex-col justify-between py-2">
                             <!-- 動的配置 -->
                         </div>
@@ -376,7 +378,7 @@
         ];
 
         let selectedPlayerForPrepSwitch = null;
-        let selectedPlayerForSub = null;
+        let selectedPlayerForMatch = null; // 試合中の選択・交代・入替用共通ID
         let matchSeconds = 0;
         let matchTimerInterval = null;
         let isRunning = false;
@@ -406,12 +408,16 @@
             return document.getElementById('formation-select').value;
         }
 
+        // 各システムに応じた正確な11人のポジション定義
         function getCurrentPositions() {
             const system = getCurrentSystem();
-            if(system === '4-4-2') return ['GK', 'CB', 'CB', 'SB', 'SB', 'DMF', 'CMF', 'OMF', 'WG', 'WG', 'CF'];
             if(system === '4-3-3') return ['GK', 'CB', 'CB', 'SB', 'SB', 'DMF', 'CMF', 'CMF', 'WG', 'WG', 'CF'];
-            if(system === '3-5-2') return ['GK', 'CB', 'CB', 'CB', 'WB', 'WB', 'DMF', 'CMF', 'CMF', 'CF', 'CF'];
-            return ['GK', 'CB', 'CB', 'CB', 'DMF', 'DMF', 'OMF', 'WG', 'WG', 'CF', 'CF'];
+            if(system === '4-2-3-1') return ['GK', 'CB', 'CB', 'SB', 'SB', 'DMF', 'DMF', 'OMF', 'WG', 'WG', 'CF'];
+            if(system === '4-4-2') return ['GK', 'CB', 'CB', 'SB', 'SB', 'DMF', 'CMF', 'OMF', 'WG', 'WG', 'CF'];
+            if(system === '4-1-2-1-2') return ['GK', 'CB', 'CB', 'SB', 'SB', 'DMF', 'CMF', 'CMF', 'OMF', 'CF', 'CF'];
+            if(system === '3-4-2-1') return ['GK', 'CB', 'CB', 'CB', 'WB', 'WB', 'CMF', 'CMF', 'OMF', 'OMF', 'CF'];
+            if(system === '3-2-3-2') return ['GK', 'CB', 'CB', 'CB', 'DMF', 'DMF', 'WG', 'OMF', 'WG', 'CF', 'CF'];
+            return ['GK', 'CB', 'CB', 'SB', 'SB', 'DMF', 'CMF', 'OMF', 'WG', 'WG', 'CF'];
         }
 
         function renderFormationSlots() {
@@ -489,33 +495,27 @@
 
             const outMatchContainer = document.getElementById('out-match-container');
             const outMatches = players.filter(p => p.status === 'out-match');
-            outMatchContainer.innerHTML = outMatches.map(p => {
-                const isSelected = selectedPlayerForPrepSwitch === p.id;
-                return `
-                    <div onclick="handlePrepPlayerClick(${p.id})" class="bg-lucero-dark px-3 py-1.5 rounded-lg border ${isSelected ? 'border-lucero-cyan' : 'border-lucero-border'} flex justify-between items-center text-xs cursor-pointer hover:border-amber-400 transition">
-                        <div class="flex items-center space-x-2">
-                            <span class="text-slate-400 font-mono">#${p.number}</span>
-                            <span class="text-slate-300">${p.name}</span>
-                        </div>
-                        <span class="text-amber-400">帯同(出場不可)</span>
+            outMatchContainer.innerHTML = outMatches.map(p => `
+                <div onclick="handlePrepPlayerClick(${p.id})" class="bg-lucero-dark px-3 py-1.5 rounded-lg border border-lucero-border flex justify-between items-center text-xs cursor-pointer">
+                    <div class="flex items-center space-x-2">
+                        <span class="text-slate-400 font-mono">#${p.number}</span>
+                        <span class="text-slate-300">${p.name}</span>
                     </div>
-                `;
-            }).join('') || '<p class="text-xs text-slate-500 text-center py-1">なし</p>';
+                    <span class="text-amber-400">帯同(出場不可)</span>
+                </div>
+            `).join('') || '<p class="text-xs text-slate-500 text-center py-1">なし</p>';
 
             const outListContainer = document.getElementById('out-list-container');
             const outLists = players.filter(p => p.status === 'out-list');
-            outListContainer.innerHTML = outLists.map(p => {
-                const isSelected = selectedPlayerForPrepSwitch === p.id;
-                return `
-                    <div onclick="handlePrepPlayerClick(${p.id})" class="bg-lucero-dark px-3 py-1.5 rounded-lg border ${isSelected ? 'border-lucero-cyan' : 'border-lucero-border'} flex justify-between items-center text-xs cursor-pointer hover:border-rose-400 transition">
-                        <div class="flex items-center space-x-2">
-                            <span class="text-slate-400 font-mono">#${p.number}</span>
-                            <span class="text-slate-300">${p.name}</span>
-                        </div>
-                        <span class="text-rose-400">不帯同</span>
+            outListContainer.innerHTML = outLists.map(p => `
+                <div onclick="handlePrepPlayerClick(${p.id})" class="bg-lucero-dark px-3 py-1.5 rounded-lg border border-lucero-border flex justify-between items-center text-xs cursor-pointer">
+                    <div class="flex items-center space-x-2">
+                        <span class="text-slate-400 font-mono">#${p.number}</span>
+                        <span class="text-slate-300">${p.name}</span>
                     </div>
-                `;
-            }).join('') || '<p class="text-xs text-slate-500 text-center py-1">なし</p>';
+                    <span class="text-rose-400">不帯同</span>
+                </div>
+            `).join('') || '<p class="text-xs text-slate-500 text-center py-1">なし</p>';
         }
 
         function addScheduleRow() {
@@ -530,35 +530,23 @@
             container.appendChild(row);
         }
 
-        // スタッフ行追加（スマホでは縦積み、PCではレスポンシブ横並びになるよう修正）
         function addStaffRow() {
             const container = document.getElementById('staff-rows');
             const row = document.createElement('div');
             row.className = 'bg-lucero-dark/60 p-3 rounded-xl border border-lucero-border grid grid-cols-1 sm:grid-cols-4 gap-2 items-center';
             row.innerHTML = `
-                <div>
-                    <label class="block text-[10px] text-slate-400 sm:hidden mb-0.5">氏名</label>
-                    <input type="text" placeholder="氏名" class="w-full bg-lucero-dark border border-lucero-border rounded-lg p-2 text-sm text-slate-200">
-                </div>
-                <div>
-                    <label class="block text-[10px] text-slate-400 sm:hidden mb-0.5">試合前</label>
-                    <input type="text" placeholder="試合前" class="w-full bg-lucero-dark border border-lucero-border rounded-lg p-2 text-sm text-slate-200">
-                </div>
-                <div>
-                    <label class="block text-[10px] text-slate-400 sm:hidden mb-0.5">試合中</label>
-                    <input type="text" placeholder="試合中" class="w-full bg-lucero-dark border border-lucero-border rounded-lg p-2 text-sm text-slate-200">
-                </div>
+                <div><input type="text" placeholder="氏名" class="w-full bg-lucero-dark border border-lucero-border rounded-lg p-2 text-sm text-slate-200"></div>
+                <div><input type="text" placeholder="試合前" class="w-full bg-lucero-dark border border-lucero-border rounded-lg p-2 text-sm text-slate-200"></div>
+                <div><input type="text" placeholder="試合中" class="w-full bg-lucero-dark border border-lucero-border rounded-lg p-2 text-sm text-slate-200"></div>
                 <div class="flex items-center gap-2">
-                    <div class="flex-1">
-                        <label class="block text-[10px] text-slate-400 sm:hidden mb-0.5">試合後</label>
-                        <input type="text" placeholder="試合後" class="w-full bg-lucero-dark border border-lucero-border rounded-lg p-2 text-sm text-slate-200">
-                    </div>
-                    <button onclick="this.parentElement.parentElement.remove()" class="mt-4 sm:mt-0 text-rose-400 hover:text-rose-300 p-2 text-xs font-bold">✕ 削除</button>
+                    <input type="text" placeholder="試合後" class="flex-1 bg-lucero-dark border border-lucero-border rounded-lg p-2 text-sm text-slate-200">
+                    <button onclick="this.parentElement.parentElement.remove()" class="text-rose-400 hover:text-rose-300 p-2 text-xs font-bold">✕</button>
                 </div>
             `;
             container.appendChild(row);
         }
 
+        // 試合当日：システム別のピッチ陣形・行マッピング
         function renderLiveMatch() {
             const system = getCurrentSystem();
             const wrapper = document.getElementById('pitch-slots-wrapper');
@@ -566,7 +554,54 @@
             const starters = players.filter(p => p.status === 'starter');
 
             let rowsConfig = [];
-            if (system === '4-4-2') {
+            if (system === '4-3-3') {
+                rowsConfig = [
+                    [starters[8] || createDummy('WG'), starters[10] || createDummy('CF'), starters[9] || createDummy('WG')],
+                    [starters[5] || createDummy('DMF'), starters[6] || createDummy('CMF'), starters[7] || createDummy('CMF')],
+                    [starters[1] || createDummy('CB'), starters[2] || createDummy('CB'), starters[3] || createDummy('SB'), starters[4] || createDummy('SB')],
+                    [starters[0] || createDummy('GK')]
+                ];
+            } else if (system === '4-2-3-1') {
+                rowsConfig = [
+                    [starters[10] || createDummy('CF')],
+                    [starters[8] || createDummy('WG'), starters[7] || createDummy('OMF'), starters[9] || createDummy('WG')],
+                    [starters[5] || createDummy('DMF'), starters[6] || createDummy('DMF')],
+                    [starters[1] || createDummy('CB'), starters[2] || createDummy('CB'), starters[3] || createDummy('SB'), starters[4] || createDummy('SB')],
+                    [starters[0] || createDummy('GK')]
+                ];
+            } else if (system === '4-4-2') {
+                rowsConfig = [
+                    [starters[9] || createDummy('CF'), starters[10] || createDummy('CF')],
+                    [starters[8] || createDummy('WG'), starters[6] || createDummy('CMF'), starters[7] || createDummy('OMF'), starters[9] || createDummy('WG')],
+                    [starters[1] || createDummy('CB'), starters[2] || createDummy('CB'), starters[3] || createDummy('SB'), starters[4] || createDummy('SB')],
+                    [starters[0] || createDummy('GK')]
+                ];
+            } else if (system === '4-1-2-1-2') {
+                rowsConfig = [
+                    [starters[9] || createDummy('CF'), starters[10] || createDummy('CF')],
+                    [starters[7] || createDummy('OMF')],
+                    [starters[5] || createDummy('CMF'), starters[6] || createDummy('CMF')],
+                    [starters[5] || createDummy('DMF')],
+                    [starters[1] || createDummy('CB'), starters[2] || createDummy('CB'), starters[3] || createDummy('SB'), starters[4] || createDummy('SB')],
+                    [starters[0] || createDummy('GK')]
+                ];
+            } else if (system === '3-4-2-1') {
+                rowsConfig = [
+                    [starters[10] || createDummy('CF')],
+                    [starters[7] || createDummy('OMF'), starters[8] || createDummy('OMF')],
+                    [starters[4] || createDummy('WB'), starters[5] || createDummy('CMF'), starters[6] || createDummy('CMF'), starters[5] || createDummy('WB')],
+                    [starters[1] || createDummy('CB'), starters[2] || createDummy('CB'), starters[3] || createDummy('CB')],
+                    [starters[0] || createDummy('GK')]
+                ];
+            } else if (system === '3-2-3-2') {
+                rowsConfig = [
+                    [starters[9] || createDummy('CF'), starters[10] || createDummy('CF')],
+                    [starters[6] || createDummy('WG'), starters[7] || createDummy('OMF'), starters[8] || createDummy('WG')],
+                    [starters[4] || createDummy('DMF'), starters[5] || createDummy('DMF')],
+                    [starters[1] || createDummy('CB'), starters[2] || createDummy('CB'), starters[3] || createDummy('CB')],
+                    [starters[0] || createDummy('GK')]
+                ];
+            } else { // フォールバック 4-4-2
                 rowsConfig = [
                     [starters[10] || createDummy('CF')],
                     [starters[8] || createDummy('WG'), starters[9] || createDummy('WG')],
@@ -574,47 +609,26 @@
                     [starters[1] || createDummy('CB'), starters[2] || createDummy('CB'), starters[3] || createDummy('SB'), starters[4] || createDummy('SB')],
                     [starters[0] || createDummy('GK')]
                 ];
-            } else if (system === '4-3-3') {
-                rowsConfig = [
-                    [starters[8] || createDummy('WG'), starters[10] || createDummy('CF'), starters[9] || createDummy('WG')],
-                    [starters[5] || createDummy('DMF'), starters[6] || createDummy('CMF'), starters[7] || createDummy('CMF')],
-                    [starters[1] || createDummy('CB'), starters[2] || createDummy('CB'), starters[3] || createDummy('SB'), starters[4] || createDummy('SB')],
-                    [starters[0] || createDummy('GK')]
-                ];
-            } else if (system === '3-5-2') {
-                rowsConfig = [
-                    [starters[9] || createDummy('CF'), starters[10] || createDummy('CF')],
-                    [starters[5] || createDummy('DMF'), starters[6] || createDummy('CMF'), starters[7] || createDummy('CMF'), starters[3] || createDummy('WB'), starters[4] || createDummy('WB')],
-                    [starters[1] || createDummy('CB'), starters[2] || createDummy('CB'), starters[3] || createDummy('CB')],
-                    [starters[0] || createDummy('GK')]
-                ];
-            } else {
-                rowsConfig = [
-                    [starters[7] || createDummy('WG'), starters[10] || createDummy('CF'), starters[8] || createDummy('WG')],
-                    [starters[4] || createDummy('DMF'), starters[5] || createDummy('DMF'), starters[6] || createDummy('OMF')],
-                    [starters[1] || createDummy('CB'), starters[2] || createDummy('CB'), starters[3] || createDummy('CB')],
-                    [starters[0] || createDummy('GK')]
-                ];
             }
 
             rowsConfig.forEach(rowPlayers => {
                 const rowDiv = document.createElement('div');
-                rowDiv.className = 'flex justify-around items-center w-full px-2';
+                rowDiv.className = 'flex justify-around items-center w-full px-2 my-0.5';
                 rowPlayers.forEach(p => {
-                    const isSelected = selectedPlayerForSub === p.id;
+                    const isSelected = selectedPlayerForMatch === p.id;
                     const isGK = p.pos === 'GK';
 
                     const playerEl = document.createElement('div');
-                    playerEl.onclick = () => selectPlayerForSub(p.id);
+                    playerEl.onclick = () => handleMatchPlayerClick(p.id, 'starter');
                     playerEl.className = `flex flex-col items-center cursor-pointer transition transform hover:scale-105 ${isSelected ? 'scale-110 drop-shadow-[0_0_12px_rgba(0,242,254,0.9)]' : ''}`;
                     
                     playerEl.innerHTML = `
-                        <div class="relative w-11 h-11 sm:w-13 sm:h-13 rounded-xl flex items-center justify-center font-black shadow-lg border ${isGK ? 'bg-amber-500 text-slate-950 border-amber-300' : 'bg-gradient-to-tr from-blue-900 via-blue-700 to-[#00f2fe] text-white border-lucero-cyan/60'} ${isSelected ? 'ring-4 ring-lucero-cyan' : ''}">
+                        <div class="relative w-10 h-10 sm:w-12 sm:h-12 rounded-xl flex items-center justify-center font-black shadow-lg border ${isGK ? 'bg-amber-500 text-slate-950 border-amber-300' : 'bg-gradient-to-tr from-blue-900 via-blue-700 to-[#00f2fe] text-white border-lucero-cyan/60'} ${isSelected ? 'ring-4 ring-lucero-cyan' : ''}">
                             <svg class="absolute inset-0 w-full h-full opacity-30 text-white p-1" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2L3 7v5c0 5.25 3.75 10 9 10s9-4.75 9-10V7l-9-5z"/></svg>
                             <span class="relative z-10 text-xs sm:text-sm font-mono tracking-tighter">${p.number}</span>
                         </div>
                         <div class="mt-1 bg-lucero-dark/95 backdrop-blur-sm border ${isSelected ? 'border-lucero-cyan text-lucero-cyan' : 'border-lucero-border text-slate-100'} px-2 py-0.5 rounded-md text-[10px] sm:text-xs font-bold text-center shadow whitespace-nowrap">
-                            ${p.name.split(' ').pop()}
+                            ${p.name}
                         </div>
                     `;
                     rowDiv.appendChild(playerEl);
@@ -622,18 +636,23 @@
                 wrapper.appendChild(rowDiv);
             });
 
+            // ベンチ
             const benchContainer = document.getElementById('live-bench-container');
             const benches = players.filter(p => p.status === 'bench');
-            benchContainer.innerHTML = benches.map(p => `
-                <div onclick="executeSub(${p.id})" class="bg-lucero-dark p-2.5 rounded-lg border border-lucero-border flex justify-between items-center cursor-pointer hover:border-lucero-gold transition">
-                    <div class="flex items-center space-x-2">
-                        <span class="text-xs bg-lucero-border px-1.5 py-0.5 rounded text-lucero-gold font-mono">#${p.number}</span>
-                        <span class="text-sm font-medium text-slate-200">${p.name}</span>
+            benchContainer.innerHTML = benches.map(p => {
+                const isSelected = selectedPlayerForMatch === p.id;
+                return `
+                    <div onclick="handleMatchPlayerClick(${p.id}, 'bench')" class="bg-lucero-dark p-2.5 rounded-lg border ${isSelected ? 'border-lucero-gold shadow-[0_0_10px_rgba(246,211,101,0.5)]' : 'border-lucero-border'} flex justify-between items-center cursor-pointer hover:border-lucero-gold transition">
+                        <div class="flex items-center space-x-2">
+                            <span class="text-xs bg-lucero-border px-1.5 py-0.5 rounded text-lucero-gold font-mono">#${p.number}</span>
+                            <span class="text-sm font-medium text-slate-200">${p.name}</span>
+                        </div>
+                        <span class="text-xs text-lucero-gold bg-lucero-accent px-2 py-0.5 rounded">${p.pos} (控)</span>
                     </div>
-                    <span class="text-xs text-lucero-gold bg-lucero-accent px-2 py-0.5 rounded">${p.pos} (交代待機)</span>
-                </div>
-            `).join('') || '<p class="text-xs text-slate-500 text-center py-4">ベンチ選手なし</p>';
+                `;
+            }).join('') || '<p class="text-xs text-slate-500 text-center py-4">ベンチ選手なし</p>';
 
+            // 交代済み選手
             const subbedOutContainer = document.getElementById('subbed-out-container');
             const subbedOuts = players.filter(p => p.status === 'subbed-out');
             subbedOutContainer.innerHTML = subbedOuts.map(p => `
@@ -651,31 +670,46 @@
             return { id: null, number: '-', name: '未割当', pos: pos };
         }
 
-        let pendingStarterId = null;
-        function selectPlayerForSub(id) {
+        // どちらを先にタップしても対応可能な交代・ポジションチェンジ制御
+        function handleMatchPlayerClick(id, clickedGroup) {
             if(!id) return;
-            pendingStarterId = id;
-            selectedPlayerForSub = id;
-            renderLiveMatch();
-        }
 
-        function executeSub(benchId) {
-            if(!pendingStarterId) {
-                alert('先にピッチ上の交代アウトする選手をタップして選択してください。');
-                return;
-            }
-            if(confirm('この選手とメンバー交代を行いますか？')) {
-                const starter = players.find(p => p.id === pendingStarterId);
-                const bench = players.find(p => p.id === benchId);
-
-                starter.status = 'subbed-out';
-                bench.status = 'starter';
-                bench.pos = starter.pos;
-
-                pendingStarterId = null;
-                selectedPlayerForSub = null;
+            if(selectedPlayerForMatch === null) {
+                // 1人目を選択
+                selectedPlayerForMatch = id;
                 renderLiveMatch();
-                alert('交代が完了しました！');
+            } else if(selectedPlayerForMatch === id) {
+                // 同じ選手をもう一度タップしたら選択解除
+                selectedPlayerForMatch = null;
+                renderLiveMatch();
+            } else {
+                const p1 = players.find(p => p.id === selectedPlayerForMatch);
+                const p2 = players.find(p => p.id === id);
+
+                if(p1 && p2) {
+                    if(p1.status === 'starter' && p2.status === 'starter') {
+                        // 【パターンA】出場中同士 ➔ ポジションチェンジ（配置入替）
+                        const tempPos = p1.pos;
+                        p1.pos = p2.pos;
+                        p2.pos = tempPos;
+                        alert(`ポジションを入れ替えました: ${p1.name} ⇄ ${p2.name}`);
+                    } else if((p1.status === 'starter' && p2.status === 'bench') || (p1.status === 'bench' && p2.status === 'starter')) {
+                        // 【パターンB】出場中 ⇄ ベンチ ➔ 選手交代（Sub）
+                        const starter = p1.status === 'starter' ? p1 : p2;
+                        const bench = p1.status === 'bench' ? p1 : p2;
+
+                        if(confirm(`${starter.name} (出場中) と ${bench.name} (ベンチ) を交代しますか？`)) {
+                            starter.status = 'subbed-out';
+                            bench.status = 'starter';
+                            bench.pos = starter.pos; // ポジション継承
+                            alert('メンバー交代が完了しました！');
+                        }
+                    } else {
+                        alert('ベンチ間や交代済み選手同士の操作はできません。');
+                    }
+                }
+                selectedPlayerForMatch = null;
+                renderLiveMatch();
             }
         }
 
