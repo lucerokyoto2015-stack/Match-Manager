@@ -155,17 +155,23 @@
                     <!-- 右側：ベンチ・メンバー外・リスト外の管理 -->
                     <div class="space-y-4">
                         <div>
-                            <h3 class="text-sm font-bold text-lucero-cyan mb-2">ベンチメンバー</h3>
+                            <h3 class="text-sm font-bold text-lucero-cyan mb-2">ベンチメンバー (最大9名)</h3>
                             <div id="bench-list-container" class="space-y-2 bg-lucero-dark/50 p-3 rounded-xl border border-lucero-border min-h-[100px]">
                                 <!-- 動的生成 -->
                             </div>
                         </div>
                         <div>
-                            <h3 class="text-sm font-bold text-amber-400 mb-2">メンバー外（帯同・出場不可）</h3>
+                            <div class="flex justify-between items-center mb-2">
+                                <h3 class="text-sm font-bold text-amber-400">メンバー外（帯同・出場不可）</h3>
+                                <button onclick="addNewPlayer('out-match')" class="bg-amber-400/20 text-amber-400 border border-amber-400/40 px-2 py-0.5 rounded text-xs font-bold hover:bg-amber-400/30 transition">+ 追加</button>
+                            </div>
                             <div id="out-match-container" class="space-y-2 bg-lucero-dark/50 p-3 rounded-xl border border-lucero-border min-h-[60px]"></div>
                         </div>
                         <div>
-                            <h3 class="text-sm font-bold text-rose-400 mb-2">リスト外（試合不帯同）</h3>
+                            <div class="flex justify-between items-center mb-2">
+                                <h3 class="text-sm font-bold text-rose-400">リスト外（試合不帯同）</h3>
+                                <button onclick="addNewPlayer('out-list')" class="bg-rose-400/20 text-rose-400 border border-rose-400/40 px-2 py-0.5 rounded text-xs font-bold hover:bg-rose-400/30 transition">+ 追加</button>
+                            </div>
                             <div id="out-list-container" class="space-y-2 bg-lucero-dark/50 p-3 rounded-xl border border-lucero-border min-h-[60px]"></div>
                         </div>
                     </div>
@@ -291,26 +297,26 @@
 
             <!-- ピッチビジュアル画面 & ベンチ・交代済みエリア -->
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                <!-- 左側：グラフィカル・サッカーピッチ（スタメン配置・フルネーム） -->
-                <div class="lg:col-span-2 bg-lucero-card p-5 rounded-xl border border-lucero-border space-y-4">
-                    <h2 class="text-base font-bold text-lucero-cyan flex items-center justify-between">
-                        <span>ピッチ上 出場中選手 (タップで交代 / ポジションチェンジ)</span>
-                        <span class="text-xs font-normal text-slate-400">※選手同士のタップで位置入替、ベンチ選択で交代</span>
+                <!-- 左側：スマホ完全対応ピッチ（サイズ自動調整） -->
+                <div class="lg:col-span-2 bg-lucero-card p-4 sm:p-5 rounded-xl border border-lucero-border space-y-4">
+                    <h2 class="text-sm sm:text-base font-bold text-lucero-cyan flex items-center justify-between flex-wrap gap-1">
+                        <span>ピッチ上 出場中選手 (タップで入替/交代)</span>
+                        <span class="text-[11px] sm:text-xs font-normal text-slate-400">※選手間タップで入替、ベンチタップで交代</span>
                     </h2>
 
-                    <!-- サッカーピッチ風コンテナ -->
-                    <div id="live-pitch-visual" class="relative w-full aspect-[4/3] sm:aspect-[16/10] bg-gradient-to-b from-[#0e3b23] via-[#114b2c] to-[#0e3b23] rounded-2xl border-2 border-emerald-400/40 p-4 shadow-inner overflow-hidden flex flex-col justify-between select-none">
+                    <!-- サッカーピッチ風コンテナ (スマホでもはみ出さない自動スケール設計) -->
+                    <div id="live-pitch-visual" class="relative w-full aspect-[4/3] sm:aspect-[16/10] bg-gradient-to-b from-[#0e3b23] via-[#114b2c] to-[#0e3b23] rounded-2xl border-2 border-emerald-400/40 p-2 sm:p-4 shadow-inner overflow-hidden flex flex-col justify-between select-none">
                         <!-- ピッチライン装飾 -->
                         <div class="absolute inset-0 pointer-events-none flex items-center justify-center">
                             <div class="w-full h-px bg-white/20 absolute"></div>
-                            <div class="w-28 h-28 sm:w-36 sm:h-36 rounded-full border border-white/20 absolute"></div>
-                            <div class="w-2 h-2 rounded-full bg-white/30 absolute"></div>
+                            <div class="w-24 h-24 sm:w-36 sm:h-36 rounded-full border border-white/20 absolute"></div>
+                            <div class="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-white/30 absolute"></div>
                             <div class="absolute top-0 left-1/2 -translate-x-1/2 w-3/5 h-1/4 border-b border-x border-white/20 rounded-b-xl"></div>
                             <div class="absolute bottom-0 left-1/2 -translate-x-1/2 w-3/5 h-1/4 border-t border-x border-white/20 rounded-t-xl"></div>
                         </div>
 
                         <!-- フォーメーション配置レイヤー -->
-                        <div id="pitch-slots-wrapper" class="relative z-10 w-full h-full flex flex-col justify-between py-2">
+                        <div id="pitch-slots-wrapper" class="relative z-10 w-full h-full flex flex-col justify-between py-1 sm:py-2">
                             <!-- 動的配置 -->
                         </div>
                     </div>
@@ -318,10 +324,13 @@
 
                 <!-- 右側：ベンチ & 交代済み選手 -->
                 <div class="space-y-6">
-                    <!-- ベンチメンバー -->
+                    <!-- ベンチメンバー (最大9名) -->
                     <div class="bg-lucero-card p-5 rounded-xl border border-lucero-border space-y-3">
-                        <h2 class="text-base font-bold text-lucero-gold">ベンチメンバー (控)</h2>
-                        <div id="live-bench-container" class="space-y-2 min-h-[140px]">
+                        <div class="flex justify-between items-center">
+                            <h2 class="text-base font-bold text-lucero-gold">ベンチメンバー (最大9名)</h2>
+                            <button onclick="addNewPlayer('bench')" class="bg-lucero-cyan/20 text-lucero-cyan border border-lucero-cyan/40 px-2 py-0.5 rounded text-xs font-bold hover:bg-lucero-cyan/30 transition">+ 追加</button>
+                        </div>
+                        <div id="live-bench-container" class="space-y-2 min-h-[140px] max-h-[350px] overflow-y-auto pr-1">
                             <!-- 動的生成 -->
                         </div>
                     </div>
@@ -329,7 +338,7 @@
                     <!-- 交代済み選手 (再出場不可) -->
                     <div class="bg-lucero-card p-5 rounded-xl border border-rose-500/40 space-y-3">
                         <h2 class="text-base font-bold text-rose-400">交代済み選手 (再出場不可)</h2>
-                        <div id="subbed-out-container" class="space-y-2 min-h-[100px] bg-lucero-dark/40 p-3 rounded-lg border border-lucero-border">
+                        <div id="subbed-out-container" class="space-y-2 min-h-[100px] max-h-[200px] overflow-y-auto bg-lucero-dark/40 p-3 rounded-lg border border-lucero-border">
                             <p class="text-xs text-slate-500 text-center py-4">交代アウトした選手はここに格納されます</p>
                         </div>
                     </div>
@@ -357,6 +366,7 @@
 
     <!-- JavaScript ロジック -->
     <script>
+        // サンプル選手データ (スタメン11名 + ベンチ最大9名 + メンバー外・リスト外)
         let players = [
             { id: 1, number: 1, name: "鈴木 健太", pos: "GK", status: "starter" },
             { id: 2, number: 3, name: "佐藤 翔", pos: "CB", status: "starter" },
@@ -369,16 +379,23 @@
             { id: 9, number: 7, name: "高橋 隼人", pos: "WG", status: "starter" },
             { id: 10, number: 11, name: "山田 蒼", pos: "WG", status: "starter" },
             { id: 11, number: 9, name: "松本 蓮", pos: "CF", status: "starter" },
+            // ベンチ (最大9名枠)
             { id: 12, number: 21, name: "井上 拓海", pos: "GK", status: "bench" },
             { id: 13, number: 14, name: "清水 湊斗", pos: "DF", status: "bench" },
             { id: 14, number: 15, name: "山口 碧", pos: "MF", status: "bench" },
             { id: 15, number: 18, name: "斎藤 陽向", pos: "FW", status: "bench" },
-            { id: 16, number: 16, name: "木村 奏太", pos: "MF", status: "out-match" },
-            { id: 17, number: 19, name: "林 琉生", pos: "DF", status: "out-list" }
+            { id: 16, number: 22, name: "岡田 健", pos: "DF", status: "bench" },
+            { id: 17, number: 23, name: "中島 大輝", pos: "MF", status: "bench" },
+            { id: 18, number: 24, name: "藤田 翔太", pos: "FW", status: "bench" },
+            { id: 19, number: 25, name: "小川 陸", pos: "MF", status: "bench" },
+            { id: 20, number: 26, name: "石井 蒼", pos: "DF", status: "bench" },
+            // その他
+            { id: 21, number: 16, name: "木村 奏太", pos: "MF", status: "out-match" },
+            { id: 22, number: 19, name: "林 琉生", pos: "DF", status: "out-list" }
         ];
 
         let selectedPlayerForPrepSwitch = null;
-        let selectedPlayerForMatch = null; // 試合中の選択・交代・入替用共通ID
+        let selectedPlayerForMatch = null;
         let matchSeconds = 0;
         let matchTimerInterval = null;
         let isRunning = false;
@@ -408,7 +425,6 @@
             return document.getElementById('formation-select').value;
         }
 
-        // 各システムに応じた正確な11人のポジション定義
         function getCurrentPositions() {
             const system = getCurrentSystem();
             if(system === '4-3-3') return ['GK', 'CB', 'CB', 'SB', 'SB', 'DMF', 'CMF', 'CMF', 'WG', 'WG', 'CF'];
@@ -418,6 +434,23 @@
             if(system === '3-4-2-1') return ['GK', 'CB', 'CB', 'CB', 'WB', 'WB', 'CMF', 'CMF', 'OMF', 'OMF', 'CF'];
             if(system === '3-2-3-2') return ['GK', 'CB', 'CB', 'CB', 'DMF', 'DMF', 'WG', 'OMF', 'WG', 'CF', 'CF'];
             return ['GK', 'CB', 'CB', 'SB', 'SB', 'DMF', 'CMF', 'OMF', 'WG', 'WG', 'CF'];
+        }
+
+        // 新規選手を追加する関数
+        function addNewPlayer(statusType) {
+            const newId = players.length > 0 ? Math.max(...players.map(p => p.id)) + 1 : 1;
+            const defaultPos = statusType === 'bench' ? 'MF' : 'DF';
+            players.push({
+                id: newId,
+                number: newId,
+                name: `新規選手 ${newId}`,
+                pos: defaultPos,
+                status: statusType
+            });
+            renderFormationSlots();
+            if(document.getElementById('tab-match').classList.contains('hidden') === false) {
+                renderLiveMatch();
+            }
         }
 
         function renderFormationSlots() {
@@ -477,43 +510,65 @@
             if(p) p.number = parseInt(newNum) || 0;
         }
 
+        function updatePlayerName(id, newName) {
+            const p = players.find(p => p.id === id);
+            if(p) p.name = newName;
+        }
+
+        function removePlayer(id) {
+            players = players.filter(p => p.id !== id);
+            renderFormationSlots();
+        }
+
         function renderBenchAndOutLists() {
+            // ベンチ (最大9名枠を綺麗に表示)
             const benchContainer = document.getElementById('bench-list-container');
             const benches = players.filter(p => p.status === 'bench');
             benchContainer.innerHTML = benches.map(p => {
                 const isSelected = selectedPlayerForPrepSwitch === p.id;
                 return `
                     <div onclick="handlePrepPlayerClick(${p.id})" class="bg-lucero-dark px-3 py-2 rounded-lg border ${isSelected ? 'border-lucero-cyan shadow-[0_0_10px_rgba(0,242,254,0.3)]' : 'border-lucero-border'} flex justify-between items-center text-sm cursor-pointer hover:border-lucero-gold transition">
-                        <div class="flex items-center space-x-2">
+                        <div class="flex items-center space-x-2 flex-1 mr-2">
                             <input type="number" value="${p.number}" onclick="event.stopPropagation()" onchange="updatePlayerNumber(${p.id}, this.value)" class="w-12 bg-lucero-card border border-lucero-border rounded px-1 py-0.5 text-xs text-center text-lucero-gold font-mono">
-                            <span class="font-medium text-slate-200">${p.name}</span>
+                            <input type="text" value="${p.name}" onclick="event.stopPropagation()" onchange="updatePlayerName(${p.id}, this.value)" class="w-full bg-lucero-card border border-lucero-border rounded px-2 py-0.5 text-xs text-slate-200">
                         </div>
-                        <span class="text-xs text-lucero-gold bg-lucero-accent px-2 py-0.5 rounded">${p.pos} (控)</span>
+                        <div class="flex items-center space-x-2">
+                            <span class="text-xs text-lucero-gold bg-lucero-accent px-2 py-0.5 rounded">${p.pos}</span>
+                            <button onclick="event.stopPropagation(); removePlayer(${p.id})" class="text-rose-400 hover:text-rose-300 text-xs px-1">✕</button>
+                        </div>
                     </div>
                 `;
             }).join('') || '<p class="text-xs text-slate-500 text-center py-2">ベンチ選手なし</p>';
 
+            // メンバー外
             const outMatchContainer = document.getElementById('out-match-container');
             const outMatches = players.filter(p => p.status === 'out-match');
             outMatchContainer.innerHTML = outMatches.map(p => `
-                <div onclick="handlePrepPlayerClick(${p.id})" class="bg-lucero-dark px-3 py-1.5 rounded-lg border border-lucero-border flex justify-between items-center text-xs cursor-pointer">
-                    <div class="flex items-center space-x-2">
+                <div class="bg-lucero-dark px-3 py-1.5 rounded-lg border border-lucero-border flex justify-between items-center text-xs">
+                    <div class="flex items-center space-x-2 flex-1 mr-2">
                         <span class="text-slate-400 font-mono">#${p.number}</span>
-                        <span class="text-slate-300">${p.name}</span>
+                        <input type="text" value="${p.name}" onchange="updatePlayerName(${p.id}, this.value)" class="w-full bg-lucero-card border border-lucero-border rounded px-2 py-0.5 text-xs text-slate-200">
                     </div>
-                    <span class="text-amber-400">帯同(出場不可)</span>
+                    <div class="flex items-center space-x-2">
+                        <span class="text-amber-400">帯同不可</span>
+                        <button onclick="removePlayer(${p.id})" class="text-rose-400 hover:text-rose-300 px-1">✕</button>
+                    </div>
                 </div>
             `).join('') || '<p class="text-xs text-slate-500 text-center py-1">なし</p>';
 
+            // リスト外
             const outListContainer = document.getElementById('out-list-container');
             const outLists = players.filter(p => p.status === 'out-list');
             outListContainer.innerHTML = outLists.map(p => `
-                <div onclick="handlePrepPlayerClick(${p.id})" class="bg-lucero-dark px-3 py-1.5 rounded-lg border border-lucero-border flex justify-between items-center text-xs cursor-pointer">
-                    <div class="flex items-center space-x-2">
+                <div class="bg-lucero-dark px-3 py-1.5 rounded-lg border border-lucero-border flex justify-between items-center text-xs">
+                    <div class="flex items-center space-x-2 flex-1 mr-2">
                         <span class="text-slate-400 font-mono">#${p.number}</span>
-                        <span class="text-slate-300">${p.name}</span>
+                        <input type="text" value="${p.name}" onchange="updatePlayerName(${p.id}, this.value)" class="w-full bg-lucero-card border border-lucero-border rounded px-2 py-0.5 text-xs text-slate-200">
                     </div>
-                    <span class="text-rose-400">不帯同</span>
+                    <div class="flex items-center space-x-2">
+                        <span class="text-rose-400">不帯同</span>
+                        <button onclick="removePlayer(${p.id})" class="text-rose-400 hover:text-rose-300 px-1">✕</button>
+                    </div>
                 </div>
             `).join('') || '<p class="text-xs text-slate-500 text-center py-1">なし</p>';
         }
@@ -546,7 +601,7 @@
             container.appendChild(row);
         }
 
-        // 試合当日：システム別のピッチ陣形・行マッピング
+        // 試合当日：スマホ完全対応＆自動サイズ調整ピッチ描画
         function renderLiveMatch() {
             const system = getCurrentSystem();
             const wrapper = document.getElementById('pitch-slots-wrapper');
@@ -601,7 +656,7 @@
                     [starters[1] || createDummy('CB'), starters[2] || createDummy('CB'), starters[3] || createDummy('CB')],
                     [starters[0] || createDummy('GK')]
                 ];
-            } else { // フォールバック 4-4-2
+            } else {
                 rowsConfig = [
                     [starters[10] || createDummy('CF')],
                     [starters[8] || createDummy('WG'), starters[9] || createDummy('WG')],
@@ -613,21 +668,22 @@
 
             rowsConfig.forEach(rowPlayers => {
                 const rowDiv = document.createElement('div');
-                rowDiv.className = 'flex justify-around items-center w-full px-2 my-0.5';
+                rowDiv.className = 'flex justify-around items-center w-full px-1 sm:px-2 my-0.5';
                 rowPlayers.forEach(p => {
                     const isSelected = selectedPlayerForMatch === p.id;
                     const isGK = p.pos === 'GK';
 
                     const playerEl = document.createElement('div');
-                    playerEl.onclick = () => handleMatchPlayerClick(p.id, 'starter');
+                    playerEl.onclick = () => handleMatchPlayerClick(p.id);
+                    // スマホでも絶対に収まるよう、サイズをレスポンシブ調整（w-8 h-8 から sm:w-12 sm:h-12）
                     playerEl.className = `flex flex-col items-center cursor-pointer transition transform hover:scale-105 ${isSelected ? 'scale-110 drop-shadow-[0_0_12px_rgba(0,242,254,0.9)]' : ''}`;
                     
                     playerEl.innerHTML = `
-                        <div class="relative w-10 h-10 sm:w-12 sm:h-12 rounded-xl flex items-center justify-center font-black shadow-lg border ${isGK ? 'bg-amber-500 text-slate-950 border-amber-300' : 'bg-gradient-to-tr from-blue-900 via-blue-700 to-[#00f2fe] text-white border-lucero-cyan/60'} ${isSelected ? 'ring-4 ring-lucero-cyan' : ''}">
-                            <svg class="absolute inset-0 w-full h-full opacity-30 text-white p-1" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2L3 7v5c0 5.25 3.75 10 9 10s9-4.75 9-10V7l-9-5z"/></svg>
-                            <span class="relative z-10 text-xs sm:text-sm font-mono tracking-tighter">${p.number}</span>
+                        <div class="relative w-8 h-8 sm:w-11 sm:h-11 rounded-xl flex items-center justify-center font-black shadow-lg border ${isGK ? 'bg-amber-500 text-slate-950 border-amber-300' : 'bg-gradient-to-tr from-blue-900 via-blue-700 to-[#00f2fe] text-white border-lucero-cyan/60'} ${isSelected ? 'ring-4 ring-lucero-cyan' : ''}">
+                            <svg class="absolute inset-0 w-full h-full opacity-30 text-white p-0.5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2L3 7v5c0 5.25 3.75 10 9 10s9-4.75 9-10V7l-9-5z"/></svg>
+                            <span class="relative z-10 text-[10px] sm:text-xs font-mono tracking-tighter">${p.number}</span>
                         </div>
-                        <div class="mt-1 bg-lucero-dark/95 backdrop-blur-sm border ${isSelected ? 'border-lucero-cyan text-lucero-cyan' : 'border-lucero-border text-slate-100'} px-2 py-0.5 rounded-md text-[10px] sm:text-xs font-bold text-center shadow whitespace-nowrap">
+                        <div class="mt-0.5 sm:mt-1 bg-lucero-dark/95 backdrop-blur-sm border ${isSelected ? 'border-lucero-cyan text-lucero-cyan' : 'border-lucero-border text-slate-100'} px-1.5 py-0.5 rounded text-[9px] sm:text-xs font-bold text-center shadow whitespace-nowrap">
                             ${p.name}
                         </div>
                     `;
@@ -642,7 +698,7 @@
             benchContainer.innerHTML = benches.map(p => {
                 const isSelected = selectedPlayerForMatch === p.id;
                 return `
-                    <div onclick="handleMatchPlayerClick(${p.id}, 'bench')" class="bg-lucero-dark p-2.5 rounded-lg border ${isSelected ? 'border-lucero-gold shadow-[0_0_10px_rgba(246,211,101,0.5)]' : 'border-lucero-border'} flex justify-between items-center cursor-pointer hover:border-lucero-gold transition">
+                    <div onclick="handleMatchPlayerClick(${p.id})" class="bg-lucero-dark p-2.5 rounded-lg border ${isSelected ? 'border-lucero-gold shadow-[0_0_10px_rgba(246,211,101,0.5)]' : 'border-lucero-border'} flex justify-between items-center cursor-pointer hover:border-lucero-gold transition">
                         <div class="flex items-center space-x-2">
                             <span class="text-xs bg-lucero-border px-1.5 py-0.5 rounded text-lucero-gold font-mono">#${p.number}</span>
                             <span class="text-sm font-medium text-slate-200">${p.name}</span>
@@ -670,16 +726,14 @@
             return { id: null, number: '-', name: '未割当', pos: pos };
         }
 
-        // どちらを先にタップしても対応可能な交代・ポジションチェンジ制御
-        function handleMatchPlayerClick(id, clickedGroup) {
+        // 試合中の正確な判定ロジック（出場中同士ならポジション入替、出場中とベンチなら交代）
+        function handleMatchPlayerClick(id) {
             if(!id) return;
 
             if(selectedPlayerForMatch === null) {
-                // 1人目を選択
                 selectedPlayerForMatch = id;
                 renderLiveMatch();
             } else if(selectedPlayerForMatch === id) {
-                // 同じ選手をもう一度タップしたら選択解除
                 selectedPlayerForMatch = null;
                 renderLiveMatch();
             } else {
@@ -688,20 +742,29 @@
 
                 if(p1 && p2) {
                     if(p1.status === 'starter' && p2.status === 'starter') {
-                        // 【パターンA】出場中同士 ➔ ポジションチェンジ（配置入替）
+                        // 【修正点】出場中同士のタップ ＝ ポジションチェンジ（配置・名前・背番号入替）
                         const tempPos = p1.pos;
                         p1.pos = p2.pos;
                         p2.pos = tempPos;
+
+                        const tempName = p1.name;
+                        p1.name = p2.name;
+                        p2.name = tempName;
+
+                        const tempNum = p1.number;
+                        p1.number = p2.number;
+                        p2.number = tempNum;
+
                         alert(`ポジションを入れ替えました: ${p1.name} ⇄ ${p2.name}`);
                     } else if((p1.status === 'starter' && p2.status === 'bench') || (p1.status === 'bench' && p2.status === 'starter')) {
-                        // 【パターンB】出場中 ⇄ ベンチ ➔ 選手交代（Sub）
+                        // 出場中 ⇄ ベンチ ＝ 選手交代（Sub）
                         const starter = p1.status === 'starter' ? p1 : p2;
                         const bench = p1.status === 'bench' ? p1 : p2;
 
                         if(confirm(`${starter.name} (出場中) と ${bench.name} (ベンチ) を交代しますか？`)) {
                             starter.status = 'subbed-out';
                             bench.status = 'starter';
-                            bench.pos = starter.pos; // ポジション継承
+                            bench.pos = starter.pos;
                             alert('メンバー交代が完了しました！');
                         }
                     } else {
