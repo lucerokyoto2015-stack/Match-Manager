@@ -65,7 +65,7 @@
                 <div id="new-sub-mode-container" class="flex flex-wrap items-center gap-3">
                     <div class="flex items-center space-x-2">
                         <span class="text-sm font-bold text-lucero-gold">新規データ:</span>
-                        <select id="new-type" onchange="handleNewTypeChange()" class="bg-lucero-dark border border-lucero-border rounded-lg px-3 py-1.5 text-sm text-slate-200">
+                        <select id="new-type" class="bg-lucero-dark border border-lucero-border rounded-lg px-3 py-1.5 text-sm text-slate-200">
                             <option value="blank">空白のデータから入れる</option>
                             <option value="copy">過去の試合データをコピー</option>
                         </select>
@@ -105,7 +105,7 @@
                 </div>
             </div>
 
-            <!-- フォーメーション配置 -->
+            <!-- フォーメーション配置（ピッチ型デザインに刷新） -->
             <div class="bg-lucero-card p-5 rounded-xl border border-lucero-border space-y-4">
                 <div class="flex flex-wrap justify-between items-center gap-2 border-b border-lucero-border pb-2">
                     <div>
@@ -123,28 +123,39 @@
                 </div>
 
                 <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                    <div class="lg:col-span-2 space-y-3">
-                        <h3 class="text-sm font-bold text-lucero-cyan">スタメン配置</h3>
-                        <div id="formation-slots-container" class="grid grid-cols-1 sm:grid-cols-2 gap-3 bg-lucero-dark/50 p-4 rounded-xl border border-lucero-border"></div>
+                    <!-- 左側：ピッチ型スタメン配置 -->
+                    <div class="lg:col-span-2 bg-lucero-card p-4 rounded-xl border border-lucero-border space-y-3">
+                        <h3 class="text-sm font-bold text-lucero-cyan">スタメン配置 (ピッチプレビュー)</h3>
+                        <div class="relative w-full aspect-[4/3] sm:aspect-[16/10] bg-gradient-to-b from-[#0e3b23] via-[#114b2c] to-[#0e3b23] rounded-2xl border-2 border-emerald-400/40 p-2 sm:p-4 shadow-inner overflow-hidden flex flex-col justify-between select-none">
+                            <div class="absolute inset-0 pointer-events-none flex items-center justify-center">
+                                <div class="w-full h-px bg-white/20 absolute"></div>
+                                <div class="w-24 h-24 sm:w-36 sm:h-36 rounded-full border border-white/20 absolute"></div>
+                                <div class="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-white/30 absolute"></div>
+                            </div>
+                            <!-- 動的フォーメーション配置レイヤー -->
+                            <div id="formation-slots-container" class="relative z-10 w-full h-full flex flex-col justify-between py-1 sm:py-2"></div>
+                        </div>
                     </div>
+
+                    <!-- 右側：ベンチ・メンバー外・リスト外の管理 -->
                     <div class="space-y-4">
                         <div>
                             <h3 class="text-sm font-bold text-lucero-cyan mb-2">ベンチメンバー (最大9名)</h3>
-                            <div id="bench-list-container" class="space-y-2 bg-lucero-dark/50 p-3 rounded-xl border border-lucero-border min-h-[100px]"></div>
+                            <div id="bench-list-container" class="space-y-2 bg-lucero-dark/50 p-3 rounded-xl border border-lucero-border min-h-[100px] max-h-[220px] overflow-y-auto"></div>
                         </div>
                         <div>
                             <div class="flex justify-between items-center mb-2">
-                                <h3 class="text-sm font-bold text-amber-400">メンバー外（帯同・出場不可）</h3>
+                                <h3 class="text-sm font-bold text-amber-400">メンバー外（帯同不可）</h3>
                                 <button onclick="addNewPlayer('out-match')" class="bg-amber-400/20 text-amber-400 border px-2 py-0.5 rounded text-xs font-bold">+ 追加</button>
                             </div>
-                            <div id="out-match-container" class="space-y-2 bg-lucero-dark/50 p-3 rounded-xl border border-lucero-border min-h-[60px]"></div>
+                            <div id="out-match-container" class="space-y-2 bg-lucero-dark/50 p-3 rounded-xl border border-lucero-border min-h-[50px]"></div>
                         </div>
                         <div>
                             <div class="flex justify-between items-center mb-2">
-                                <h3 class="text-sm font-bold text-rose-400">リスト外（試合不帯同）</h3>
+                                <h3 class="text-sm font-bold text-rose-400">リスト外（不帯同）</h3>
                                 <button onclick="addNewPlayer('out-list')" class="bg-rose-400/20 text-rose-400 border px-2 py-0.5 rounded text-xs font-bold">+ 追加</button>
                             </div>
-                            <div id="out-list-container" class="space-y-2 bg-lucero-dark/50 p-3 rounded-xl border border-lucero-border min-h-[60px]"></div>
+                            <div id="out-list-container" class="space-y-2 bg-lucero-dark/50 p-3 rounded-xl border border-lucero-border min-h-[50px]"></div>
                         </div>
                     </div>
                 </div>
@@ -183,7 +194,6 @@
 
                     <div class="text-3xl font-black font-mono tracking-wider text-lucero-cyan bg-lucero-dark px-4 py-1.5 rounded-xl border border-lucero-border" id="match-timer">00:00</div>
                     
-                    <!-- 進行ボタン（前半開始 ⇄ 前半終了 ⇄ 後半開始 ⇄ 後半終了） -->
                     <button onclick="handleMainAction()" id="btn-main-action" class="bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold px-5 py-2.5 rounded-lg text-sm transition shadow-md">前半開始</button>
                 </div>
             </div>
@@ -246,7 +256,7 @@
         </div>
     </div>
 
-    <!-- 試合終了後分岐モーダル（同点時の選択） -->
+    <!-- 試合終了後分岐モーダル -->
     <div id="endgame-modal" class="fixed inset-0 bg-black/70 hidden items-center justify-center z-50 p-4">
         <div class="bg-lucero-card border border-lucero-border p-6 rounded-xl max-w-md w-full space-y-4 text-center">
             <h3 class="text-lg font-bold text-lucero-gold">試合終了（同点）</h3>
@@ -326,10 +336,9 @@
         let teamConcedes = 0;
         let matchEvents = [];
 
-        // 試合フェーズ管理: not_started -> first_half -> halftime -> second_half -> ended_check -> extra_first_half -> extra_halftime -> extra_second_half -> ended_extra_check -> pk -> finished
         let matchPhase = 'not_started';
-        let pendingActionType = ''; // 'first_half_end', 'second_half_end', etc.
-        let goalMode = 'goal'; // 'goal' or 'concede'
+        let pendingActionType = '';
+        let goalMode = 'goal';
 
         function switchTab(tab) {
             document.getElementById('tab-prep').classList.toggle('hidden', tab !== 'prep');
@@ -337,6 +346,7 @@
             document.getElementById('nav-prep').className = tab === 'prep' ? 'px-4 py-1.5 rounded-lg text-sm font-semibold bg-lucero-cyan text-lucero-dark shadow-md' : 'px-4 py-1.5 rounded-lg text-sm font-semibold bg-lucero-accent text-slate-300 hover:bg-slate-700';
             document.getElementById('nav-match').className = tab === 'match' ? 'px-4 py-1.5 rounded-lg text-sm font-semibold bg-lucero-cyan text-lucero-dark shadow-md' : 'px-4 py-1.5 rounded-lg text-sm font-semibold bg-lucero-accent text-slate-300 hover:bg-slate-700';
             if(tab === 'match') renderLiveMatch();
+            if(tab === 'prep') renderFormationSlots();
         }
 
         function handlePrepModeChange() {
@@ -347,13 +357,6 @@
         function getCurrentSystem() { return document.getElementById('formation-select').value; }
         function getHalfDuration() { return parseInt(document.getElementById('match-duration-select').value) || 45; }
 
-        function getCurrentPositions() {
-            const system = getCurrentSystem();
-            if(system === '4-3-3') return ['GK', 'CB', 'CB', 'SB', 'SB', 'DMF', 'CMF', 'CMF', 'WG', 'WG', 'CF'];
-            if(system === '4-2-3-1') return ['GK', 'CB', 'CB', 'SB', 'SB', 'DMF', 'DMF', 'OMF', 'WG', 'WG', 'CF'];
-            return ['GK', 'CB', 'CB', 'SB', 'SB', 'DMF', 'CMF', 'OMF', 'WG', 'WG', 'CF'];
-        }
-
         function addNewPlayer(statusType) {
             const newId = players.length > 0 ? Math.max(...players.map(p => p.id)) + 1 : 1;
             players.push({ id: newId, number: newId, name: `新規選手 ${newId}`, pos: 'MF', status: statusType, playSeconds: 0 });
@@ -361,28 +364,65 @@
             if(!document.getElementById('tab-match').classList.contains('hidden')) renderLiveMatch();
         }
 
+        // 前日準備用 ピッチ型スタメン配置の描画
         function renderFormationSlots() {
-            const positions = getCurrentPositions();
+            const system = getCurrentSystem();
             const container = document.getElementById('formation-slots-container');
             container.innerHTML = '';
             const starters = players.filter(p => p.status === 'starter');
 
-            positions.forEach((pos, idx) => {
-                const player = starters[idx] || { id: null, number: '-', name: '未割当', pos: pos };
-                const isSelected = selectedPlayerForPrepSwitch === player.id;
-                const div = document.createElement('div');
-                div.className = `bg-lucero-dark p-3 rounded-lg border ${isSelected ? 'border-lucero-cyan' : 'border-lucero-border'} flex items-center justify-between gap-3 cursor-pointer`;
-                div.onclick = () => handlePrepPlayerClick(player.id);
-                div.innerHTML = `
-                    <div class="flex items-center space-x-2">
-                        <span class="text-xs font-bold text-lucero-cyan bg-lucero-accent px-2 py-1 rounded w-14 text-center">${pos}</span>
-                        <span class="text-xs bg-lucero-border px-1.5 py-0.5 rounded text-lucero-gold font-mono">#${player.number}</span>
-                        <span class="font-bold text-sm text-slate-100">${player.name}</span>
-                    </div>
-                    <span class="text-xs text-slate-400">スタメン</span>
-                `;
-                container.appendChild(div);
+            let rowsConfig = [];
+            if (system === '4-3-3') {
+                rowsConfig = [
+                    [starters[8] || {id:null, number:'-', name:'未割当', pos:'WG'}, starters[10] || {id:null, number:'-', name:'未割当', pos:'CF'}, starters[9] || {id:null, number:'-', name:'未割当', pos:'WG'}],
+                    [starters[5] || {id:null, number:'-', name:'未割当', pos:'DMF'}, starters[6] || {id:null, number:'-', name:'未割当', pos:'CMF'}, starters[7] || {id:null, number:'-', name:'未割当', pos:'CMF'}],
+                    [starters[1] || {id:null, number:'-', name:'未割当', pos:'CB'}, starters[2] || {id:null, number:'-', name:'未割当', pos:'CB'}, starters[3] || {id:null, number:'-', name:'未割当', pos:'SB'}, starters[4] || {id:null, number:'-', name:'未割当', pos:'SB'}],
+                    [starters[0] || {id:null, number:'-', name:'未割当', pos:'GK'}]
+                ];
+            } else if (system === '4-2-3-1') {
+                rowsConfig = [
+                    [starters[10] || {id:null, number:'-', name:'未割当', pos:'CF'}],
+                    [starters[8] || {id:null, number:'-', name:'未割当', pos:'WG'}, starters[7] || {id:null, number:'-', name:'未割当', pos:'OMF'}, starters[9] || {id:null, number:'-', name:'未割当', pos:'WG'}],
+                    [starters[5] || {id:null, number:'-', name:'未割当', pos:'DMF'}, starters[6] || {id:null, number:'-', name:'未割当', pos:'DMF'}],
+                    [starters[1] || {id:null, number:'-', name:'未割当', pos:'CB'}, starters[2] || {id:null, number:'-', name:'未割当', pos:'CB'}, starters[3] || {id:null, number:'-', name:'未割当', pos:'SB'}, starters[4] || {id:null, number:'-', name:'未割当', pos:'SB'}],
+                    [starters[0] || {id:null, number:'-', name:'未割当', pos:'GK'}]
+                ];
+            } else {
+                rowsConfig = [
+                    [starters[9] || {id:null, number:'-', name:'未割当', pos:'CF'}, starters[10] || {id:null, number:'-', name:'未割当', pos:'CF'}],
+                    [starters[8] || {id:null, number:'-', name:'未割当', pos:'WG'}, starters[6] || {id:null, number:'-', name:'未割当', pos:'CMF'}, starters[7] || {id:null, number:'-', name:'未割当', pos:'OMF'}, starters[9] || {id:null, number:'-', name:'未割当', pos:'WG'}],
+                    [starters[1] || {id:null, number:'-', name:'未割当', pos:'CB'}, starters[2] || {id:null, number:'-', name:'未割当', pos:'CB'}, starters[3] || {id:null, number:'-', name:'未割当', pos:'SB'}, starters[4] || {id:null, number:'-', name:'未割当', pos:'SB'}],
+                    [starters[0] || {id:null, number:'-', name:'未割当', pos:'GK'}]
+                ];
+            }
+
+            rowsConfig.forEach(rowPlayers => {
+                const rowDiv = document.createElement('div');
+                rowDiv.className = 'flex justify-around items-center w-full px-1 sm:px-2 my-0.5';
+                rowPlayers.forEach(p => {
+                    const isSelected = selectedPlayerForPrepSwitch === p.id;
+                    const isGK = p.pos === 'GK';
+                    const playerEl = document.createElement('div');
+                    if(p.id !== null) {
+                        playerEl.onclick = () => handlePrepPlayerClick(p.id);
+                        playerEl.className = `flex flex-col items-center cursor-pointer transition transform hover:scale-105 ${isSelected ? 'scale-110 drop-shadow-[0_0_12px_rgba(0,242,254,0.9)]' : ''}`;
+                    } else {
+                        playerEl.className = `flex flex-col items-center opacity-60`;
+                    }
+                    
+                    playerEl.innerHTML = `
+                        <div class="relative w-8 h-8 sm:w-11 sm:h-11 rounded-xl flex items-center justify-center font-black shadow-lg border ${isGK ? 'bg-amber-500 text-slate-950 border-amber-300' : 'bg-gradient-to-tr from-blue-900 via-blue-700 to-[#00f2fe] text-white border-lucero-cyan/60'} ${isSelected ? 'ring-4 ring-lucero-cyan' : ''}">
+                            <span class="relative z-10 text-[10px] sm:text-xs font-mono">${p.number}</span>
+                        </div>
+                        <div class="mt-0.5 sm:mt-1 bg-lucero-dark/95 border ${isSelected ? 'border-lucero-cyan text-lucero-cyan' : 'border-lucero-border text-slate-100'} px-1.5 py-0.5 rounded text-[9px] sm:text-xs font-bold text-center shadow whitespace-nowrap">
+                            ${p.name}
+                        </div>
+                    `;
+                    rowDiv.appendChild(playerEl);
+                });
+                container.appendChild(rowDiv);
             });
+
             renderBenchAndOutLists();
         }
 
@@ -407,18 +447,22 @@
         }
 
         function renderBenchAndOutLists() {
-            document.getElementById('bench-list-container').innerHTML = players.filter(p => p.status === 'bench').map(p => `
-                <div onclick="handlePrepPlayerClick(${p.id})" class="bg-lucero-dark px-3 py-2 rounded-lg border flex justify-between items-center text-sm cursor-pointer">
-                    <span class="text-xs text-lucero-gold font-mono">#${p.number}</span>
-                    <span class="text-sm font-medium text-slate-200">${p.name}</span>
-                    <span class="text-xs text-lucero-gold">${p.pos}</span>
-                </div>
-            `).join('') || '<p class="text-xs text-slate-500 text-center py-2">ベンチ選手なし</p>';
+            document.getElementById('bench-list-container').innerHTML = players.filter(p => p.status === 'bench').map(p => {
+                const isSelected = selectedPlayerForPrepSwitch === p.id;
+                return `
+                    <div onclick="handlePrepPlayerClick(${p.id})" class="bg-lucero-dark p-2 rounded-lg border ${isSelected ? 'border-lucero-cyan' : 'border-lucero-border'} flex justify-between items-center cursor-pointer hover:border-lucero-gold transition">
+                        <span class="text-xs text-lucero-gold font-mono">#${p.number}</span>
+                        <span class="text-sm font-medium text-slate-200">${p.name}</span>
+                        <span class="text-xs text-lucero-gold bg-lucero-accent px-2 py-0.5 rounded">${p.pos} (控)</span>
+                    </div>
+                `;
+            }).join('') || '<p class="text-xs text-slate-500 text-center py-4">ベンチ選手なし</p>';
 
             document.getElementById('out-match-container').innerHTML = players.filter(p => p.status === 'out-match').map(p => `<div class="text-xs text-amber-400">#${p.number} ${p.name}</div>`).join('') || '<p class="text-xs text-slate-500">なし</p>';
             document.getElementById('out-list-container').innerHTML = players.filter(p => p.status === 'out-list').map(p => `<div class="text-xs text-rose-400">#${p.number} ${p.name}</div>`).join('') || '<p class="text-xs text-slate-500">なし</p>';
         }
 
+        // 当日試合用ピッチ描画
         function renderLiveMatch() {
             const system = getCurrentSystem();
             const wrapper = document.getElementById('pitch-slots-wrapper');
@@ -437,11 +481,12 @@
                 rowDiv.className = 'flex justify-around items-center w-full px-1 sm:px-2 my-0.5';
                 rowPlayers.forEach(p => {
                     const isSelected = selectedPlayerForMatch === p.id;
+                    const isGK = p.pos === 'GK';
                     const playerEl = document.createElement('div');
                     playerEl.onclick = () => handleMatchPlayerClick(p.id);
                     playerEl.className = `flex flex-col items-center cursor-pointer transition transform hover:scale-105 ${isSelected ? 'scale-110' : ''}`;
                     playerEl.innerHTML = `
-                        <div class="relative w-8 h-8 sm:w-11 sm:h-11 rounded-xl flex items-center justify-center font-black shadow-lg border bg-gradient-to-tr from-blue-900 via-blue-700 to-[#00f2fe] text-white ${isSelected ? 'ring-4 ring-lucero-cyan' : ''}">
+                        <div class="relative w-8 h-8 sm:w-11 sm:h-11 rounded-xl flex items-center justify-center font-black shadow-lg border ${isGK ? 'bg-amber-500 text-slate-950 border-amber-300' : 'bg-gradient-to-tr from-blue-900 via-blue-700 to-[#00f2fe] text-white'} ${isSelected ? 'ring-4 ring-lucero-cyan' : ''}">
                             <span class="relative z-10 text-[10px] sm:text-xs font-mono">${p.number}</span>
                         </div>
                         <div class="mt-0.5 sm:mt-1 bg-lucero-dark/95 border ${isSelected ? 'border-lucero-cyan text-lucero-cyan' : 'border-lucero-border text-slate-100'} px-1.5 py-0.5 rounded text-[9px] sm:text-xs font-bold text-center">
@@ -475,7 +520,6 @@
         // メイン進行ボタンの制御
         function handleMainAction() {
             if (matchPhase === 'not_started') {
-                // 前開始スタート
                 matchPhase = 'first_half';
                 document.getElementById('match-status-badge').innerText = '前半';
                 document.getElementById('match-status-badge').className = 'px-2.5 py-1 rounded text-xs font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/40';
@@ -484,11 +528,9 @@
                 matchEvents.push(`<span class="text-emerald-400">0分 前半開始</span>`);
                 updateEventsLog();
             } else if (matchPhase === 'first_half') {
-                // 前半終了タップ -> AT入力モーダルへ
                 pendingActionType = 'first_half_end';
                 openATModal('前半のアディショナルタイム (AT)');
             } else if (matchPhase === 'halftime') {
-                // 後半開始
                 matchPhase = 'second_half';
                 document.getElementById('match-status-badge').innerText = '後半';
                 document.getElementById('btn-main-action').innerText = '後半終了';
@@ -496,20 +538,8 @@
                 matchEvents.push(`<span class="text-emerald-400">後半開始</span>`);
                 updateEventsLog();
             } else if (matchPhase === 'second_half') {
-                // 後半終了タップ -> AT入力モーダルへ
                 pendingActionType = 'second_half_end';
                 openATModal('後半のアディショナルタイム (AT)');
-            } else if (matchPhase === 'extra_first_half') {
-                pendingActionType = 'extra_first_half_end';
-                openATModal('延長前半AT');
-            } else if (matchPhase === 'extra_halftime') {
-                matchPhase = 'extra_second_half';
-                document.getElementById('match-status-badge').innerText = '延長後半';
-                document.getElementById('btn-main-action').innerText = '延長後半終了';
-                startTimer();
-            } else if (matchPhase === 'extra_second_half') {
-                pendingActionType = 'extra_second_half_end';
-                openATModal('延長後半AT');
             }
         }
 
@@ -541,12 +571,7 @@
             document.getElementById('at-modal').classList.add('hidden');
 
             if (pendingActionType === 'first_half_end') {
-                // 前半終了：スタメン全員に出場時間を加算 (正規時間 + AT)
-                players.forEach(p => {
-                    if (p.status === 'starter') {
-                        p.playSeconds += addSecs;
-                    }
-                });
+                players.forEach(p => { if (p.status === 'starter') p.playSeconds += addSecs; });
                 matchPhase = 'halftime';
                 document.getElementById('match-status-badge').innerText = 'ハーフタイム';
                 document.getElementById('match-status-badge').className = 'px-2.5 py-1 rounded text-xs font-bold bg-amber-500/20 text-amber-400 border border-amber-500/40';
@@ -556,35 +581,15 @@
                 updateEventsLog();
                 alert(`前半終了しました。出場時間に ${totalMinutes}分 が加算されました。ハーフタイム中の選手交代が可能です。`);
             } else if (pendingActionType === 'second_half_end') {
-                // 後半終了：後半出場中メンバーに出場時間を加算
-                players.forEach(p => {
-                    if (p.status === 'starter') {
-                        p.playSeconds += addSecs;
-                    }
-                });
+                players.forEach(p => { if (p.status === 'starter') p.playSeconds += addSecs; });
                 matchEvents.push(`<span class="text-amber-400">後半終了 (AT +${atMin}分)</span>`);
                 updateEventsLog();
-                checkMatchResultAfterFullTime();
-            } else if (pendingActionType === 'extra_first_half_end') {
-                const exDur = 15; // 延長前半15分想定
-                const exTotal = (exDur + atMin) * 60;
-                players.forEach(p => { if (p.status === 'starter') p.playSeconds += exTotal; });
-                matchPhase = 'extra_halftime';
-                document.getElementById('match-status-badge').innerText = '延長HT';
-                document.getElementById('btn-main-action').innerText = '延長後半開始';
-                alert('延長前半終了');
-            } else if (pendingActionType === 'extra_second_half_end') {
-                const exDur = 15;
-                const exTotal = (exDur + atMin) * 60;
-                players.forEach(p => { if (p.status === 'starter') p.playSeconds += exTotal; });
                 checkMatchResultAfterFullTime();
             }
         }
 
-        // 試合終了時の勝敗・同点チェック
         function checkMatchResultAfterFullTime() {
             if (teamGoals === teamConcedes) {
-                // 同点の場合の選択肢モーダル
                 document.getElementById('endgame-modal').classList.remove('hidden');
                 document.getElementById('endgame-modal').classList.add('flex');
             } else {
@@ -595,32 +600,20 @@
         function selectEndGameOption(option) {
             document.getElementById('endgame-modal').classList.remove('flex');
             document.getElementById('endgame-modal').classList.add('hidden');
-
-            if (option === 'draw') {
-                finishMatchCompletely('終了（引き分け）');
-            } else if (option === 'extra') {
-                matchPhase = 'extra_first_half';
-                document.getElementById('match-status-badge').innerText = '延長前半';
-                document.getElementById('btn-main-action').innerText = '延長前半終了';
-                startTimer();
-                alert('延長戦を開始します');
-            } else if (option === 'pk') {
-                openPKModal();
-            }
+            if (option === 'draw') finishMatchCompletely('終了（引き分け）');
+            else if (option === 'extra') { matchPhase = 'extra_first_half'; alert('延長戦開始'); }
+            else if (option === 'pk') openPKModal();
         }
 
         function finishMatchCompletely(statusText = '試合終了') {
             matchPhase = 'finished';
             document.getElementById('match-status-badge').innerText = statusText;
-            document.getElementById('match-status-badge').className = 'px-2.5 py-1 rounded text-xs font-bold bg-blue-500/20 text-blue-400 border border-blue-500/40';
             document.getElementById('btn-main-action').innerText = '試合終了済み';
             document.getElementById('btn-main-action').disabled = true;
-            alert(`試合が終了しました (${statusText})。すべての選手の出場時間が確定しました。`);
+            alert(`試合終了 (${statusText})。出場時間が確定しました。`);
         }
 
-        // PK戦モーダル
         function openPKModal() {
-            matchPhase = 'pk';
             document.getElementById('pk-modal').classList.remove('hidden');
             document.getElementById('pk-modal').classList.add('flex');
             addPKRow();
@@ -629,7 +622,7 @@
         function addPKRow() {
             const container = document.getElementById('pk-kickers-container');
             const row = document.createElement('div');
-            row.className = 'flex items-center gap-2 bg-lucero-dark p-2 rounded border border-lucero-border';
+            row.className = 'flex items-center gap-2 bg-lucero-dark p-2 rounded border';
             row.innerHTML = `
                 <select class="bg-lucero-card border rounded p-1 text-xs text-slate-200 flex-1">
                     ${players.map(p => `<option value="${p.id}">#${p.number} ${p.name}</option>`).join('')}
@@ -649,7 +642,6 @@
             finishMatchCompletely('試合終了（PK戦決着）');
         }
 
-        // タップによる入替・交代処理（ハーフタイム中はHT交代対応）
         function handleMatchPlayerClick(id) {
             if(!id) return;
             if(selectedPlayerForMatch === null) {
@@ -664,7 +656,6 @@
 
                 if(p1 && p2) {
                     if(p1.status === 'starter' && p2.status === 'starter' && matchPhase !== 'halftime') {
-                        // 出場中同士のポジション入替
                         const tempPos = p1.pos; p1.pos = p2.pos; p2.pos = tempPos;
                         const tempName = p1.name; p1.name = p2.name; p2.name = tempName;
                         const tempNum = p1.number; p1.number = p2.number; p2.number = tempNum;
@@ -674,27 +665,23 @@
                         const bench = p1.status === 'bench' ? p1 : p2;
 
                         if (matchPhase === 'halftime') {
-                            // ハーフタイム中の交代
-                            if(confirm(`[ハーフタイム交代] ${starter.name} と ${bench.name} を交代しますか？`)) {
+                            if(confirm(`[HT交代] ${starter.name} ⇄ ${bench.name}`)) {
                                 starter.status = 'ht-subout';
                                 bench.status = 'starter';
                                 bench.pos = starter.pos;
                                 matchEvents.push(`<span class="text-amber-400">HT交代:</span> OUT ${starter.name} ⇄ IN ${bench.name}`);
                                 updateEventsLog();
-                                alert('ハーフタイム交代が完了しました！');
                             }
                         } else if (matchPhase === 'second_half') {
-                            // 試合中の交代
-                            if(confirm(`[選手交代] ${starter.name} と ${bench.name} を交代しますか？`)) {
+                            if(confirm(`[選手交代] ${starter.name} ⇄ ${bench.name}`)) {
                                 starter.status = 'subbed-out';
                                 bench.status = 'starter';
                                 bench.pos = starter.pos;
                                 matchEvents.push(`<span class="text-amber-400">${Math.floor(matchSeconds/60)}分 交代:</span> OUT ${starter.name} ⇄ IN ${bench.name}`);
                                 updateEventsLog();
-                                alert('メンバー交代が完了しました！');
                             }
                         } else {
-                            alert('現在は選手交代ができない時間帯です（試合中またはハーフタイムのみ可能）。');
+                            alert('現在は選手交代ができない時間帯です。');
                         }
                     }
                 }
@@ -703,7 +690,6 @@
             }
         }
 
-        // 得点・失点モーダル
         function openGoalModal(mode) {
             goalMode = mode;
             document.getElementById('goal-modal-title').innerText = mode === 'goal' ? '⚽ 自チーム得点記録' : '⚠️ 相手チーム失点記録';
