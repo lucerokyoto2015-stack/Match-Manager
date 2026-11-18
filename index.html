@@ -53,7 +53,7 @@
 
         <!-- ==================== ① 前日準備タブ ==================== -->
         <section id="tab-prep" class="space-y-6">
-            <!-- モード選択バー（ご要望の①②分岐） -->
+            <!-- モード選択バー -->
             <div class="bg-lucero-card p-4 rounded-xl border border-lucero-border flex flex-wrap items-center justify-between gap-4">
                 <div class="flex items-center space-x-3">
                     <span class="text-sm font-bold text-lucero-cyan">モード:</span>
@@ -63,7 +63,6 @@
                     </select>
                 </div>
 
-                <!-- ① 新規作成を選んだ際の子要素（空白ページ or 過去データコピー） -->
                 <div id="new-sub-mode-container" class="flex flex-wrap items-center gap-3">
                     <div class="flex items-center space-x-2">
                         <span class="text-xs text-slate-400">作成方法:</span>
@@ -81,7 +80,6 @@
                     </div>
                 </div>
 
-                <!-- ② 作成途中のデータ編集を選んだ際の子要素（どれを編集するか選択） -->
                 <div id="edit-select-container" class="hidden items-center space-x-3">
                     <span class="text-xs text-slate-400">編集データ選択:</span>
                     <select class="bg-lucero-dark border border-lucero-border rounded-lg px-3 py-1.5 text-xs text-lucero-gold font-bold">
@@ -120,6 +118,17 @@
                         <label class="block text-xs font-semibold text-slate-400 mb-1">対戦相手</label>
                         <input type="text" value="FCルミナス" class="w-full bg-lucero-dark border border-lucero-border rounded-lg p-2 text-sm text-slate-200">
                     </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-400 mb-1">チーム</label>
+                        <select class="w-full bg-lucero-dark border border-lucero-border rounded-lg p-2 text-sm text-lucero-cyan font-bold">
+                            <option value="U-15">U-15</option>
+                            <option value="U-14">U-14</option>
+                            <option value="U-13">U-13</option>
+                            <option value="1ST">1ST</option>
+                            <option value="2ND">2ND</option>
+                            <option value="3RD">3RD</option>
+                        </select>
+                    </div>
                 </div>
             </div>
 
@@ -142,7 +151,7 @@
 
                 <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
                     <div class="lg:col-span-2 bg-lucero-card p-4 rounded-xl border border-lucero-border space-y-3">
-                        <h3 class="text-sm font-bold text-lucero-cyan">スタメン配置 (ピッチプレビュー)[span_0](start_span)[span_0](end_span)</h3>
+                        <h3 class="text-sm font-bold text-lucero-cyan">スタメン配置 (ピッチプレビュー)</h3>
                         <div class="relative w-full aspect-[3/4] sm:aspect-[4/5] bg-gradient-to-b from-[#0e3b23] via-[#114b2c] to-[#0e3b23] rounded-2xl border-2 border-emerald-400/40 p-4 shadow-inner overflow-hidden flex flex-col justify-between select-none">
                             <div class="absolute inset-0 pointer-events-none flex items-center justify-center">
                                 <div class="w-full h-px bg-white/20 absolute"></div>
@@ -157,13 +166,13 @@
 
                     <div class="space-y-4">
                         <div>
-                            <h3 class="text-sm font-bold text-lucero-cyan mb-2">ベンチメンバー (最大9名)[span_1](start_span)[span_1](end_span)</h3>
+                            <h3 class="text-sm font-bold text-lucero-cyan mb-2">ベンチメンバー (最大9名)</h3>
                             <div id="bench-list-container" class="space-y-2 bg-lucero-dark/50 p-3 rounded-xl border border-lucero-border min-h-[100px] max-h-[220px] overflow-y-auto"></div>
                         </div>
                         <div>
                             <div class="flex justify-between items-center mb-2">
-                                <h3 class="text-sm font-bold text-amber-400">メンバー外（帯同不可）[span_2](start_span)[span_2](end_span)</h3>
-                                <button onclick="addNewPlayer('out-match')" class="bg-amber-400/20 text-amber-400 border px-2 py-0.5 rounded text-xs font-bold">+ 追加[span_3](start_span)[span_3](end_span)</button>
+                                <h3 class="text-sm font-bold text-amber-400">メンバー外（帯同不可）</h3>
+                                <button onclick="addNewPlayer('out-match')" class="bg-amber-400/20 text-amber-400 border px-2 py-0.5 rounded text-xs font-bold">+ 追加</button>
                             </div>
                             <div id="out-match-container" class="space-y-2 bg-lucero-dark/50 p-3 rounded-xl border border-lucero-border min-h-[50px]"></div>
                         </div>
@@ -179,62 +188,108 @@
             </div>
 
             <!-- 3. 攻守の戦い方 -->
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <div class="bg-lucero-card p-5 rounded-xl border border-lucero-border space-y-4">
-                    <h2 class="text-base font-bold text-lucero-gold border-b border-lucero-border pb-2">3. 攻守の戦い方</h2>
-                    <div class="space-y-3">
-                        <div>
-                            <label class="block text-xs font-semibold text-slate-400 mb-1">攻撃の戦い方 (5行)</label>
-                            <textarea rows="5" class="w-full bg-lucero-dark border border-lucero-border rounded-lg p-2.5 text-sm text-slate-200" placeholder="ビルドアップの狙い、サイドからの崩しなど..."></textarea>
-                        </div>
-                        <div>
-                            <label class="block text-xs font-semibold text-slate-400 mb-1">守備の戦い方 (5行)</label>
-                            <textarea rows="5" class="w-full bg-lucero-dark border border-lucero-border rounded-lg p-2.5 text-sm text-slate-200" placeholder="守備ブロックの構築、ハイプレスのタイミングなど..."></textarea>
-                        </div>
+            <div class="bg-lucero-card p-5 rounded-xl border border-lucero-border space-y-4">
+                <h2 class="text-base font-bold text-lucero-gold border-b border-lucero-border pb-2">3. 攻守の戦い方</h2>
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-400 mb-1">攻撃の戦い方</label>
+                        <textarea rows="5" class="w-full bg-lucero-dark border border-lucero-border rounded-lg p-2.5 text-sm text-slate-200" placeholder="ビルドアップの狙い、サイドからの崩しなど..."></textarea>
                     </div>
-                </div>
-
-                <!-- 4. MTGの流れ -->
-                <div class="bg-lucero-card p-5 rounded-xl border border-lucero-border space-y-4">
-                    <h2 class="text-base font-bold text-lucero-gold border-b border-lucero-border pb-2">4. MTGの流れ</h2>
-                    <div class="space-y-3">
-                        <div>
-                            <label class="block text-xs font-semibold text-slate-400 mb-1">導入 (5行)</label>
-                            <textarea rows="5" class="w-full bg-lucero-dark border border-lucero-border rounded-lg p-2.5 text-sm text-slate-200" placeholder="本日のメンタリティ、共通意識の確認..."></textarea>
-                        </div>
-                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
-                            <div>
-                                <label class="block text-xs font-semibold text-slate-400 mb-1">攻撃 (話す順番)</label>
-                                <select class="w-full bg-lucero-dark border border-lucero-border rounded-lg p-2 text-sm text-slate-200">
-                                    <option>1番目</option><option>2番目</option><option>3番目</option>
-                                </select>
-                            </div>
-                            <div>
-                                <label class="block text-xs font-semibold text-slate-400 mb-1">守備 (話す順番)</label>
-                                <select class="w-full bg-lucero-dark border border-lucero-border rounded-lg p-2 text-sm text-slate-200">
-                                    <option>2番目</option><option>1番目</option><option>3番目</option>
-                                </select>
-                            </div>
-                            <div>
-                                <label class="block text-xs font-semibold text-slate-400 mb-1">メンタル (話す順番)</label>
-                                <select class="w-full bg-lucero-dark border border-lucero-border rounded-lg p-2 text-sm text-slate-200">
-                                    <option>3番目</option><option>1番目</option><option>2番目</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div>
-                            <label class="block text-xs font-semibold text-slate-400 mb-1">詳細ポイント・全体指示</label>
-                            <textarea rows="2" class="w-full bg-lucero-dark border border-lucero-border rounded-lg p-2 text-sm text-slate-200" placeholder="セットプレーの確認など..."></textarea>
-                        </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-400 mb-1">守備の戦い方</label>
+                        <textarea rows="5" class="w-full bg-lucero-dark border border-lucero-border rounded-lg p-2.5 text-sm text-slate-200" placeholder="守備ブロックの構築、ハイプレスのタイミングなど..."></textarea>
                     </div>
                 </div>
             </div>
 
-            <!-- 5. 当日タイムスケジュール & 6. スタッフの役割 -->
+            <!-- 新規追加：4. 相手の分析 -->
+            <div class="bg-lucero-card p-5 rounded-xl border border-lucero-border space-y-5">
+                <h2 class="text-base font-bold text-lucero-gold border-b border-lucero-border pb-2">4. 相手の分析</h2>
+                
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-400 mb-1">攻撃の特徴</label>
+                        <textarea rows="4" class="w-full bg-lucero-dark border border-lucero-border rounded-lg p-2.5 text-sm text-slate-200" placeholder="相手の攻撃の狙い、ビルドアップの特徴など..."></textarea>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-400 mb-1">守備の特徴</label>
+                        <textarea rows="4" class="w-full bg-lucero-dark border border-lucero-border rounded-lg p-2.5 text-sm text-slate-200" placeholder="相手の守備ブロック、プレスのかけ方など..."></textarea>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 pt-2">
+                    <!-- 要注意選手（増設可） -->
+                    <div class="space-y-3 bg-lucero-dark/40 p-4 rounded-xl border border-lucero-border">
+                        <div class="flex justify-between items-center">
+                            <label class="text-xs font-bold text-amber-400">要注意選手</label>
+                            <button onclick="addAnalysisRow('key-player-rows', '要注意選手名・特徴など...')" class="bg-amber-400/20 text-amber-400 border border-amber-500/40 px-2.5 py-1 rounded text-xs font-bold">+ 選手追加</button>
+                        </div>
+                        <div id="key-player-rows" class="space-y-2"></div>
+                    </div>
+
+                    <!-- ウィークポイント（増設可） -->
+                    <div class="space-y-3 bg-lucero-dark/40 p-4 rounded-xl border border-lucero-border">
+                        <div class="flex justify-between items-center">
+                            <label class="text-xs font-bold text-lucero-cyan">ウィークポイント</label>
+                            <button onclick="addAnalysisRow('weak-point-rows', '相手の弱点・突くべきスペースなど...')" class="bg-lucero-cyan/20 text-lucero-cyan border border-lucero-cyan/40 px-2.5 py-1 rounded text-xs font-bold">+ 項目追加</button>
+                        </div>
+                        <div id="weak-point-rows" class="space-y-2"></div>
+                    </div>
+                </div>
+
+                <!-- セットプレー（攻撃・守備） -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 pt-2">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-400 mb-1">セットプレー (攻撃)</label>
+                        <textarea rows="3" class="w-full bg-lucero-dark border border-lucero-border rounded-lg p-2 text-sm text-slate-200" placeholder="相手のFK/CKのサインや特徴..."></textarea>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-400 mb-1">セットプレー (守備)</label>
+                        <textarea rows="3" class="w-full bg-lucero-dark border border-lucero-border rounded-lg p-2 text-sm text-slate-200" placeholder="相手のセットプレーに対する注意点..."></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 5. MTGの流れ -->
+            <div class="bg-lucero-card p-5 rounded-xl border border-lucero-border space-y-4">
+                <h2 class="text-base font-bold text-lucero-gold border-b border-lucero-border pb-2">5. MTGの流れ</h2>
+                <div class="space-y-3">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-400 mb-1">導入 (5行)</label>
+                        <textarea rows="5" class="w-full bg-lucero-dark border border-lucero-border rounded-lg p-2.5 text-sm text-slate-200" placeholder="本日のメンタリティ、共通意識の確認..."></textarea>
+                    </div>
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-400 mb-1">攻撃 (話す順番)</label>
+                            <select class="w-full bg-lucero-dark border border-lucero-border rounded-lg p-2 text-sm text-slate-200">
+                                <option>1番目</option><option>2番目</option><option>3番目</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-400 mb-1">守備 (話す順番)</label>
+                            <select class="w-full bg-lucero-dark border border-lucero-border rounded-lg p-2 text-sm text-slate-200">
+                                <option>2番目</option><option>1番目</option><option>3番目</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-400 mb-1">メンタル (話す順番)</label>
+                            <select class="w-full bg-lucero-dark border border-lucero-border rounded-lg p-2 text-sm text-slate-200">
+                                <option>3番目</option><option>1番目</option><option>2番目</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-400 mb-1">詳細ポイント・全体指示</label>
+                        <textarea rows="2" class="w-full bg-lucero-dark border border-lucero-border rounded-lg p-2 text-sm text-slate-200" placeholder="セットプレーの確認など..."></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 6. 当日タイムスケジュール & 7. スタッフの役割 -->
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 <div class="bg-lucero-card p-5 rounded-xl border border-lucero-border space-y-4">
                     <div class="flex justify-between items-center border-b border-lucero-border pb-2">
-                        <h2 class="text-base font-bold text-lucero-gold">5. 当日タイムスケジュール</h2>
+                        <h2 class="text-base font-bold text-lucero-gold">6. 当日タイムスケジュール</h2>
                         <button onclick="addScheduleRow()" class="bg-lucero-cyan/20 text-lucero-cyan border border-lucero-cyan/40 px-3 py-1 rounded text-xs font-bold">+ 行追加</button>
                     </div>
                     <div id="schedule-rows" class="space-y-3"></div>
@@ -242,7 +297,7 @@
 
                 <div class="bg-lucero-card p-5 rounded-xl border border-lucero-border space-y-4">
                     <div class="flex justify-between items-center border-b border-lucero-border pb-2">
-                        <h2 class="text-base font-bold text-lucero-gold">6. スタッフの役割</h2>
+                        <h2 class="text-base font-bold text-lucero-gold">7. スタッフの役割</h2>
                         <button onclick="addStaffRow()" class="bg-lucero-cyan/20 text-lucero-cyan border border-lucero-cyan/40 px-3 py-1 rounded text-xs font-bold">+ 行追加</button>
                     </div>
                     <div id="staff-rows" class="space-y-3"></div>
@@ -437,10 +492,11 @@
                 renderFormationSlots();
                 if(document.getElementById('schedule-rows').children.length === 0) addScheduleRow();
                 if(document.getElementById('staff-rows').children.length === 0) addStaffRow();
+                if(document.getElementById('key-player-rows').children.length === 0) addAnalysisRow('key-player-rows', '要注意選手名・特徴など...');
+                if(document.getElementById('weak-point-rows').children.length === 0) addAnalysisRow('weak-point-rows', '相手の弱点・突くべきスペースなど...');
             }
         }
 
-        // ① 新規作成 ⇄ ② 作成途中データ編集 の切り替え制御
         function handlePrepModeChange() {
             const mode = document.getElementById('prep-mode').value;
             const newSubContainer = document.getElementById('new-sub-mode-container');
@@ -459,7 +515,6 @@
             }
         }
 
-        // 新規作成内の「空白ページ」or「過去データコピー」の切り替え
         function handleNewTypeChange() {
             const type = document.getElementById('new-type').value;
             const copyContainer = document.getElementById('copy-target-container');
@@ -632,6 +687,17 @@
                 <div><input type="text" placeholder="試合前" class="w-full bg-lucero-dark border border-lucero-border rounded-lg p-2 text-sm text-slate-200"></div>
                 <div><input type="text" placeholder="試合中" class="w-full bg-lucero-dark border border-lucero-border rounded-lg p-2 text-sm text-slate-200"></div>
                 <div><input type="text" placeholder="試合後" class="w-full bg-lucero-dark border border-lucero-border rounded-lg p-2 text-sm text-slate-200"></div>
+            `;
+            container.appendChild(row);
+        }
+
+        function addAnalysisRow(containerId, placeholderText) {
+            const container = document.getElementById(containerId);
+            const row = document.createElement('div');
+            row.className = 'flex items-center gap-2';
+            row.innerHTML = `
+                <input type="text" placeholder="${placeholderText}" class="flex-1 bg-lucero-dark border border-lucero-border rounded-lg px-3 py-2 text-sm text-slate-200">
+                <button onclick="this.parentElement.remove()" class="w-8 h-8 bg-rose-500/20 text-rose-400 border border-rose-500/40 rounded-lg flex items-center justify-center text-xs font-bold shrink-0 hover:bg-rose-500/30 transition">✕</button>
             `;
             container.appendChild(row);
         }
@@ -853,7 +919,9 @@
             renderFormationSlots();
             addScheduleRow();
             addStaffRow();
-            handlePrepModeChange(); // 初期状態の表示制御
+            addAnalysisRow('key-player-rows', '要注意選手名・特徴など...');
+            addAnalysisRow('weak-point-rows', '相手の弱点・突くべきスペースなど...');
+            handlePrepModeChange();
         };
     </script>
 </body>
