@@ -49,7 +49,7 @@
     </header>
 
     <!-- メインコンテンツ -->
-    <main class="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6">
+    <main class="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 space-y-6">
 
         <!-- ==================== ① 前日準備タブ ==================== -->
         <section id="tab-prep" class="space-y-6">
@@ -105,7 +105,7 @@
                 </div>
             </div>
 
-            <!-- フォーメーション配置（ピッチ型デザインに刷新） -->
+            <!-- フォーメーション配置（縦長ストレッチ対応） -->
             <div class="bg-lucero-card p-5 rounded-xl border border-lucero-border space-y-4">
                 <div class="flex flex-wrap justify-between items-center gap-2 border-b border-lucero-border pb-2">
                     <div>
@@ -123,30 +123,31 @@
                 </div>
 
                 <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                    <!-- 左側：ピッチ型スタメン配置 -->
+                    <!-- 左側：縦長ストレッチしたピッチプレビュー -->
                     <div class="lg:col-span-2 bg-lucero-card p-4 rounded-xl border border-lucero-border space-y-3">
-                        <h3 class="text-sm font-bold text-lucero-cyan">スタメン配置 (ピッチプレビュー)</h3>
-                        <div class="relative w-full aspect-[4/3] sm:aspect-[16/10] bg-gradient-to-b from-[#0e3b23] via-[#114b2c] to-[#0e3b23] rounded-2xl border-2 border-emerald-400/40 p-2 sm:p-4 shadow-inner overflow-hidden flex flex-col justify-between select-none">
+                        <h3 class="text-sm font-bold text-lucero-cyan">スタメン配置 (ピッチプレビュー)[span_1](start_span)[span_1](end_span)</h3>
+                        <div class="relative w-full aspect-[3/4] sm:aspect-[4/5] bg-gradient-to-b from-[#0e3b23] via-[#114b2c] to-[#0e3b23] rounded-2xl border-2 border-emerald-400/40 p-4 shadow-inner overflow-hidden flex flex-col justify-between select-none">
                             <div class="absolute inset-0 pointer-events-none flex items-center justify-center">
                                 <div class="w-full h-px bg-white/20 absolute"></div>
-                                <div class="w-24 h-24 sm:w-36 sm:h-36 rounded-full border border-white/20 absolute"></div>
-                                <div class="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-white/30 absolute"></div>
+                                <div class="w-32 h-32 sm:w-44 sm:h-44 rounded-full border border-white/20 absolute"></div>
+                                <div class="w-2 h-2 rounded-full bg-white/30 absolute"></div>
+                                <div class="absolute top-0 left-1/2 -translate-x-1/2 w-3/5 h-1/5 border-b border-x border-white/20 rounded-b-xl"></div>
+                                <div class="absolute bottom-0 left-1/2 -translate-x-1/2 w-3/5 h-1/5 border-t border-x border-white/20 rounded-t-xl"></div>
                             </div>
-                            <!-- 動的フォーメーション配置レイヤー -->
-                            <div id="formation-slots-container" class="relative z-10 w-full h-full flex flex-col justify-between py-1 sm:py-2"></div>
+                            <div id="formation-slots-container" class="relative z-10 w-full h-full flex flex-col justify-between py-2"></div>
                         </div>
                     </div>
 
                     <!-- 右側：ベンチ・メンバー外・リスト外の管理 -->
                     <div class="space-y-4">
                         <div>
-                            <h3 class="text-sm font-bold text-lucero-cyan mb-2">ベンチメンバー (最大9名)</h3>
+                            <h3 class="text-sm font-bold text-lucero-cyan mb-2">ベンチメンバー (最大9名)[span_2](start_span)[span_2](end_span)</h3>
                             <div id="bench-list-container" class="space-y-2 bg-lucero-dark/50 p-3 rounded-xl border border-lucero-border min-h-[100px] max-h-[220px] overflow-y-auto"></div>
                         </div>
                         <div>
                             <div class="flex justify-between items-center mb-2">
-                                <h3 class="text-sm font-bold text-amber-400">メンバー外（帯同不可）</h3>
-                                <button onclick="addNewPlayer('out-match')" class="bg-amber-400/20 text-amber-400 border px-2 py-0.5 rounded text-xs font-bold">+ 追加</button>
+                                <h3 class="text-sm font-bold text-amber-400">メンバー外（帯同不可）[span_3](start_span)[span_3](end_span)</h3>
+                                <button onclick="addNewPlayer('out-match')" class="bg-amber-400/20 text-amber-400 border px-2 py-0.5 rounded text-xs font-bold">+ 追加[span_4](start_span)[span_4](end_span)</button>
                             </div>
                             <div id="out-match-container" class="space-y-2 bg-lucero-dark/50 p-3 rounded-xl border border-lucero-border min-h-[50px]"></div>
                         </div>
@@ -161,6 +162,77 @@
                 </div>
             </div>
 
+            <!-- 3. 攻守の戦い方 -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div class="bg-lucero-card p-5 rounded-xl border border-lucero-border space-y-4">
+                    <h2 class="text-base font-bold text-lucero-gold border-b border-lucero-border pb-2">3. 攻守の戦い方</h2>
+                    <div class="space-y-3">
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-400 mb-1">攻撃の戦い方 (5行)</label>
+                            <textarea rows="5" class="w-full bg-lucero-dark border border-lucero-border rounded-lg p-2.5 text-sm text-slate-200" placeholder="ビルドアップの狙い、サイドからの崩しなど..."></textarea>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-400 mb-1">守備の戦い方 (5行)</label>
+                            <textarea rows="5" class="w-full bg-lucero-dark border border-lucero-border rounded-lg p-2.5 text-sm text-slate-200" placeholder="守備ブロックの構築、ハイプレスのタイミングなど..."></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 4. MTGの流れ -->
+                <div class="bg-lucero-card p-5 rounded-xl border border-lucero-border space-y-4">
+                    <h2 class="text-base font-bold text-lucero-gold border-b border-lucero-border pb-2">4. MTGの流れ</h2>
+                    <div class="space-y-3">
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-400 mb-1">導入 (5行)</label>
+                            <textarea rows="5" class="w-full bg-lucero-dark border border-lucero-border rounded-lg p-2.5 text-sm text-slate-200" placeholder="本日のメンタリティ、共通意識の確認..."></textarea>
+                        </div>
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-400 mb-1">攻撃 (話す順番)</label>
+                                <select class="w-full bg-lucero-dark border border-lucero-border rounded-lg p-2 text-sm text-slate-200">
+                                    <option>1番目</option><option>2番目</option><option>3番目</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-400 mb-1">守備 (話す順番)</label>
+                                <select class="w-full bg-lucero-dark border border-lucero-border rounded-lg p-2 text-sm text-slate-200">
+                                    <option>2番目</option><option>1番目</option><option>3番目</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-400 mb-1">メンタル (話す順番)</label>
+                                <select class="w-full bg-lucero-dark border border-lucero-border rounded-lg p-2 text-sm text-slate-200">
+                                    <option>3番目</option><option>1番目</option><option>2番目</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-400 mb-1">詳細ポイント・全体指示</label>
+                            <textarea rows="2" class="w-full bg-lucero-dark border border-lucero-border rounded-lg p-2 text-sm text-slate-200" placeholder="セットプレーの確認など..."></textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 5. 当日タイムスケジュール & 6. スタッフの役割 -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div class="bg-lucero-card p-5 rounded-xl border border-lucero-border space-y-4">
+                    <div class="flex justify-between items-center border-b border-lucero-border pb-2">
+                        <h2 class="text-base font-bold text-lucero-gold">5. 当日タイムスケジュール</h2>
+                        <button onclick="addScheduleRow()" class="bg-lucero-cyan/20 text-lucero-cyan border border-lucero-cyan/40 px-3 py-1 rounded text-xs font-bold">+ 行追加</button>
+                    </div>
+                    <div id="schedule-rows" class="space-y-3"></div>
+                </div>
+
+                <div class="bg-lucero-card p-5 rounded-xl border border-lucero-border space-y-4">
+                    <div class="flex justify-between items-center border-b border-lucero-border pb-2">
+                        <h2 class="text-base font-bold text-lucero-gold">6. スタッフの役割</h2>
+                        <button onclick="addStaffRow()" class="bg-lucero-cyan/20 text-lucero-cyan border border-lucero-cyan/40 px-3 py-1 rounded text-xs font-bold">+ 行追加</button>
+                    </div>
+                    <div id="staff-rows" class="space-y-3"></div>
+                </div>
+            </div>
+
             <div class="flex justify-end pt-4">
                 <button onclick="alert('前日準備データを保存しました！')" class="bg-gradient-to-r from-lucero-gold to-amber-500 text-lucero-dark font-bold px-8 py-3 rounded-xl shadow-lg">保存する</button>
             </div>
@@ -169,7 +241,6 @@
 
         <!-- ==================== ② 試合当日タブ ==================== -->
         <section id="tab-match" class="hidden space-y-6">
-            <!-- コントロールボード -->
             <div class="bg-lucero-card p-5 rounded-xl border border-lucero-border flex flex-wrap items-center justify-between gap-4">
                 <div class="flex items-center space-x-4">
                     <div>
@@ -183,7 +254,6 @@
                     </div>
                 </div>
 
-                <!-- スコア ＆ 得点・失点ボタン ＆ メイン進行ボタン -->
                 <div class="flex flex-wrap items-center gap-3">
                     <div class="flex items-center space-x-2 bg-lucero-dark px-3 py-1.5 rounded-xl border border-lucero-border">
                         <span class="text-xs text-slate-400">スコア:</span>
@@ -198,7 +268,7 @@
                 </div>
             </div>
 
-            <!-- ピッチ ＆ ベンチ -->
+            <!-- 当日の縦長ピッチ ＆ ベンチ -->
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 <div class="lg:col-span-2 bg-lucero-card p-4 sm:p-5 rounded-xl border border-lucero-border space-y-4">
                     <h2 class="text-sm sm:text-base font-bold text-lucero-cyan flex items-center justify-between flex-wrap gap-1">
@@ -206,13 +276,15 @@
                         <span class="text-[11px] sm:text-xs font-normal text-slate-400">※HT中または試合中の交代が可能</span>
                     </h2>
 
-                    <div class="relative w-full aspect-[4/3] sm:aspect-[16/10] bg-gradient-to-b from-[#0e3b23] via-[#114b2c] to-[#0e3b23] rounded-2xl border-2 border-emerald-400/40 p-2 sm:p-4 shadow-inner overflow-hidden flex flex-col justify-between select-none">
+                    <div class="relative w-full aspect-[3/4] sm:aspect-[4/5] bg-gradient-to-b from-[#0e3b23] via-[#114b2c] to-[#0e3b23] rounded-2xl border-2 border-emerald-400/40 p-4 shadow-inner overflow-hidden flex flex-col justify-between select-none">
                         <div class="absolute inset-0 pointer-events-none flex items-center justify-center">
                             <div class="w-full h-px bg-white/20 absolute"></div>
-                            <div class="w-24 h-24 sm:w-36 sm:h-36 rounded-full border border-white/20 absolute"></div>
-                            <div class="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-white/30 absolute"></div>
+                            <div class="w-32 h-32 sm:w-44 sm:h-44 rounded-full border border-white/20 absolute"></div>
+                            <div class="w-2 h-2 rounded-full bg-white/30 absolute"></div>
+                            <div class="absolute top-0 left-1/2 -translate-x-1/2 w-3/5 h-1/5 border-b border-x border-white/20 rounded-b-xl"></div>
+                            <div class="absolute bottom-0 left-1/2 -translate-x-1/2 w-3/5 h-1/5 border-t border-x border-white/20 rounded-t-xl"></div>
                         </div>
-                        <div id="pitch-slots-wrapper" class="relative z-10 w-full h-full flex flex-col justify-between py-1 sm:py-2"></div>
+                        <div id="pitch-slots-wrapper" class="relative z-10 w-full h-full flex flex-col justify-between py-2"></div>
                     </div>
                 </div>
 
@@ -346,7 +418,11 @@
             document.getElementById('nav-prep').className = tab === 'prep' ? 'px-4 py-1.5 rounded-lg text-sm font-semibold bg-lucero-cyan text-lucero-dark shadow-md' : 'px-4 py-1.5 rounded-lg text-sm font-semibold bg-lucero-accent text-slate-300 hover:bg-slate-700';
             document.getElementById('nav-match').className = tab === 'match' ? 'px-4 py-1.5 rounded-lg text-sm font-semibold bg-lucero-cyan text-lucero-dark shadow-md' : 'px-4 py-1.5 rounded-lg text-sm font-semibold bg-lucero-accent text-slate-300 hover:bg-slate-700';
             if(tab === 'match') renderLiveMatch();
-            if(tab === 'prep') renderFormationSlots();
+            if(tab === 'prep') {
+                renderFormationSlots();
+                if(document.getElementById('schedule-rows').children.length === 0) addScheduleRow();
+                if(document.getElementById('staff-rows').children.length === 0) addStaffRow();
+            }
         }
 
         function handlePrepModeChange() {
@@ -364,10 +440,10 @@
             if(!document.getElementById('tab-match').classList.contains('hidden')) renderLiveMatch();
         }
 
-        // 前日準備用 ピッチ型スタメン配置の描画
-        function renderFormationSlots() {
+        // 縦長ピッチ型スタメン配置の描画共通関数
+        function renderPitchRows(containerId, isMatchMode = false) {
             const system = getCurrentSystem();
-            const container = document.getElementById('formation-slots-container');
+            const container = document.getElementById(containerId);
             container.innerHTML = '';
             const starters = players.filter(p => p.status === 'starter');
 
@@ -398,20 +474,21 @@
 
             rowsConfig.forEach(rowPlayers => {
                 const rowDiv = document.createElement('div');
-                rowDiv.className = 'flex justify-around items-center w-full px-1 sm:px-2 my-0.5';
+                rowDiv.className = 'flex justify-around items-center w-full px-1 sm:px-2 my-1';
                 rowPlayers.forEach(p => {
-                    const isSelected = selectedPlayerForPrepSwitch === p.id;
+                    const isSelected = isMatchMode ? (selectedPlayerForMatch === p.id) : (selectedPlayerForPrepSwitch === p.id);
                     const isGK = p.pos === 'GK';
                     const playerEl = document.createElement('div');
+
                     if(p.id !== null) {
-                        playerEl.onclick = () => handlePrepPlayerClick(p.id);
+                        playerEl.onclick = () => isMatchMode ? handleMatchPlayerClick(p.id) : handlePrepPlayerClick(p.id);
                         playerEl.className = `flex flex-col items-center cursor-pointer transition transform hover:scale-105 ${isSelected ? 'scale-110 drop-shadow-[0_0_12px_rgba(0,242,254,0.9)]' : ''}`;
                     } else {
                         playerEl.className = `flex flex-col items-center opacity-60`;
                     }
                     
                     playerEl.innerHTML = `
-                        <div class="relative w-8 h-8 sm:w-11 sm:h-11 rounded-xl flex items-center justify-center font-black shadow-lg border ${isGK ? 'bg-amber-500 text-slate-950 border-amber-300' : 'bg-gradient-to-tr from-blue-900 via-blue-700 to-[#00f2fe] text-white border-lucero-cyan/60'} ${isSelected ? 'ring-4 ring-lucero-cyan' : ''}">
+                        <div class="relative w-9 h-9 sm:w-12 sm:h-12 rounded-xl flex items-center justify-center font-black shadow-lg border ${isGK ? 'bg-amber-500 text-slate-950 border-amber-300' : 'bg-gradient-to-tr from-blue-900 via-blue-700 to-[#00f2fe] text-white border-lucero-cyan/60'} ${isSelected ? 'ring-4 ring-lucero-cyan' : ''}">
                             <span class="relative z-10 text-[10px] sm:text-xs font-mono">${p.number}</span>
                         </div>
                         <div class="mt-0.5 sm:mt-1 bg-lucero-dark/95 border ${isSelected ? 'border-lucero-cyan text-lucero-cyan' : 'border-lucero-border text-slate-100'} px-1.5 py-0.5 rounded text-[9px] sm:text-xs font-bold text-center shadow whitespace-nowrap">
@@ -422,8 +499,36 @@
                 });
                 container.appendChild(rowDiv);
             });
+        }
 
+        function renderFormationSlots() {
+            renderPitchRows('formation-slots-container', false);
             renderBenchAndOutLists();
+        }
+
+        function renderLiveMatch() {
+            renderPitchRows('pitch-slots-wrapper', true);
+
+            document.getElementById('live-bench-container').innerHTML = players.filter(p => p.status === 'bench').map(p => {
+                const isSelected = selectedPlayerForMatch === p.id;
+                return `
+                    <div onclick="handleMatchPlayerClick(${p.id})" class="bg-lucero-dark p-2 rounded-lg border ${isSelected ? 'border-lucero-cyan' : 'border-lucero-border'} flex justify-between items-center cursor-pointer hover:border-lucero-gold transition">
+                        <span class="text-xs text-lucero-gold font-mono">#${p.number}</span>
+                        <span class="text-sm font-medium text-slate-200">${p.name}</span>
+                        <span class="text-xs text-lucero-gold bg-lucero-accent px-2 py-0.5 rounded">${p.pos} (控)</span>
+                    </div>
+                `;
+            }).join('') || '<p class="text-xs text-slate-500 text-center py-4">ベンチ選手なし</p>';
+
+            document.getElementById('subbed-out-container').innerHTML = players.filter(p => p.status === 'subbed-out' || p.status === 'ht-subout').map(p => `
+                <div class="bg-lucero-dark/80 px-3 py-2 rounded border border-rose-500/30 flex justify-between items-center text-xs">
+                    <div>
+                        <span class="text-slate-500 font-mono">#${p.number}</span>
+                        <span class="text-slate-300">${p.name}</span>
+                    </div>
+                    <span class="text-rose-400 font-bold">${p.status === 'ht-subout' ? 'HT交代アウト' : '交代アウト'} (${Math.floor(p.playSeconds/60)}分)</span>
+                </div>
+            `).join('') || '<p class="text-xs text-slate-500 text-center py-2">交代選手なし</p>';
         }
 
         function handlePrepPlayerClick(id) {
@@ -462,59 +567,33 @@
             document.getElementById('out-list-container').innerHTML = players.filter(p => p.status === 'out-list').map(p => `<div class="text-xs text-rose-400">#${p.number} ${p.name}</div>`).join('') || '<p class="text-xs text-slate-500">なし</p>';
         }
 
-        // 当日試合用ピッチ描画
-        function renderLiveMatch() {
-            const system = getCurrentSystem();
-            const wrapper = document.getElementById('pitch-slots-wrapper');
-            wrapper.innerHTML = '';
-            const starters = players.filter(p => p.status === 'starter');
+        // タイムスケジュール & スタッフ行追加
+        function addScheduleRow() {
+            const container = document.getElementById('schedule-rows');
+            const row = document.createElement('div');
+            row.className = 'bg-lucero-dark/60 p-2.5 rounded-xl border border-lucero-border flex items-center gap-2';
+            row.innerHTML = `
+                <input type="time" value="09:00" class="bg-lucero-dark border rounded px-2 py-1.5 text-xs text-slate-200 w-28 shrink-0">
+                <input type="text" placeholder="例: 会場到着" class="flex-1 bg-lucero-dark border rounded px-2.5 py-1.5 text-xs text-slate-200 min-w-0">
+                <button onclick="this.parentElement.remove()" class="text-rose-400 px-1.5 py-1 text-xs font-bold shrink-0">✕</button>
+            `;
+            container.appendChild(row);
+        }
 
-            let rowsConfig = [
-                [starters[8] || {number:'-', name:'未割当', pos:'WG'}, starters[10] || {number:'-', name:'未割当', pos:'CF'}, starters[9] || {number:'-', name:'未割当', pos:'WG'}],
-                [starters[5] || {number:'-', name:'未割当', pos:'DMF'}, starters[6] || {number:'-', name:'未割当', pos:'CMF'}, starters[7] || {number:'-', name:'未割当', pos:'CMF'}],
-                [starters[1] || {number:'-', name:'未割当', pos:'CB'}, starters[2] || {number:'-', name:'未割当', pos:'CB'}, starters[3] || {number:'-', name:'未割当', pos:'SB'}, starters[4] || {number:'-', name:'未割当', pos:'SB'}],
-                [starters[0] || {number:'-', name:'未割当', pos:'GK'}]
-            ];
-
-            rowsConfig.forEach(rowPlayers => {
-                const rowDiv = document.createElement('div');
-                rowDiv.className = 'flex justify-around items-center w-full px-1 sm:px-2 my-0.5';
-                rowPlayers.forEach(p => {
-                    const isSelected = selectedPlayerForMatch === p.id;
-                    const isGK = p.pos === 'GK';
-                    const playerEl = document.createElement('div');
-                    playerEl.onclick = () => handleMatchPlayerClick(p.id);
-                    playerEl.className = `flex flex-col items-center cursor-pointer transition transform hover:scale-105 ${isSelected ? 'scale-110' : ''}`;
-                    playerEl.innerHTML = `
-                        <div class="relative w-8 h-8 sm:w-11 sm:h-11 rounded-xl flex items-center justify-center font-black shadow-lg border ${isGK ? 'bg-amber-500 text-slate-950 border-amber-300' : 'bg-gradient-to-tr from-blue-900 via-blue-700 to-[#00f2fe] text-white'} ${isSelected ? 'ring-4 ring-lucero-cyan' : ''}">
-                            <span class="relative z-10 text-[10px] sm:text-xs font-mono">${p.number}</span>
-                        </div>
-                        <div class="mt-0.5 sm:mt-1 bg-lucero-dark/95 border ${isSelected ? 'border-lucero-cyan text-lucero-cyan' : 'border-lucero-border text-slate-100'} px-1.5 py-0.5 rounded text-[9px] sm:text-xs font-bold text-center">
-                            ${p.name}
-                        </div>
-                    `;
-                    rowDiv.appendChild(playerEl);
-                });
-                wrapper.appendChild(rowDiv);
-            });
-
-            document.getElementById('live-bench-container').innerHTML = players.filter(p => p.status === 'bench').map(p => `
-                <div onclick="handleMatchPlayerClick(${p.id})" class="bg-lucero-dark p-2 rounded-lg border flex justify-between items-center cursor-pointer hover:border-lucero-gold transition">
-                    <span class="text-xs text-lucero-gold font-mono">#${p.number}</span>
-                    <span class="text-sm font-medium text-slate-200">${p.name}</span>
-                    <span class="text-xs text-lucero-gold bg-lucero-accent px-2 py-0.5 rounded">${p.pos} (控)</span>
+        function addStaffRow() {
+            const container = document.getElementById('staff-rows');
+            const row = document.createElement('div');
+            row.className = 'bg-lucero-dark/60 p-3 rounded-xl border grid grid-cols-1 sm:grid-cols-4 gap-2 items-center';
+            row.innerHTML = `
+                <div><input type="text" placeholder="氏名" class="w-full bg-lucero-dark border rounded p-2 text-sm text-slate-200"></div>
+                <div><input type="text" placeholder="試合前" class="w-full bg-lucero-dark border rounded p-2 text-sm text-slate-200"></div>
+                <div><input type="text" placeholder="試合中" class="w-full bg-lucero-dark border rounded p-2 text-sm text-slate-200"></div>
+                <div class="flex items-center gap-2">
+                    <input type="text" placeholder="試合後" class="flex-1 bg-lucero-dark border rounded p-2 text-sm text-slate-200">
+                    <button onclick="this.parentElement.parentElement.remove()" class="text-rose-400 p-2 text-xs">✕</button>
                 </div>
-            `).join('') || '<p class="text-xs text-slate-500 text-center py-4">ベンチ選手なし</p>';
-
-            document.getElementById('subbed-out-container').innerHTML = players.filter(p => p.status === 'subbed-out' || p.status === 'ht-subout').map(p => `
-                <div class="bg-lucero-dark/80 px-3 py-2 rounded border border-rose-500/30 flex justify-between items-center text-xs">
-                    <div>
-                        <span class="text-slate-500 font-mono">#${p.number}</span>
-                        <span class="text-slate-300">${p.name}</span>
-                    </div>
-                    <span class="text-rose-400 font-bold">${p.status === 'ht-subout' ? 'HT交代アウト' : '交代アウト'} (${Math.floor(p.playSeconds/60)}分)</span>
-                </div>
-            `).join('') || '<p class="text-xs text-slate-500 text-center py-2">交代選手なし</p>';
+            `;
+            container.appendChild(row);
         }
 
         // メイン進行ボタンの制御
@@ -733,6 +812,8 @@
 
         window.onload = function() {
             renderFormationSlots();
+            addScheduleRow();
+            addStaffRow();
         };
     </script>
 </body>
