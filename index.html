@@ -343,7 +343,7 @@
                 <div class="lg:col-span-2 bg-lucero-card p-4 sm:p-5 rounded-xl border border-lucero-border space-y-4">
                     <h2 class="text-sm sm:text-base font-bold text-lucero-cyan flex items-center justify-between flex-wrap gap-1">
                         <span>ピッチ上 出場中選手 (タップで入替/交代)</span>
-                        <span class="text-[11px] sm:text-xs font-normal text-slate-400">※試合中・HT中・延長戦いつでも交代・入替が可能</span>
+                        <span class="text-[11px] sm:text-xs font-normal text-slate-400">※試合中いつでもポジション入替・交代が可能</span>
                     </h2>
 
                     <div class="relative w-full aspect-[3/4] sm:aspect-[4/5] bg-gradient-to-b from-[#0e3b23] via-[#114b2c] to-[#0e3b23] rounded-2xl border-2 border-emerald-400/40 p-4 shadow-inner overflow-hidden flex flex-col justify-between select-none">
@@ -398,13 +398,12 @@
         </div>
     </div>
 
-    <!-- 試合終了後分岐モーダル（延長ハーフ時間選択式） -->
+    <!-- 試合終了後分岐モーダル -->
     <div id="endgame-modal" class="fixed inset-0 bg-black/70 hidden items-center justify-center z-50 p-4">
         <div class="bg-lucero-card border border-lucero-border p-6 rounded-xl max-w-md w-full space-y-4 text-center">
             <h3 class="text-lg font-bold text-lucero-gold">試合終了（同点）</h3>
             <p class="text-xs text-slate-300">試合が同点で終了しました。次の処理を選択してください。</p>
             
-            <!-- 延長ハーフ時間のドラム式（セレクト）選択 -->
             <div class="bg-lucero-dark p-3 rounded-lg border border-lucero-border flex items-center justify-between">
                 <span class="text-xs text-slate-300 font-bold">延長戦ハーフ時間:</span>
                 <select id="extra-duration-select" class="bg-lucero-card border border-lucero-border rounded px-3 py-1.5 text-sm text-lucero-cyan font-bold">
@@ -430,11 +429,11 @@
         </div>
     </div>
 
-    <!-- PK戦入力モーダル（自チーム & 相手キック結果対応） -->
+    <!-- PK戦入力モーダル -->
     <div id="pk-modal" class="fixed inset-0 bg-black/70 hidden items-center justify-center z-50 p-4">
         <div class="bg-lucero-card border border-lucero-border p-6 rounded-xl max-w-lg w-full space-y-4">
             <h3 class="text-lg font-bold text-lucero-gold">PK戦 記録</h3>
-            <p class="text-xs text-slate-300">自チームのキッカーおよび相手チームのキック結果（○ / ×）を入力してください。</p>
+            <p class="text-xs text-slate-300">自チームのキッカーおよび相手チームのキック結果を入力してください。</p>
             <div id="pk-kickers-container" class="space-y-2 max-h-[250px] overflow-y-auto pr-1"></div>
             <button onclick="addPKRow()" class="w-full bg-lucero-cyan/20 text-lucero-cyan border border-lucero-cyan/40 py-1.5 rounded text-xs font-bold">+ キッカー追加</button>
             <div class="flex justify-end space-x-3 pt-2">
@@ -500,7 +499,7 @@
         let matchPhase = 'not_started';
         let pendingActionType = '';
         let goalMode = 'goal';
-        let extraHalfDuration = 10; // 選択された延長ハーフ時間（デフォルト10分）
+        let extraHalfDuration = 10;
 
         function switchTab(tab) {
             document.getElementById('tab-prep').classList.toggle('hidden', tab !== 'prep');
@@ -722,7 +721,6 @@
             container.appendChild(row);
         }
 
-        // メイン進行ボタンの制御
         function handleMainAction() {
             if (matchPhase === 'not_started') {
                 matchPhase = 'first_half';
@@ -845,7 +843,6 @@
         }
 
         function selectEndGameOption(option) {
-            // 延長ハーフ時間を取得（5〜15分ドラム式選択）
             extraHalfDuration = parseInt(document.getElementById('extra-duration-select').value) || 10;
 
             document.getElementById('endgame-modal').classList.remove('flex');
@@ -873,7 +870,6 @@
             addPKRow();
         }
 
-        // PK戦キッカー追加（自チーム ＆ 相手キック結果対応）
         function addPKRow() {
             const container = document.getElementById('pk-kickers-container');
             const row = document.createElement('div');
@@ -910,7 +906,7 @@
             finishMatchCompletely('試合終了（PK戦決着）');
         }
 
-        // 前半・後半・延長中いつでも選手交代・ポジション入替
+        // ポジション入替・選手交代（ポジション入替もイベントログに記録するように改修）
         function handleMatchPlayerClick(id) {
             if(!id) return;
             if (matchPhase === 'not_started' || matchPhase === 'finished' || matchPhase === 'full_time_ended') {
@@ -929,10 +925,15 @@
                 const p2 = players.find(p => p.id === id);
 
                 if(p1 && p2) {
+                    const currentMin = Math.floor(matchSeconds/60);
                     if(p1.status === 'starter' && p2.status === 'starter') {
+                        // スタメン同士ならポジション入れ替え
                         const tempPos = p1.pos; p1.pos = p2.pos; p2.pos = tempPos;
                         const tempName = p1.name; p1.name = p2.name; p2.name = tempName;
                         const tempNum = p1.number; p1.number = p2.number; p2.number = tempNum;
+                        
+                        matchEvents.push(`<span class="text-lucero-cyan">${currentMin}分 ポジション入替:</span> ${p1.name} ⇄ ${p2.name}`);
+                        updateEventsLog();
                         alert(`ポジション入替: ${p1.name} ⇄ ${p2.name}`);
                     } else if((p1.status === 'starter' && p2.status === 'bench') || (p1.status === 'bench' && p2.status === 'starter')) {
                         const starter = p1.status === 'starter' ? p1 : p2;
@@ -943,7 +944,6 @@
                             starter.status = matchPhase.includes('halftime') ? 'ht-subout' : 'subbed-out';
                             bench.status = 'starter';
                             bench.pos = starter.pos;
-                            const currentMin = Math.floor(matchSeconds/60);
                             matchEvents.push(`<span class="text-amber-400">${currentMin}分 交代:</span> OUT ${starter.name} ⇄ IN ${bench.name}`);
                             updateEventsLog();
                         }
