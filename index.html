@@ -57,8 +57,8 @@
                 <div class="flex items-center space-x-3">
                     <span class="text-sm font-bold text-lucero-cyan">モード:</span>
                     <select id="prep-mode" onchange="handlePrepModeChange()" class="bg-lucero-dark border border-lucero-border rounded-lg px-3 py-1.5 text-sm text-slate-200 focus:outline-none focus:border-lucero-cyan font-bold text-lucero-gold">
-                        <option value="new">① 新規作成</option>
-                        <option value="edit">② 作成途中のデータ編集</option>
+                        <option value="new">新規作成</option>
+                        <option value="edit">作成途中のデータ編集</option>
                     </select>
                 </div>
 
@@ -90,8 +90,8 @@
 
             <!-- 試合基本設定 -->
             <div class="bg-lucero-card p-5 rounded-xl border border-lucero-border space-y-4">
-                <h2 class="text-base font-bold text-lucero-gold border-b border-lucero-border pb-2">1. 試合基本設定・MTG資料</h2>
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                <h2 class="text-base font-bold text-lucero-gold border-b border-lucero-border pb-2">1. 試合基本設定</h2>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
                     <div>
                         <label class="block text-xs font-semibold text-slate-400 mb-1">大会名</label>
                         <select class="w-full bg-lucero-dark border border-lucero-border rounded-lg p-2 text-sm text-slate-200">
@@ -118,6 +118,10 @@
                         <input type="text" value="FCルミナス" class="w-full bg-lucero-dark border border-lucero-border rounded-lg p-2 text-sm text-slate-200">
                     </div>
                     <div>
+                        <label class="block text-xs font-semibold text-slate-400 mb-1">会場</label>
+                        <input type="text" id="prep-venue-input" value="宝ヶ池球技場" oninput="syncVenue(this.value)" placeholder="会場名を入力" class="w-full bg-lucero-dark border border-lucero-border rounded-lg p-2 text-sm text-slate-200">
+                    </div>
+                    <div class="sm:col-span-2 lg:col-span-1">
                         <label class="block text-xs font-semibold text-slate-400 mb-1">チーム</label>
                         <select class="w-full bg-lucero-dark border border-lucero-border rounded-lg p-2 text-sm text-lucero-cyan font-bold">
                             <option value="U-15">U-15</option>
@@ -174,7 +178,7 @@
                         </div>
                         <div>
                             <div class="flex justify-between items-center mb-2">
-                                <h3 class="text-sm font-bold text-amber-400">メンバー外（帯同不可）</h3>
+                                <h3 class="text-sm font-bold text-amber-400">メンバー外（帯同）</h3>
                                 <button onclick="addNewPlayer('out-match')" class="bg-amber-400/20 text-amber-400 border px-2 py-0.5 rounded text-xs font-bold">+ 追加</button>
                             </div>
                             <div id="out-match-container" class="space-y-2 bg-lucero-dark/50 p-3 rounded-xl border border-lucero-border min-h-[50px]"></div>
@@ -312,7 +316,7 @@
 
         <!-- ==================== ② 試合当日タブ ==================== -->
         <section id="tab-match" class="hidden space-y-6">
-            <!-- ① 計測する試合の選択 & ステータスバー（はみ出し防止対応＆試合中システム変更機能追加） -->
+            <!-- ① 計測する試合の選択 & ステータスバー（会場・天候欄追加対応） -->
             <div class="bg-lucero-card p-5 rounded-xl border border-lucero-border space-y-4">
                 <div class="flex flex-wrap items-center justify-between gap-4">
                     <div class="flex-1 min-w-[260px]">
@@ -323,21 +327,22 @@
                         </select>
                     </div>
 
-                    <div class="flex items-center gap-3">
+                    <div class="flex items-center gap-3 flex-wrap">
                         <div>
                             <span class="text-xs text-slate-400 block mb-1">試合ステータス</span>
                             <span id="match-status-badge" class="px-2.5 py-1 rounded text-xs font-bold bg-amber-500/20 text-amber-400 border border-amber-500/40 inline-block">未開始</span>
                         </div>
                         <div>
-                            <span class="text-xs text-slate-400 block mb-1">システム変更</span>
-                            <select id="live-formation-select" onchange="onLiveFormationChange(this.value)" class="bg-lucero-dark border border-lucero-border rounded-lg px-2.5 py-1 text-xs text-lucero-cyan font-bold">
-                                <option value="4-3-3">4-3-3</option>
-                                <option value="4-2-3-1">4-2-3-1</option>
-                                <option value="4-1-4-1">4-1-4-1</option>
-                                <option value="4-4-2">4-4-2 (Flat)</option>
-                                <option value="4-4-2-diamond">4-4-2 (Diamond)</option>
-                                <option value="3-2-3-2">3-2-3-2</option>
-                                <option value="3-2-4-1">3-2-4-1</option>
+                            <span class="text-xs text-slate-400 block mb-1">会場</span>
+                            <span id="display-venue-badge" class="px-2.5 py-1 rounded text-xs font-bold bg-lucero-dark text-slate-200 border border-lucero-border inline-block min-w-[80px]">宝ヶ池球技場</span>
+                        </div>
+                        <div>
+                            <span class="text-xs text-slate-400 block mb-1">天候</span>
+                            <select id="match-weather-select" class="bg-lucero-dark border border-lucero-border rounded-lg px-2.5 py-1 text-xs text-lucero-gold font-bold">
+                                <option value="晴">☀️ 晴</option>
+                                <option value="小雨">🌧️ 小雨</option>
+                                <option value="大雨">⛈️ 大雨</option>
+                                <option value="雪">❄️ 雪</option>
                             </select>
                         </div>
                     </div>
@@ -360,10 +365,22 @@
 
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 <div class="lg:col-span-2 bg-lucero-card p-4 sm:p-5 rounded-xl border border-lucero-border space-y-4">
-                    <h2 class="text-sm sm:text-base font-bold text-lucero-cyan flex items-center justify-between flex-wrap gap-1">
-                        <span>ピッチ上 出場中選手 (タップで入替/交代)</span>
-                        <span class="text-[11px] sm:text-xs font-normal text-slate-400">※試合中いつでもポジション入替・交代が可能</span>
-                    </h2>
+                    <div class="flex flex-wrap items-center justify-between gap-2">
+                        <h2 class="text-sm sm:text-base font-bold text-lucero-cyan">出場中の選手</h2>
+                        <div class="flex items-center space-x-2">
+                            <span class="text-xs text-slate-400">システム変更:</span>
+                            <select id="live-formation-select" onchange="onLiveFormationChange(this.value)" class="bg-lucero-dark border border-lucero-border rounded-lg px-2.5 py-1 text-xs text-lucero-cyan font-bold">
+                                <option value="4-3-3">4-3-3</option>
+                                <option value="4-2-3-1">4-2-3-1</option>
+                                <option value="4-1-4-1">4-1-4-1</option>
+                                <option value="4-4-2">4-4-2 (Flat)</option>
+                                <option value="4-4-2-diamond">4-4-2 (Diamond)</option>
+                                <option value="3-2-3-2">3-2-3-2</option>
+                                <option value="3-2-4-1">3-2-4-1</option>
+                            </select>
+                        </div>
+                    </div>
+                    <p class="text-[11px] sm:text-xs text-slate-400">※試合中いつでもポジション入替・交代が可能</p>
 
                     <div class="relative w-full aspect-[3/4] sm:aspect-[4/5] bg-gradient-to-b from-[#0e3b23] via-[#114b2c] to-[#0e3b23] rounded-2xl border-2 border-emerald-400/40 p-4 shadow-inner overflow-hidden flex flex-col justify-between select-none">
                         <div class="absolute inset-0 pointer-events-none flex items-center justify-center">
@@ -519,7 +536,7 @@
         let pendingActionType = '';
         let goalMode = 'goal';
         let extraHalfDuration = 10;
-        let currentSystem = '4-3-3'; // 現在のフォーメーションシステム
+        let currentSystem = '4-3-3';
 
         function switchTab(tab) {
             document.getElementById('tab-prep').classList.toggle('hidden', tab !== 'prep');
@@ -571,6 +588,13 @@
         }
 
         function getHalfDuration() { return parseInt(document.getElementById('match-duration-select').value) || 45; }
+
+        function syncVenue(val) {
+            const venueBadge = document.getElementById('display-venue-badge');
+            if(venueBadge) {
+                venueBadge.innerText = val.trim() !== '' ? val : '未設定';
+            }
+        }
 
         function onPrepFormationChange() {
             currentSystem = document.getElementById('formation-select').value;
@@ -1071,6 +1095,7 @@
             addAnalysisRow('key-player-rows', '要注意選手名・特徴など...');
             addAnalysisRow('weak-point-rows', '相手の弱点・突くべきスペースなど...');
             handlePrepModeChange();
+            syncVenue(document.getElementById('prep-venue-input').value);
         };
     </script>
 </body>
