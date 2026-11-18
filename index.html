@@ -202,7 +202,7 @@
                 </div>
             </div>
 
-            <!-- 新規追加：4. 相手の分析 -->
+            <!-- 4. 相手の分析 -->
             <div class="bg-lucero-card p-5 rounded-xl border border-lucero-border space-y-5">
                 <h2 class="text-base font-bold text-lucero-gold border-b border-lucero-border pb-2">4. 相手の分析</h2>
                 
@@ -218,7 +218,7 @@
                 </div>
 
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 pt-2">
-                    <!-- 要注意選手（増設可） -->
+                    <!-- 要注意選手（増設可・入力枠の幅自動調整） -->
                     <div class="space-y-3 bg-lucero-dark/40 p-4 rounded-xl border border-lucero-border">
                         <div class="flex justify-between items-center">
                             <label class="text-xs font-bold text-amber-400">要注意選手</label>
@@ -227,7 +227,7 @@
                         <div id="key-player-rows" class="space-y-2"></div>
                     </div>
 
-                    <!-- ウィークポイント（増設可） -->
+                    <!-- ウィークポイント（増設可・入力枠の幅自動調整） -->
                     <div class="space-y-3 bg-lucero-dark/40 p-4 rounded-xl border border-lucero-border">
                         <div class="flex justify-between items-center">
                             <label class="text-xs font-bold text-lucero-cyan">ウィークポイント</label>
@@ -691,13 +691,14 @@
             container.appendChild(row);
         }
 
+        // 要注意選手・ウィークポイント追加（入力枠の幅を自動調整し、✕ボタンを枠内に綺麗に収める）
         function addAnalysisRow(containerId, placeholderText) {
             const container = document.getElementById(containerId);
             const row = document.createElement('div');
-            row.className = 'flex items-center gap-2';
+            row.className = 'relative flex items-center w-full';
             row.innerHTML = `
-                <input type="text" placeholder="${placeholderText}" class="flex-1 bg-lucero-dark border border-lucero-border rounded-lg px-3 py-2 text-sm text-slate-200">
-                <button onclick="this.parentElement.remove()" class="w-8 h-8 bg-rose-500/20 text-rose-400 border border-rose-500/40 rounded-lg flex items-center justify-center text-xs font-bold shrink-0 hover:bg-rose-500/30 transition">✕</button>
+                <input type="text" placeholder="${placeholderText}" class="w-full bg-lucero-dark border border-lucero-border rounded-lg pl-3 pr-12 py-2 text-sm text-slate-200">
+                <button onclick="this.parentElement.remove()" class="absolute right-2 top-1/2 -translate-y-1/2 w-7 h-7 bg-rose-500/20 text-rose-400 border border-rose-500/40 rounded-lg flex items-center justify-center text-xs font-bold hover:bg-rose-500/30 transition">✕</button>
             `;
             container.appendChild(row);
         }
