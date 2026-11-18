@@ -51,9 +51,8 @@
     <!-- メインコンテンツ -->
     <main class="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 space-y-6">
 
-        <!-- ==================== ① 前日準備タブ ==================== -->
+        <!-- ==================== ① 前日準備タブ (固定) ==================== -->
         <section id="tab-prep" class="space-y-6">
-            <!-- モード選択バー -->
             <div class="bg-lucero-card p-4 rounded-xl border border-lucero-border flex flex-wrap items-center justify-between gap-4">
                 <div class="flex items-center space-x-3">
                     <span class="text-sm font-bold text-lucero-cyan">モード:</span>
@@ -218,7 +217,6 @@
                 </div>
 
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 pt-2">
-                    <!-- 要注意選手（増設可・入力枠の幅自動調整） -->
                     <div class="space-y-3 bg-lucero-dark/40 p-4 rounded-xl border border-lucero-border">
                         <div class="flex justify-between items-center">
                             <label class="text-xs font-bold text-amber-400">要注意選手</label>
@@ -227,7 +225,6 @@
                         <div id="key-player-rows" class="space-y-2"></div>
                     </div>
 
-                    <!-- ウィークポイント（増設可・入力枠の幅自動調整） -->
                     <div class="space-y-3 bg-lucero-dark/40 p-4 rounded-xl border border-lucero-border">
                         <div class="flex justify-between items-center">
                             <label class="text-xs font-bold text-lucero-cyan">ウィークポイント</label>
@@ -237,7 +234,6 @@
                     </div>
                 </div>
 
-                <!-- セットプレー（攻撃・守備） -->
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 pt-2">
                     <div>
                         <label class="block text-xs font-semibold text-slate-400 mb-1">セットプレー (攻撃)</label>
@@ -312,15 +308,19 @@
 
         <!-- ==================== ② 試合当日タブ ==================== -->
         <section id="tab-match" class="hidden space-y-6">
+            <!-- ① 計測する試合の選択 & ステータスバー -->
             <div class="bg-lucero-card p-5 rounded-xl border border-lucero-border flex flex-wrap items-center justify-between gap-4">
-                <div class="flex items-center space-x-4">
+                <div class="flex items-center space-x-4 flex-wrap gap-3">
                     <div>
-                        <span class="text-xs text-slate-400 block mb-1">本日の試合</span>
-                        <span class="text-base font-bold text-lucero-gold">vs FCルミナス</span>
+                        <span class="text-xs text-slate-400 block mb-1">計測する試合を選択</span>
+                        <select class="bg-lucero-dark border border-lucero-border rounded-lg px-3 py-1.5 text-sm text-lucero-gold font-bold">
+                            <option>2026/06/12 vs FCルミナス (都道府県リーグ)</option>
+                            <option>2026/06/19 vs アトレチコ北区 (トレーニングマッチ)</option>
+                        </select>
                     </div>
-                    <div class="h-8 w-px bg-lucero-border"></div>
+                    <div class="h-8 w-px bg-lucero-border hidden sm:block"></div>
                     <div>
-                        <span class="text-xs text-slate-400 block">試合ステータス</span>
+                        <span class="text-xs text-slate-400 block mb-1">試合ステータス</span>
                         <span id="match-status-badge" class="px-2.5 py-1 rounded text-xs font-bold bg-amber-500/20 text-amber-400 border border-amber-500/40">未開始</span>
                     </div>
                 </div>
@@ -343,7 +343,7 @@
                 <div class="lg:col-span-2 bg-lucero-card p-4 sm:p-5 rounded-xl border border-lucero-border space-y-4">
                     <h2 class="text-sm sm:text-base font-bold text-lucero-cyan flex items-center justify-between flex-wrap gap-1">
                         <span>ピッチ上 出場中選手 (タップで入替/交代)</span>
-                        <span class="text-[11px] sm:text-xs font-normal text-slate-400">※HT中または試合中の交代が可能</span>
+                        <span class="text-[11px] sm:text-xs font-normal text-slate-400">※試合中・HT中いつでも交代・入替が可能</span>
                     </h2>
 
                     <div class="relative w-full aspect-[3/4] sm:aspect-[4/5] bg-gradient-to-b from-[#0e3b23] via-[#114b2c] to-[#0e3b23] rounded-2xl border-2 border-emerald-400/40 p-4 shadow-inner overflow-hidden flex flex-col justify-between select-none">
@@ -368,7 +368,7 @@
                     </div>
 
                     <div class="bg-lucero-card p-5 rounded-xl border border-rose-500/40 space-y-3">
-                        <h2 class="text-base font-bold text-rose-400">交代済み・HT交代選手</h2>
+                        <h2 class="text-base font-bold text-rose-400">交代済み選手</h2>
                         <div id="subbed-out-container" class="space-y-2 min-h-[80px] max-h-[150px] overflow-y-auto bg-lucero-dark/40 p-3 rounded-lg border">
                             <p class="text-xs text-slate-500 text-center py-2">交代した選手はここに表示されます</p>
                         </div>
@@ -478,6 +478,7 @@
         let teamConcedes = 0;
         let matchEvents = [];
 
+        // フェーズ管理: not_started, first_half, halftime, second_half, full_time_ended, extra_halftime, extra_first_half, extra_second_half, finished
         let matchPhase = 'not_started';
         let pendingActionType = '';
         let goalMode = 'goal';
@@ -691,7 +692,6 @@
             container.appendChild(row);
         }
 
-        // 要注意選手・ウィークポイント追加（入力枠の幅を自動調整し、✕ボタンを枠内に綺麗に収める）
         function addAnalysisRow(containerId, placeholderText) {
             const container = document.getElementById(containerId);
             const row = document.createElement('div');
@@ -703,12 +703,11 @@
             container.appendChild(row);
         }
 
+        // メイン進行ボタンの制御 (通常ハーフ〜延長戦のステータス変化対応)
         function handleMainAction() {
             if (matchPhase === 'not_started') {
                 matchPhase = 'first_half';
-                document.getElementById('match-status-badge').innerText = '前半';
-                document.getElementById('match-status-badge').className = 'px-2.5 py-1 rounded text-xs font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/40';
-                document.getElementById('btn-main-action').innerText = '前半終了';
+                updateMatchStatusUI('前半', 'emerald', '前半終了');
                 startTimer();
                 matchEvents.push(`<span class="text-emerald-400">0分 前半開始</span>`);
                 updateEventsLog();
@@ -717,15 +716,39 @@
                 openATModal('前半のアディショナルタイム (AT)');
             } else if (matchPhase === 'halftime') {
                 matchPhase = 'second_half';
-                document.getElementById('match-status-badge').innerText = '後半';
-                document.getElementById('btn-main-action').innerText = '後半終了';
+                updateMatchStatusUI('後半', 'emerald', '後半終了');
                 startTimer();
                 matchEvents.push(`<span class="text-emerald-400">後半開始</span>`);
                 updateEventsLog();
             } else if (matchPhase === 'second_half') {
                 pendingActionType = 'second_half_end';
                 openATModal('後半のアディショナルタイム (AT)');
+            } else if (matchPhase === 'extra_halftime') {
+                matchPhase = 'extra_first_half';
+                updateMatchStatusUI('延長前半', 'amber', '延長前半終了');
+                startTimer();
+                matchEvents.push(`<span class="text-amber-400">延長前半開始</span>`);
+                updateEventsLog();
+            } else if (matchPhase === 'extra_first_half') {
+                pendingActionType = 'extra_first_half_end';
+                openATModal('延長前半のアディショナルタイム (AT)');
+            } else if (matchPhase === 'extra_halftime_2') {
+                matchPhase = 'extra_second_half';
+                updateMatchStatusUI('延長後半', 'amber', '延長後半終了');
+                startTimer();
+                matchEvents.push(`<span class="text-amber-400">延長後半開始</span>`);
+                updateEventsLog();
+            } else if (matchPhase === 'extra_second_half') {
+                pendingActionType = 'extra_second_half_end';
+                openATModal('延長後半のアディショナルタイム (AT)');
             }
+        }
+
+        function updateMatchStatusUI(text, colorTheme, btnText) {
+            const badge = document.getElementById('match-status-badge');
+            badge.innerText = text;
+            badge.className = `px-2.5 py-1 rounded text-xs font-bold bg-${colorTheme}-500/20 text-${colorTheme}-400 border border-${colorTheme}-500/40`;
+            document.getElementById('btn-main-action').innerText = btnText;
         }
 
         function startTimer() {
@@ -748,7 +771,7 @@
 
         function submitAT() {
             const atMin = parseInt(document.getElementById('at-input-minutes').value) || 0;
-            const halfDur = getHalfDuration();
+            const halfDur = (matchPhase.includes('extra')) ? 15 : getHalfDuration(); // 延長戦は通常15分ハーフ
             const totalMinutes = halfDur + atMin;
             const addSecs = totalMinutes * 60;
 
@@ -758,18 +781,30 @@
             if (pendingActionType === 'first_half_end') {
                 players.forEach(p => { if (p.status === 'starter') p.playSeconds += addSecs; });
                 matchPhase = 'halftime';
-                document.getElementById('match-status-badge').innerText = 'ハーフタイム';
-                document.getElementById('match-status-badge').className = 'px-2.5 py-1 rounded text-xs font-bold bg-amber-500/20 text-amber-400 border border-amber-500/40';
-                document.getElementById('btn-main-action').innerText = '後半開始';
+                updateMatchStatusUI('ハーフタイム', 'amber', '後半開始');
                 document.getElementById('match-timer').innerText = `${totalMinutes}:00 (HT)`;
                 matchEvents.push(`<span class="text-amber-400">前半終了 (AT +${atMin}分)</span>`);
                 updateEventsLog();
-                alert(`前半終了しました。出場時間に ${totalMinutes}分 が加算されました。ハーフタイム中の選手交代が可能です。`);
+                alert(`前半終了しました。出場時間に ${totalMinutes}分 が加算されました。`);
             } else if (pendingActionType === 'second_half_end') {
                 players.forEach(p => { if (p.status === 'starter') p.playSeconds += addSecs; });
-                matchEvents.push(`<span class="text-amber-400">後半終了 (AT +${atMin}分)</span>`);
+                matchPhase = 'full_time_ended';
+                matchEvents.push(`<span class="text-amber-400">試合終了 (AT +${atMin}分)</span>`);
                 updateEventsLog();
                 checkMatchResultAfterFullTime();
+            } else if (pendingActionType === 'extra_first_half_end') {
+                players.forEach(p => { if (p.status === 'starter') p.playSeconds += addSecs; });
+                matchPhase = 'extra_halftime_2';
+                updateMatchStatusUI('延長ハーフタイム', 'amber', '延長後半開始');
+                document.getElementById('match-timer').innerText = `${totalMinutes}:00 (E-HT)`;
+                matchEvents.push(`<span class="text-amber-400">延長前半終了 (AT +${atMin}分)</span>`);
+                updateEventsLog();
+                alert(`延長前半終了しました。`);
+            } else if (pendingActionType === 'extra_second_half_end') {
+                players.forEach(p => { if (p.status === 'starter') p.playSeconds += addSecs; });
+                matchEvents.push(`<span class="text-amber-400">延長後半終了 (AT +${atMin}分)</span>`);
+                updateEventsLog();
+                checkExtraMatchResultAfterFullTime();
             }
         }
 
@@ -782,11 +817,24 @@
             }
         }
 
+        function checkExtraMatchResultAfterFullTime() {
+            if (teamGoals === teamConcedes) {
+                // 延長でも同点の場合はPK戦へ
+                openPKModal();
+            } else {
+                finishMatchCompletely('試合終了（延長戦決着）');
+            }
+        }
+
         function selectEndGameOption(option) {
             document.getElementById('endgame-modal').classList.remove('flex');
             document.getElementById('endgame-modal').classList.add('hidden');
             if (option === 'draw') finishMatchCompletely('終了（引き分け）');
-            else if (option === 'extra') { matchPhase = 'extra_first_half'; alert('延長戦開始'); }
+            else if (option === 'extra') {
+                matchPhase = 'extra_halftime';
+                updateMatchStatusUI('延長前 (準備)', 'amber', '延長前半開始');
+                alert('延長戦を開始します。「延長前半開始」ボタンを押してください。');
+            }
             else if (option === 'pk') openPKModal();
         }
 
@@ -827,8 +875,14 @@
             finishMatchCompletely('試合終了（PK戦決着）');
         }
 
+        // 前半・後半・延長中いつでも選手交代・ポジション入替が行えるよう改修
         function handleMatchPlayerClick(id) {
             if(!id) return;
+            if (matchPhase === 'not_started' || matchPhase === 'finished' || matchPhase === 'full_time_ended') {
+                alert('現在は試合中またはハーフタイムではありません。');
+                return;
+            }
+
             if(selectedPlayerForMatch === null) {
                 selectedPlayerForMatch = id;
                 renderLiveMatch();
@@ -840,33 +894,25 @@
                 const p2 = players.find(p => p.id === id);
 
                 if(p1 && p2) {
-                    if(p1.status === 'starter' && p2.status === 'starter' && matchPhase !== 'halftime') {
+                    if(p1.status === 'starter' && p2.status === 'starter') {
+                        // スタメン同士ならポジション入れ替え
                         const tempPos = p1.pos; p1.pos = p2.pos; p2.pos = tempPos;
                         const tempName = p1.name; p1.name = p2.name; p2.name = tempName;
                         const tempNum = p1.number; p1.number = p2.number; p2.number = tempNum;
                         alert(`ポジション入替: ${p1.name} ⇄ ${p2.name}`);
                     } else if((p1.status === 'starter' && p2.status === 'bench') || (p1.status === 'bench' && p2.status === 'starter')) {
+                        // スタメンとベンチなら選手交代（前半・後半・延長いつでも可能）
                         const starter = p1.status === 'starter' ? p1 : p2;
                         const bench = p1.status === 'bench' ? p1 : p2;
 
-                        if (matchPhase === 'halftime') {
-                            if(confirm(`[HT交代] ${starter.name} ⇄ ${bench.name}`)) {
-                                starter.status = 'ht-subout';
-                                bench.status = 'starter';
-                                bench.pos = starter.pos;
-                                matchEvents.push(`<span class="text-amber-400">HT交代:</span> OUT ${starter.name} ⇄ IN ${bench.name}`);
-                                updateEventsLog();
-                            }
-                        } else if (matchPhase === 'second_half') {
-                            if(confirm(`[選手交代] ${starter.name} ⇄ ${bench.name}`)) {
-                                starter.status = 'subbed-out';
-                                bench.status = 'starter';
-                                bench.pos = starter.pos;
-                                matchEvents.push(`<span class="text-amber-400">${Math.floor(matchSeconds/60)}分 交代:</span> OUT ${starter.name} ⇄ IN ${bench.name}`);
-                                updateEventsLog();
-                            }
-                        } else {
-                            alert('現在は選手交代ができない時間帯です。');
+                        const phaseName = matchPhase.includes('halftime') ? 'HT交代' : '選手交代';
+                        if(confirm(`[${phaseName}] ${starter.name} ⇄ ${bench.name}`)) {
+                            starter.status = matchPhase.includes('halftime') ? 'ht-subout' : 'subbed-out';
+                            bench.status = 'starter';
+                            bench.pos = starter.pos;
+                            const currentMin = Math.floor(matchSeconds/60);
+                            matchEvents.push(`<span class="text-amber-400">${currentMin}分 交代:</span> OUT ${starter.name} ⇄ IN ${bench.name}`);
+                            updateEventsLog();
                         }
                     }
                 }
