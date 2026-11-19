@@ -1,1 +1,125 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ログイン - Lucero Staff Portal</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            lucero: {
+              dark: '#0b1329',
+              card: '#131c38',
+              cyan: '#00f2fe',
+              gold: '#f6d365',
+              accent: '#1e294b',
+              border: '#334155'
+            }
+          }
+        }
+      }
+    }
+  </script>
+</head>
+<body class="min-h-screen flex flex-col justify-center items-center bg-[#0b1329] text-slate-100 p-4 font-sans">
 
+  <div class="w-full max-w-md space-y-6">
+    <!-- ロゴヘッダー -->
+    <div class="text-center space-y-2">
+      <div class="w-12 h-12 mx-auto rounded-xl bg-gradient-to-tr from-lucero-gold to-lucero-cyan flex items-center justify-center font-black text-xl text-lucero-dark shadow-lg">
+        L
+      </div>
+      <h1 class="text-2xl font-extrabold tracking-wider text-lucero-gold">LUCERO STAFF PORTAL</h1>
+      <p class="text-xs text-slate-400">スタッフ専用ポータルログイン</p>
+    </div>
+
+    <!-- ログインカード -->
+    <div class="bg-lucero-card border border-lucero-border rounded-2xl p-6 sm:p-8 shadow-2xl space-y-5">
+      <h2 class="text-base font-bold text-slate-100 border-b border-lucero-border pb-2">LOGIN</h2>
+
+      <form id="portalLoginForm" onsubmit="handlePortalLogin(event)" class="space-y-4">
+        <div>
+          <label for="loginId" class="block text-xs font-semibold text-slate-400 mb-1.5">ログインID（メールアドレス）</label>
+          <input type="text" id="loginId" required autocomplete="username" placeholder="example@gmail.com"
+            class="w-full bg-lucero-dark border border-lucero-border rounded-lg px-3.5 py-2.5 text-sm text-slate-100 focus:outline-none focus:border-lucero-cyan transition">
+        </div>
+
+        <div>
+          <label for="loginPw" class="block text-xs font-semibold text-slate-400 mb-1.5">パスワード</label>
+          <input type="password" id="loginPw" required autocomplete="current-password" placeholder="••••••••"
+            class="w-full bg-lucero-dark border border-lucero-border rounded-lg px-3.5 py-2.5 text-sm text-slate-100 focus:outline-none focus:border-lucero-cyan transition">
+        </div>
+
+        <p id="loginErrorMsg" class="hidden text-xs text-rose-400 bg-rose-500/10 border border-rose-500/30 rounded-lg p-2.5"></p>
+
+        <button type="submit" id="loginBtn"
+          class="w-full py-3 rounded-xl bg-gradient-to-r from-lucero-gold to-amber-500 text-lucero-dark font-bold text-sm shadow-lg hover:opacity-95 transition">
+          ログインする
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <script src="./auth.js"></script>
+  <script>
+    // すでにログイン済みならトップページへ自動遷移
+    if (getLoginUser()) {
+      window.location.replace("./top.html");
+    }
+
+    async function handlePortalLogin(e) {
+      e.preventDefault();
+      const id = document.getElementById("loginId").value.trim();
+      const pw = document.getElementById("loginPw").value.trim();
+      const errEl = document.getElementById("loginErrorMsg");
+      const btn = document.getElementById("loginBtn");
+
+      errEl.classList.add("hidden");
+      btn.disabled = true;
+      btn.innerText = "認証中...";
+
+      try {
+        const res = await fetch(GAS_URL, {
+          method: "POST",
+          headers: { "Content-Type": "text/plain" },
+          body: JSON.stringify({
+            action: "portalLogin",
+            id: id,
+            pw: pw
+          })
+        });
+
+        const result = await res.json();
+
+        if (result.status === "success" && result.user) {
+          // 権限判定（スプレッドシートF列が「管理者」なら admin、それ以外は staff）
+          const rawRole = result.user.rawRole || result.user.role || "";
+          const normalizedRole = (rawRole === "管理者" || rawRole === "admin") ? "admin" : "staff";
+
+          saveLoginUser({
+            id: result.user.id || id,
+            name: result.user.name,
+            role: normalizedRole,
+            rawRole: rawRole || (normalizedRole === "admin" ? "管理者" : "スタッフ")
+          });
+
+          window.location.href = "./top.html";
+        } else {
+          errEl.innerText = result.message || "IDまたはパスワードが正しくないか、アクセス権限がありません。";
+          errEl.classList.remove("hidden");
+        }
+      } catch (err) {
+        console.error(err);
+        errEl.innerText = "通信エラーが発生しました。ネットワーク状態を確認してください。";
+        errEl.classList.remove("hidden");
+      } finally {
+        btn.disabled = false;
+        btn.innerText = "ログインする";
+      }
+    }
+  </script>
+</body>
+</html>
