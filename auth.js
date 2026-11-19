@@ -3,7 +3,7 @@
 // ==========================================
 
 // 既存の勤怠管理GASのURL（ログイン処理もこのGASに統合するか、専用GASのURLを設定）
-const GAS_URL = "https://script.google.com/macros/s/AKfycbzpqVPtSIUMjSarKvEQCWgh4h4eXP-5suFn59Vw3E6rMHbMymo4ee6OFUME9jx-JtUh/exec";
+const GAS_URL = "https://script.google.com/macros/s/AKfycbysqy2E5yk-25BTQvs2h7nxRKuwpSS1MJshJRJeyRHzYAKhPTvKL61hob641Selvwd2Xw/exec";
 const AUTH_STORAGE_KEY = "lucero_staff_portal_user_v1";
 
 /**
