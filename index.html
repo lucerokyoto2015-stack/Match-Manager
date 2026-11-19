@@ -1,413 +1,90 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Lucero スタッフポータル</title>
-  <style>
-    :root {
-      --bg: #f4f6fa;
-      --surface: #ffffff;
-      --text: #111827;
-      --muted: #6b7280;
-      --border: #e5e7eb;
-      --primary: #1e3a8a;
-      --primary-2: #2563eb;
-      --accent: #0ea5e9;
-      --danger: #dc2626;
-      --shadow: 0 10px 25px rgba(15, 23, 42, 0.08);
-      --radius: 14px;
-    }
-
-    * {
-      box-sizing: border-box;
-    }
-
-    body {
-      margin: 0;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Hiragino Sans", "Noto Sans JP", sans-serif;
-      background: var(--bg);
-      color: var(--text);
-      min-height: 100vh;
-    }
-
-    .topbar {
-      background: var(--surface);
-      border-bottom: 1px solid var(--border);
-      padding: 14px 20px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-      position: sticky;
-      top: 0;
-      z-index: 10;
-    }
-
-    .brand {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      font-weight: 800;
-      font-size: 17px;
-      letter-spacing: 0.02em;
-    }
-
-    .brand-badge {
-      background: linear-gradient(135deg, var(--primary), var(--primary-2));
-      color: #fff;
-      font-size: 11px;
-      padding: 3px 8px;
-      border-radius: 999px;
-    }
-
-    .user-area {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      font-size: 13px;
-    }
-
-    .user-chip {
-      background: #eff6ff;
-      color: var(--primary);
-      border: 1px solid #bfdbfe;
-      padding: 5px 10px;
-      border-radius: 999px;
-      font-weight: 600;
-    }
-
-    .btn {
-      border: none;
-      border-radius: 10px;
-      padding: 10px 14px;
-      font-size: 14px;
-      font-weight: 700;
-      cursor: pointer;
-      transition: transform 0.12s ease, opacity 0.15s ease, box-shadow 0.15s ease;
-    }
-
-    .btn:disabled {
-      opacity: 0.6;
-      cursor: not-allowed;
-    }
-
-    .btn-ghost {
-      background: #f3f4f6;
-      color: var(--text);
-      padding: 7px 11px;
-      font-size: 12px;
-    }
-
-    .btn-primary {
-      width: 100%;
-      background: linear-gradient(135deg, var(--primary), var(--primary-2));
-      color: #fff;
-      padding: 12px 16px;
-      box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25);
-    }
-
-    .btn-primary:hover:not(:disabled) {
-      transform: translateY(-1px);
-    }
-
-    .container {
-      max-width: 880px;
-      margin: 0 auto;
-      padding: 28px 18px 48px;
-    }
-
-    /* ログインカード */
-    .login-card {
-      max-width: 420px;
-      margin: 36px auto;
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 28px 24px;
-      box-shadow: var(--shadow);
-    }
-
-    .login-card h1 {
-      margin: 0 0 6px;
-      font-size: 21px;
-    }
-
-    .login-card p {
-      margin: 0 0 20px;
-      font-size: 13px;
-      color: var(--muted);
-    }
-
-    .field {
-      margin-bottom: 14px;
-    }
-
-    .field label {
-      display: block;
-      font-size: 12px;
-      font-weight: 700;
-      margin-bottom: 6px;
-      color: #374151;
-    }
-
-    .field input {
-      width: 100%;
-      padding: 11px 12px;
-      border: 1px solid #d1d5db;
-      border-radius: 10px;
-      font-size: 15px;
-    }
-
-    .field input:focus {
-      outline: none;
-      border-color: var(--primary-2);
-      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
-    }
-
-    .error-msg {
-      margin-top: 12px;
-      color: var(--danger);
-      font-size: 13px;
-      font-weight: 600;
-      min-height: 18px;
-    }
-
-    /* ポータルメニュー */
-    .welcome-box {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 20px 22px;
-      margin-bottom: 20px;
-      box-shadow: var(--shadow);
-    }
-
-    .welcome-box h1 {
-      margin: 0 0 6px;
-      font-size: 22px;
-    }
-
-    .welcome-box p {
-      margin: 0;
-      font-size: 14px;
-      color: var(--muted);
-    }
-
-    .menu-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-      gap: 16px;
-    }
-
-    .portal-card {
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      gap: 10px;
-      padding: 20px;
-      border-radius: var(--radius);
-      text-decoration: none;
-      color: var(--text);
-      background: var(--surface);
-      border: 1px solid var(--border);
-      box-shadow: var(--shadow);
-      transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
-    }
-
-    .portal-card:hover {
-      transform: translateY(-2px);
-      border-color: #93c5fd;
-    }
-
-    /* STARPASS ボタン専用スタイル */
-    .portal-card--starpass {
-      color: #ffffff;
-      border: none;
-      background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 60%, #0ea5e9 100%);
-      box-shadow: 0 8px 20px rgba(37, 99, 235, 0.28);
-    }
-
-    .portal-card--starpass:hover {
-      border-color: transparent;
-      box-shadow: 0 12px 24px rgba(37, 99, 235, 0.36);
-    }
-
-    .card-badge {
-      align-self: flex-start;
-      font-size: 11px;
-      font-weight: 700;
-      letter-spacing: 0.04em;
-      padding: 3px 9px;
-      border-radius: 999px;
-      background: #eff6ff;
-      color: var(--primary);
-    }
-
-    .portal-card--starpass .card-badge {
-      background: rgba(255, 255, 255, 0.22);
-      color: #ffffff;
-    }
-
-    .card-title {
-      font-size: 19px;
-      font-weight: 800;
-      line-height: 1.3;
-      margin: 2px 0;
-    }
-
-    .card-desc {
-      font-size: 13px;
-      line-height: 1.5;
-      color: var(--muted);
-    }
-
-    .portal-card--starpass .card-desc {
-      color: rgba(255, 255, 255, 0.92);
-    }
-
-    .card-cta {
-      font-size: 13px;
-      font-weight: 700;
-      margin-top: 4px;
-    }
-
-    .hidden {
-      display: none !important;
-    }
-  </style>
-</head>
-<body>
-  <header class="topbar">
-    <div class="brand">
-      <span>Lucero STAFF PORTAL</span>
-      <span class="brand-badge">PORTAL</span>
-    </div>
-    <div id="userArea" class="user-area hidden">
-      <span id="userChip" class="user-chip"></span>
-      <button id="logoutBtn" type="button" class="btn btn-ghost">ログアウト</button>
-    </div>
-  </header>
-
-  <main class="container">
-    <!-- ログイン画面 -->
-    <section id="loginSection" class="login-card">
-      <h1>スタッフログイン</h1>
-      <p>ポータルを利用するにはスタッフIDとパスワードを入力してください。</p>
-      <form id="loginForm">
-        <div class="field">
-          <label for="staffId">スタッフID</label>
-          <input id="staffId" name="staffId" type="text" autocomplete="username" required />
-        </div>
-        <div class="field">
-          <label for="staffPw">パスワード</label>
-          <input id="staffPw" name="staffPw" type="password" autocomplete="current-password" required />
-        </div>
-        <button id="loginSubmitBtn" type="submit" class="btn btn-primary">ログイン</button>
-        <div id="loginError" class="error-msg" role="alert"></div>
-      </form>
-    </section>
-
-    <!-- ポータルホーム画面 -->
-    <section id="portalSection" class="hidden">
-      <div class="welcome-box">
-        <h1 id="welcomeTitle">ようこそ</h1>
-        <p>利用する機能を選択してください。</p>
-      </div>
-
-      <div class="menu-grid">
-        <!-- 勤怠管理 -->
-        <a href="attendance.html" class="portal-card">
-          <div>
-            <span class="card-badge">勤怠・打刻</span>
-            <div class="card-title">勤怠管理</div>
-            <div class="card-desc">出退勤打刻、勤怠履歴の確認、打刻修正申請</div>
-          </div>
-          <div class="card-cta">勤怠画面を開く →</div>
-        </a>
-
-        <!-- STARPASS（追加ボタン） -->
-        <a href="starpass.html" class="portal-card portal-card--starpass" aria-label="STARPASS 加盟店マップ・クーポン利用へ移動">
-          <div>
-            <span class="card-badge">加盟店・特典</span>
-            <div class="card-title">STARPASS</div>
-            <div class="card-desc">加盟店マップ検索・クーポン利用・履歴確認</div>
-          </div>
-          <div class="card-cta">STARPASSを開く →</div>
-        </a>
-      </div>
-    </section>
-  </main>
-
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ログイン - Lucero Staff Portal</title>
+  <script src="https://cdn.tailwindcss.com"></script>
   <script>
-    const GAS_WEBAPP_URL = "https://script.google.com/macros/s/AKfycbysqy2E5yk-25BTQvs2h7nxRKuwpSS1MJshJRJeyRHzYAKhPTvKL61hob641Selvwd2Xw/exec";
-    const SESSION_KEY = "lucero_portal_user";
-
-    const loginSection = document.getElementById("loginSection");
-    const portalSection = document.getElementById("portalSection");
-    const userArea = document.getElementById("userArea");
-    const userChip = document.getElementById("userChip");
-    const welcomeTitle = document.getElementById("welcomeTitle");
-    const loginForm = document.getElementById("loginForm");
-    const loginSubmitBtn = document.getElementById("loginSubmitBtn");
-    const loginError = document.getElementById("loginError");
-    const logoutBtn = document.getElementById("logoutBtn");
-
-    function getSessionUser() {
-      try {
-        const raw = sessionStorage.getItem(SESSION_KEY);
-        if (!raw) return null;
-        const parsed = JSON.parse(raw);
-        return parsed && parsed.id ? parsed : null;
-      } catch (_) {
-        return null;
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            lucero: {
+              dark: '#0b1329',
+              card: '#131c38',
+              cyan: '#00f2fe',
+              gold: '#f6d365',
+              accent: '#1e294b',
+              border: '#334155'
+            }
+          }
+        }
       }
     }
+  </script>
+</head>
+<body class="min-h-screen flex flex-col justify-center items-center bg-[#0b1329] text-slate-100 p-4 font-sans">
 
-    function setSessionUser(user) {
-      sessionStorage.setItem(SESSION_KEY, JSON.stringify(user));
+  <div class="w-full max-w-md space-y-6">
+    <!-- ロゴヘッダー -->
+    <div class="text-center space-y-2">
+      <div class="w-12 h-12 mx-auto rounded-xl bg-gradient-to-tr from-lucero-gold to-lucero-cyan flex items-center justify-center font-black text-xl text-lucero-dark shadow-lg">
+        L
+      </div>
+      <h1 class="text-2xl font-extrabold tracking-wider text-lucero-gold">LUCERO STAFF PORTAL</h1>
+      <p class="text-xs text-slate-400">スタッフ専用ポータルログイン</p>
+    </div>
+
+    <!-- ログインカード -->
+    <div class="bg-lucero-card border border-lucero-border rounded-2xl p-6 sm:p-8 shadow-2xl space-y-5">
+      <h2 class="text-base font-bold text-slate-100 border-b border-lucero-border pb-2">LOGIN</h2>
+
+      <form id="portalLoginForm" onsubmit="handlePortalLogin(event)" class="space-y-4">
+        <div>
+          <label for="loginId" class="block text-xs font-semibold text-slate-400 mb-1.5">ログインID（メールアドレス）</label>
+          <input type="text" id="loginId" required autocomplete="username" placeholder="example@gmail.com"
+            class="w-full bg-lucero-dark border border-lucero-border rounded-lg px-3.5 py-2.5 text-sm text-slate-100 focus:outline-none focus:border-lucero-cyan transition">
+        </div>
+
+        <div>
+          <label for="loginPw" class="block text-xs font-semibold text-slate-400 mb-1.5">パスワード</label>
+          <input type="password" id="loginPw" required autocomplete="current-password" placeholder="••••••••"
+            class="w-full bg-lucero-dark border border-lucero-border rounded-lg px-3.5 py-2.5 text-sm text-slate-100 focus:outline-none focus:border-lucero-cyan transition">
+        </div>
+
+        <p id="loginErrorMsg" class="hidden text-xs text-rose-400 bg-rose-500/10 border border-rose-500/30 rounded-lg p-2.5"></p>
+
+        <button type="submit" id="loginBtn"
+          class="w-full py-3 rounded-xl bg-gradient-to-r from-lucero-gold to-amber-500 text-lucero-dark font-bold text-sm shadow-lg hover:opacity-95 transition">
+          ログインする
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <script src="./auth.js"></script>
+  <script>
+    // すでにログイン済みならトップページへ自動遷移
+    if (getLoginUser()) {
+      window.location.replace("./top.html");
     }
 
-    function clearSessionUser() {
-      sessionStorage.removeItem(SESSION_KEY);
-    }
-
-    function renderView() {
-      const user = getSessionUser();
-      if (user) {
-        loginSection.classList.add("hidden");
-        portalSection.classList.remove("hidden");
-        userArea.classList.remove("hidden");
-
-        const roleLabel = user.rawRole ? `（${user.rawRole}）` : "";
-        userChip.textContent = `${user.name || user.id}${roleLabel}`;
-        welcomeTitle.textContent = `${user.name || user.id} さん、お疲れさまです`;
-      } else {
-        portalSection.classList.add("hidden");
-        userArea.classList.add("hidden");
-        loginSection.classList.remove("hidden");
-      }
-    }
-
-    loginForm.addEventListener("submit", async (e) => {
+    async function handlePortalLogin(e) {
       e.preventDefault();
-      loginError.textContent = "";
+      const id = document.getElementById("loginId").value.trim();
+      const pw = document.getElementById("loginPw").value.trim();
+      const errEl = document.getElementById("loginErrorMsg");
+      const btn = document.getElementById("loginBtn");
 
-      const id = document.getElementById("staffId").value.trim();
-      const pw = document.getElementById("staffPw").value.trim();
-
-      if (!id || !pw) {
-        loginError.textContent = "スタッフIDとパスワードを入力してください。";
-        return;
-      }
-
-      loginSubmitBtn.disabled = true;
-      loginSubmitBtn.textContent = "認証中...";
+      errEl.classList.add("hidden");
+      btn.disabled = true;
+      btn.innerText = "認証中...";
 
       try {
-        const res = await fetch(GAS_WEBAPP_URL, {
+        const res = await fetch(GAS_URL, {
           method: "POST",
-          headers: { "Content-Type": "text/plain;charset=utf-8" },
+          headers: { "Content-Type": "text/plain" },
           body: JSON.stringify({
             action: "portalLogin",
             id: id,
@@ -415,28 +92,34 @@
           })
         });
 
-        const data = await res.json();
-        if (data && data.status === "success" && data.user) {
-          setSessionUser(data.user);
-          loginForm.reset();
-          renderView();
+        const result = await res.json();
+
+        if (result.status === "success" && result.user) {
+          // 権限判定（スプレッドシートF列が「管理者」なら admin、それ以外は staff）
+          const rawRole = result.user.rawRole || result.user.role || "";
+          const normalizedRole = (rawRole === "管理者" || rawRole === "admin") ? "admin" : "staff";
+
+          saveLoginUser({
+            id: result.user.id || id,
+            name: result.user.name,
+            role: normalizedRole,
+            rawRole: rawRole || (normalizedRole === "admin" ? "管理者" : "スタッフ")
+          });
+
+          window.location.href = "./top.html";
         } else {
-          loginError.textContent = (data && data.message) || "ログインに失敗しました。";
+          errEl.innerText = result.message || "IDまたはパスワードが正しくないか、アクセス権限がありません。";
+          errEl.classList.remove("hidden");
         }
       } catch (err) {
-        loginError.textContent = "通信エラーが発生しました。時間をおいて再度お試しください。";
+        console.error(err);
+        errEl.innerText = "通信エラーが発生しました。ネットワーク状態を確認してください。";
+        errEl.classList.remove("hidden");
       } finally {
-        loginSubmitBtn.disabled = false;
-        loginSubmitBtn.textContent = "ログイン";
+        btn.disabled = false;
+        btn.innerText = "ログインする";
       }
-    });
-
-    logoutBtn.addEventListener("click", () => {
-      clearSessionUser();
-      renderView();
-    });
-
-    renderView();
+    }
   </script>
 </body>
 </html>
