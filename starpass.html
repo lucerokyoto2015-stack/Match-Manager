@@ -80,11 +80,11 @@
             gap: 14px;
         }
 
-        /* 🔄 3D反転コンテナ構造（写真枠削除に合わせてリサイズ） */
+        /* 🔄 3D反転コンテナ構造 */
         .card-container {
             perspective: 1200px;
             width: 100%;
-            aspect-ratio: 1 / 1.22;
+            aspect-ratio: 1 / 1.16;
             position: relative;
             cursor: pointer;
         }
@@ -255,7 +255,7 @@
             text-transform: uppercase;
         }
 
-        /* 会員情報エリア（写真枠なし全幅レイアウト） */
+        /* 会員情報エリア */
         .card-profile-area {
             z-index: 2;
             background: rgba(2, 6, 23, 0.38);
@@ -276,27 +276,14 @@
             font-size: 20px;
             font-weight: 800;
             letter-spacing: 0.6px;
-            color: #ffffff;
+            color: var(--lucero-gold-light);
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
-            line-height: 1.25;
-        }
-
-        .player-alpha {
-            font-family: 'Urbanist', sans-serif;
-            font-size: 11px;
-            font-weight: 600;
-            color: var(--lucero-gold-light);
-            letter-spacing: 1px;
-            text-transform: uppercase;
-            margin-top: 2px;
+            line-height: 1.3;
             margin-bottom: 10px;
             border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-            padding-bottom: 6px;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
+            padding-bottom: 8px;
         }
 
         .meta-grid {
@@ -856,7 +843,7 @@
                     </div>
 
                     <div class="card-header">
-                        <div class="card-badge" id="passBadge">LUCERO STAFF</div>
+                        <div class="card-badge" id="passBadge">STAFF</div>
                         <div class="live-clock">
                             <div class="live-dot"></div>
                             <span id="clockSerial">00:00:00</span>
@@ -873,7 +860,6 @@
                     <div class="card-profile-area">
                         <div class="label-sub">Member Name</div>
                         <div class="player-name" id="cardName">STAFF</div>
-                        <div class="player-alpha" id="cardAlpha">LUCERO KYOTO STAFF</div>
 
                         <div class="meta-grid">
                             <div>
@@ -1018,21 +1004,66 @@
         let appStarted = false;
         let portalUser = null;
 
-        // ポータルログインユーザー情報の取得（auth.js 連携）
+        function extractUserFromStorage(storage) {
+            if (!storage) return null;
+            const candidateKeys = ["lucero_portal_user", "portal_user", "loginUser", "user"];
+            for (let i = 0; i < candidateKeys.length; i++) {
+                try {
+                    const raw = storage.getItem(candidateKeys[i]);
+                    if (!raw) continue;
+                    const parsed = JSON.parse(raw);
+                    const u = parsed && parsed.user ? parsed.user : parsed;
+                    if (u && (u.name || u.staffName || u.id || u.staffId)) {
+                        return {
+                            id: u.id || u.staffId || "",
+                            name: u.name || u.staffName || "",
+                            rawRole: u.rawRole || u.role || ""
+                        };
+                    }
+                } catch (_) {}
+            }
+            for (let j = 0; j < storage.length; j++) {
+                const k = storage.key(j);
+                if (!k || !/user|auth|login|staff|portal/i.test(k)) continue;
+                try {
+                    const raw = storage.getItem(k);
+                    if (!raw || raw.charAt(0) !== "{") continue;
+                    const parsed = JSON.parse(raw);
+                    const u = parsed && parsed.user ? parsed.user : parsed;
+                    if (u && (u.name || u.staffName)) {
+                        return {
+                            id: u.id || u.staffId || "",
+                            name: u.name || u.staffName || "",
+                            rawRole: u.rawRole || u.role || ""
+                        };
+                    }
+                } catch (_) {}
+            }
+            return null;
+        }
+
+        // ポータルログインユーザー情報の取得（auth.js ＆ ストレージ連携）
         function getPortalUserSafe() {
             try {
                 if (typeof getLoginUser === "function") {
                     const u = getLoginUser();
-                    if (u && (u.name || u.id)) return u;
+                    const target = u && u.user ? u.user : u;
+                    if (target && (target.name || target.staffName || target.id || target.staffId)) {
+                        return {
+                            id: target.id || target.staffId || "",
+                            name: target.name || target.staffName || "",
+                            rawRole: target.rawRole || target.role || ""
+                        };
+                    }
                 }
             } catch (_) {}
-            try {
-                const raw = sessionStorage.getItem("lucero_portal_user");
-                if (raw) {
-                    const parsed = JSON.parse(raw);
-                    if (parsed && (parsed.name || parsed.id)) return parsed;
-                }
-            } catch (_) {}
+
+            const fromSession = extractUserFromStorage(window.sessionStorage);
+            if (fromSession) return fromSession;
+
+            const fromLocal = extractUserFromStorage(window.localStorage);
+            if (fromLocal) return fromLocal;
+
             return null;
         }
 
@@ -1122,22 +1153,13 @@
 
         function initCard() {
             const savedName = localStorage.getItem('lucero_starpass_name');
-            const savedAlpha = localStorage.getItem('lucero_starpass_alpha');
-
             const displayName = (portalUser && portalUser.name) || savedName || "STAFF";
-            const displayAlpha = savedAlpha || (portalUser && portalUser.id ? `ID: ${portalUser.id}` : "LUCERO KYOTO STAFF");
-            const badgeText = (portalUser && portalUser.rawRole)
-                ? `LUCERO STAFF (${portalUser.rawRole})`
-                : "LUCERO STAFF";
 
             if (document.getElementById('cardName')) {
                 document.getElementById('cardName').innerText = displayName;
             }
-            if (document.getElementById('cardAlpha')) {
-                document.getElementById('cardAlpha').innerText = displayAlpha;
-            }
             if (document.getElementById('passBadge')) {
-                document.getElementById('passBadge').innerText = badgeText;
+                document.getElementById('passBadge').innerText = "STAFF";
             }
             if (document.getElementById('cardCategory')) {
                 document.getElementById('cardCategory').innerText = "Lucero STAFF";
