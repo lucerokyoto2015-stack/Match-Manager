@@ -103,63 +103,6 @@
             gap: 16px;
         }
 
-        /* 登録フォーム */
-        .register-box {
-            background: var(--box-bg);
-            border: 1px solid var(--lucero-gold);
-            border-radius: 16px;
-            padding: 20px;
-            display: none;
-            flex-direction: column;
-            gap: 14px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
-        }
-
-        .register-box h3 {
-            font-size: 16px;
-            color: var(--lucero-gold-light);
-            text-align: center;
-            margin-bottom: 4px;
-        }
-
-        .form-group {
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-        }
-
-        .form-group label {
-            font-size: 12px;
-            color: var(--text-sub);
-            font-weight: 500;
-        }
-
-        .form-group input[type="text"],
-        .form-group select {
-            background: #0f172a;
-            border: 1px solid rgba(255,255,255,0.15);
-            border-radius: 8px;
-            padding: 12px;
-            color: #fff;
-            font-size: 15px;
-            outline: none;
-            transition: border-color 0.2s;
-            appearance: none;
-            -webkit-appearance: none;
-        }
-
-        .form-group select {
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%23c5a059'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
-            background-repeat: no-repeat;
-            background-position: right 12px center;
-            background-size: 16px;
-        }
-
-        .form-group input[type="text"]:focus,
-        .form-group select:focus {
-            border-color: var(--lucero-gold);
-        }
-
         /* 🔄 3D反転コンテナ構造 */
         .card-container {
             perspective: 1200px;
@@ -936,35 +879,6 @@
     </header>
 
     <main>
-        <!-- 入力フォーム -->
-        <div class="register-box" id="registerBox">
-            <h3>【初回】会員情報を登録</h3>
-            <div class="form-group">
-                <label>① 氏名（漢字フルネーム）</label>
-                <input type="text" id="inputName" placeholder="例：ルセロ 太郎">
-            </div>
-            <div class="form-group">
-                <label>② 名前アルファベット</label>
-                <input type="text" id="inputAlpha" placeholder="例：TARO LUCERO">
-            </div>
-            <div class="form-group">
-                <label>③ 所属カテゴリー</label>
-                <select id="inputCategory">
-                    <option value="" disabled selected>選択してください</option>
-                    <option value="LUCERO KYOTO U15">LUCERO KYOTO U15</option>
-                    <option value="LUCERO KYOTO U14">LUCERO KYOTO U14</option>
-                    <option value="LUCERO KYOTO U13">LUCERO KYOTO U13</option>
-                    <option value="PORQUE Football school">PORQUE Football school</option>
-                    <option value="KIDS Soccer School">KIDS Soccer School</option>
-                    <option value="PARTNER">PARTNER</option>
-                    <option value="LUCERO STAFF">LUCERO STAFF</option>
-                </select>
-            </div>
-            <button class="btn-action btn-use-complete" onclick="saveProfileData()">
-                📄 STARPASSを発行する
-            </button>
-        </div>
-
         <!-- 🔄 会員証反転コンテナ -->
         <div class="card-container" id="cardContainer" onclick="toggleCardFlip()">
             <div class="card-inner" id="cardInner">
@@ -979,7 +893,7 @@
                     </div>
 
                     <div class="card-header">
-                        <div class="card-badge" id="passBadge">OFFICIAL</div>
+                        <div class="card-badge" id="passBadge">LUCERO STAFF</div>
                         <div class="live-clock">
                             <div class="live-dot"></div>
                             <span id="clockSerial">00:00:00</span>
@@ -995,17 +909,17 @@
 
                         <div class="player-info-text">
                             <div class="label-sub">Member Name</div>
-                            <div class="player-name" id="cardName">未登録</div>
-                            <div class="player-alpha" id="cardAlpha">SELECT PHOTO & INFO</div>
+                            <div class="player-name" id="cardName">STAFF</div>
+                            <div class="player-alpha" id="cardAlpha">LUCERO KYOTO STAFF</div>
 
                             <div class="meta-grid">
                                 <div>
-                                    <div class="label-sub">ID Number</div>
-                                    <div class="meta-value" id="cardId">---</div>
+                                    <div class="label-sub">CATEGORY</div>
+                                    <div class="meta-value" id="cardCategory">Lucero STAFF</div>
                                 </div>
                                 <div>
-                                    <div class="label-sub">Valid Thru</div>
-                                    <div class="meta-value">2027.03.31</div>
+                                    <div class="label-sub">VALID THRU</div>
+                                    <div class="meta-value" id="cardValidThru">2027.03.31</div>
                                 </div>
                             </div>
                         </div>
@@ -1063,7 +977,7 @@
         </div>
 
         <div class="info-box" id="infoBoxText">
-            ℹ️ <strong>【初回登録】</strong>情報を入力し、写真を登録してください。一度発行すると変更はできません。
+            ℹ️ カードをタップすると裏面に切り替わります。行きたい店舗をタップするとクーポンと詳細が開きます。
         </div>
 
         <!-- 🏪 加盟店・クーポン選択セクション -->
@@ -1123,7 +1037,9 @@
 
     <script src="./auth.js"></script>
     <script>
-        const GAS_WEBAPP_URL = "https://script.google.com/macros/s/AKfycbzQGjquUqg9VC16qCh5oYiO7u7M8FKJVaIjjwgRa34fgVFGbXVdVpEAYXnIMKhMjvUlKw/exec";
+        const GAS_WEBAPP_URL = (typeof GAS_URL !== "undefined" && GAS_URL)
+            ? GAS_URL
+            : "https://script.google.com/macros/s/AKfycbzQGjquUqg9VC16qCh5oYiO7u7M8FKJVaIjjwgRa34fgVFGbXVdVpEAYXnIMKhMjvUlKw/exec";
 
         // フォールバック用初期マスタ（スプレッドシート読込失敗時のみ使用）
         let shopList = [
@@ -1133,7 +1049,6 @@
         ];
 
         let globalPhotoData = "";
-        let isRegistered = false;
         let activeCouponId = null;
         let countdownInterval = null;
         let map = null;
@@ -1247,57 +1162,30 @@
         function initCard() {
             const savedName = localStorage.getItem('lucero_starpass_name');
             const savedAlpha = localStorage.getItem('lucero_starpass_alpha');
-            const savedCat = localStorage.getItem('lucero_starpass_cat');
-            const savedId = localStorage.getItem('lucero_starpass_id');
             const savedPhoto = localStorage.getItem('lucero_starpass_photo');
 
-            const registerBox = document.getElementById('registerBox');
-            const infoBoxText = document.getElementById('infoBoxText');
+            const displayName = (portalUser && portalUser.name) || savedName || "STAFF";
+            const displayAlpha = savedAlpha || (portalUser && portalUser.id ? `ID: ${portalUser.id}` : "LUCERO KYOTO STAFF");
+            const badgeText = (portalUser && portalUser.rawRole)
+                ? `LUCERO STAFF (${portalUser.rawRole})`
+                : "LUCERO STAFF";
 
-            // ポータルログイン済みの場合はスタッフ名・ID・区分を反映
-            if (portalUser && portalUser.name) {
-                const displayName = savedName || portalUser.name;
-                const displayRole = savedCat || (portalUser.rawRole ? `LUCERO STAFF (${portalUser.rawRole})` : "LUCERO STAFF");
-                const displayId = savedId || portalUser.id || "STAFF";
-
-                if (document.getElementById('cardName')) document.getElementById('cardName').innerText = displayName;
-                if (document.getElementById('cardAlpha')) document.getElementById('cardAlpha').innerText = savedAlpha || "LUCERO STAFF PORTAL";
-                if (document.getElementById('passBadge')) document.getElementById('passBadge').innerText = displayRole;
-                if (document.getElementById('cardId')) document.getElementById('cardId').innerText = displayId;
-
-                if (savedPhoto) {
-                    globalPhotoData = savedPhoto;
-                    displaySavedPhoto(savedPhoto);
-                }
-
-                // ポータルログイン中は未登録でもクーポン利用可能にする
-                isRegistered = true;
-                if (registerBox) registerBox.style.setProperty('display', 'none', 'important');
-                if (infoBoxText) {
-                    infoBoxText.innerHTML = savedPhoto
-                        ? `ℹ️ <strong>【ご利用方法】</strong>カードをタップすると裏面に切り替わります。行きたい店舗をタップするとクーポンと詳細が開きます。`
-                        : `ℹ️ <strong>【ご利用方法】</strong>ポータルログイン連携済みです。左上の📷から顔写真を任意で登録できます。`;
-                }
-                return;
+            if (document.getElementById('cardName')) {
+                document.getElementById('cardName').innerText = displayName;
+            }
+            if (document.getElementById('cardAlpha')) {
+                document.getElementById('cardAlpha').innerText = displayAlpha;
+            }
+            if (document.getElementById('passBadge')) {
+                document.getElementById('passBadge').innerText = badgeText;
+            }
+            if (document.getElementById('cardCategory')) {
+                document.getElementById('cardCategory').innerText = "Lucero STAFF";
             }
 
-            // 従来の localStorage 会員証モード
-            if (savedName && savedPhoto) {
-                isRegistered = true;
-                if (registerBox) registerBox.style.setProperty('display', 'none', 'important');
-
-                if (document.getElementById('cardName')) document.getElementById('cardName').innerText = savedName;
-                if (document.getElementById('cardAlpha')) document.getElementById('cardAlpha').innerText = savedAlpha || "";
-                if (document.getElementById('passBadge')) document.getElementById('passBadge').innerText = savedCat || "OFFICIAL";
-                if (document.getElementById('cardId')) document.getElementById('cardId').innerText = savedId;
+            if (savedPhoto) {
                 globalPhotoData = savedPhoto;
                 displaySavedPhoto(savedPhoto);
-
-                if (infoBoxText) infoBoxText.innerHTML = `ℹ️ <strong>【ご利用方法】</strong>カードをタップすると裏面に切り替わります。行きたい店舗をタップするとクーポンと詳細が開きます。`;
-            } else {
-                isRegistered = false;
-                if (registerBox) registerBox.style.setProperty('display', 'flex', 'important');
-                if (infoBoxText) infoBoxText.innerHTML = `ℹ️ <strong>【初回登録】</strong>情報を入力し、写真を登録してください。一度発行すると変更はできません。`;
             }
         }
 
@@ -1490,10 +1378,6 @@
 
         function selectCoupon(id, event) {
             if (event) event.stopPropagation();
-            if (!isRegistered) {
-                alert("先に会員登録を完了させてください。");
-                return;
-            }
             activeCouponId = id;
 
             const targetShop = shopList.find(s => String(s.id) === String(id));
@@ -1526,7 +1410,7 @@
 
             const playerId = (portalUser && portalUser.id) || localStorage.getItem('lucero_starpass_id') || "";
             const playerName = (portalUser && portalUser.name) || localStorage.getItem('lucero_starpass_name') || "";
-            const category = localStorage.getItem('lucero_starpass_cat') || (portalUser && portalUser.rawRole ? `LUCERO STAFF (${portalUser.rawRole})` : "LUCERO STAFF");
+            const category = "Lucero STAFF";
 
             const payload = {
                 action: "useCoupon",
@@ -1598,49 +1482,8 @@
             activeCouponId = null;
         }
 
-        function getPrefixByCategory(category) {
-            switch (category) {
-                case "LUCERO KYOTO U15": return "U15";
-                case "LUCERO KYOTO U14": return "U14";
-                case "LUCERO KYOTO U13": return "U13";
-                case "PORQUE Football school": return "PRQ";
-                case "KIDS Soccer School": return "KIDS";
-                case "PARTNER": return "PTN";
-                case "LUCERO STAFF": return "STF";
-                default: return "U15";
-            }
-        }
-
-        function saveProfileData() {
-            if (isRegistered && !portalUser) return;
-
-            const nameInput = document.getElementById('inputName').value.trim();
-            const alphaInput = document.getElementById('inputAlpha').value.trim().toUpperCase();
-            const catInput = document.getElementById('inputCategory').value;
-
-            if (!nameInput) { alert("「① 氏名」を入力してください。"); return; }
-            if (!alphaInput) { alert("「② アルファベット」を入力してください。"); return; }
-            if (!catInput) { alert("「③ カテゴリー」を選択してください。"); return; }
-            if (!globalPhotoData) { alert("「写真」を登録してください。"); return; }
-
-            const prefix = getPrefixByCategory(catInput);
-            const generatedId = `${prefix}-${Math.floor(Math.random() * 9000 + 1000)}`;
-
-            localStorage.setItem('lucero_starpass_name', nameInput);
-            localStorage.setItem('lucero_starpass_alpha', alphaInput);
-            localStorage.setItem('lucero_starpass_cat', catInput);
-            localStorage.setItem('lucero_starpass_id', generatedId);
-            localStorage.setItem('lucero_starpass_photo', globalPhotoData);
-
-            isRegistered = true;
-            initCard();
-            renderShopList();
-            alert("STARPASSを発行しました！");
-        }
-
         function triggerImageUpload(event) {
             if (event) event.stopPropagation();
-            if (isRegistered && !portalUser && globalPhotoData) return;
             const input = document.getElementById('imageUploadInput');
             if (input) input.click();
         }
