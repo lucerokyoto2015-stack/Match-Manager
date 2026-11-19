@@ -1,1 +1,118 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>トップメニュー - Lucero Staff Portal</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            lucero: {
+              dark: '#0b1329',
+              card: '#131c38',
+              cyan: '#00f2fe',
+              gold: '#f6d365',
+              accent: '#1e294b',
+              border: '#334155'
+            }
+          }
+        }
+      }
+    }
+  </script>
+</head>
+<body class="min-h-screen flex flex-col bg-[#0b1329] text-slate-100 font-sans">
 
+  <!-- ヘッダー -->
+  <header class="bg-lucero-card border-b border-lucero-border px-4 py-3 sticky top-0 z-50 flex flex-wrap justify-between items-center gap-2">
+    <div class="flex items-center space-x-3">
+      <div class="w-8 h-8 rounded bg-gradient-to-tr from-lucero-gold to-lucero-cyan flex items-center justify-center font-bold text-lucero-dark">L</div>
+      <h1 class="text-lg font-bold tracking-wider text-lucero-gold">LUCERO STAFF PORTAL</h1>
+    </div>
+
+    <div class="flex items-center space-x-3">
+      <div class="text-right">
+        <span id="headerUserName" class="text-sm font-bold text-slate-100 block leading-tight"></span>
+        <span id="headerUserRole" class="text-[11px] text-lucero-cyan font-semibold"></span>
+      </div>
+      <button onclick="logoutPortal()" class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-lucero-accent text-slate-300 hover:bg-slate-700 border border-lucero-border transition">
+        ログアウト
+      </button>
+    </div>
+  </header>
+
+  <!-- メインメニュー -->
+  <main class="flex-1 max-w-5xl w-full mx-auto p-6 flex flex-col justify-center gap-8">
+    <div class="space-y-1">
+      <h2 class="text-xl sm:text-2xl font-bold text-slate-100">メニューを選択してください</h2>
+      <p class="text-xs sm:text-sm text-slate-400">利用したい機能のカードをタップして移動します。</p>
+    </div>
+
+    <div id="menuGrid" class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <!-- 1. 勤怠管理（全スタッフ表示） -->
+      <a href="./attendance.html" class="bg-lucero-card hover:bg-lucero-accent border border-lucero-border hover:border-lucero-gold p-6 rounded-2xl transition shadow-lg flex flex-col justify-between gap-5 group">
+        <div class="space-y-2.5">
+          <span class="inline-block text-[11px] font-bold px-2.5 py-1 rounded bg-amber-500/20 text-amber-400">ATTENDANCE</span>
+          <h3 class="text-lg font-bold text-lucero-gold group-hover:underline">勤怠管理</h3>
+          <p class="text-xs text-slate-300 leading-relaxed">
+            本日の出勤打刻、過去分の勤怠修正申請、および自分の月別勤怠履歴の確認を行います。
+          </p>
+        </div>
+        <span class="text-sm font-bold text-lucero-gold">勤怠管理を開く →</span>
+      </a>
+
+      <!-- 2. 当日試合記録（全スタッフ表示） -->
+      <a href="./match.html" class="bg-lucero-card hover:bg-lucero-accent border border-lucero-border hover:border-lucero-cyan p-6 rounded-2xl transition shadow-lg flex flex-col justify-between gap-5 group">
+        <div class="space-y-2.5">
+          <span class="inline-block text-[11px] font-bold px-2.5 py-1 rounded bg-lucero-cyan/20 text-lucero-cyan">MATCH DAY</span>
+          <h3 class="text-lg font-bold text-slate-100 group-hover:text-lucero-cyan transition">当日試合記録</h3>
+          <p class="text-xs text-slate-300 leading-relaxed">
+            試合中のタイマー計測、得点・失点記録、選手交代・ポジション入替、システム変更のログ記録を行います。
+          </p>
+        </div>
+        <span class="text-sm font-bold text-lucero-cyan">当日試合記録を開く →</span>
+      </a>
+
+      <!-- 3. 前日試合準備（管理者のみ表示） -->
+      <a id="menuCardPrep" href="./prep.html" class="hidden bg-lucero-card hover:bg-lucero-accent border border-lucero-border hover:border-emerald-400 p-6 rounded-2xl transition shadow-lg flex-col justify-between gap-5 group">
+        <div class="space-y-2.5">
+          <div class="flex items-center justify-between">
+            <span class="inline-block text-[11px] font-bold px-2.5 py-1 rounded bg-emerald-500/20 text-emerald-400">MATCH PREP</span>
+            <span class="text-[10px] font-bold px-2 py-0.5 rounded bg-rose-500/20 text-rose-300 border border-rose-500/30">管理者限定</span>
+          </div>
+          <h3 class="text-lg font-bold text-slate-100 group-hover:text-emerald-400 transition">前日試合準備</h3>
+          <p class="text-xs text-slate-300 leading-relaxed">
+            試合基本設定、会場、スタメン・フォーメーション配置、戦術・相手分析、MTG流れ、スタッフ役割の作成・編集。
+          </p>
+        </div>
+        <span class="text-sm font-bold text-emerald-400">前日試合準備を開く →</span>
+      </a>
+    </div>
+  </main>
+
+  <script src="./auth.js"></script>
+  <script>
+    const currentUser = requireAuth({ requireAdmin: false });
+
+    if (currentUser) {
+      document.getElementById("headerUserName").innerText = `${currentUser.name} 様`;
+      document.getElementById("headerUserRole").innerText = isAdminUser(currentUser) ? "区分: 管理者" : "区分: スタッフ";
+
+      // 管理者のみ「前日試合準備」カードを表示
+      if (isAdminUser(currentUser)) {
+        const prepCard = document.getElementById("menuCardPrep");
+        prepCard.classList.remove("hidden");
+        prepCard.classList.add("flex");
+      } else {
+        // スタッフの場合は2カラム中央寄せで見栄えを調整
+        const grid = document.getElementById("menuGrid");
+        grid.classList.remove("md:grid-cols-3");
+        grid.classList.add("md:grid-cols-2");
+      }
+    }
+  </script>
+</body>
+</html>
