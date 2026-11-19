@@ -80,51 +80,31 @@
             gap: 14px;
         }
 
-        /* 🔄 3D反転コンテナ構造 */
+        /* 会員証コンテナ */
         .card-container {
             perspective: 1200px;
             width: 100%;
-            aspect-ratio: 1 / 1.16;
             position: relative;
-            cursor: pointer;
         }
 
         .card-inner {
             width: 100%;
-            height: 100%;
             position: relative;
-            transform-style: preserve-3d;
-            transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: transform 0.2s ease-out;
         }
 
-        .card-container.flipped .card-inner {
-            transform: rotateY(180deg);
-        }
-
-        /* 表裏共通ベース */
-        .starpass-card-front,
-        .starpass-card-back {
-            position: absolute;
-            inset: 0;
+        .starpass-card-front {
+            position: relative;
             width: 100%;
-            height: 100%;
             background: linear-gradient(145deg, #0b1d3a 0%, #050d1c 55%, #020612 100%);
             border: 1.5px solid var(--lucero-gold);
             border-radius: 20px;
-            padding: 18px 20px;
+            padding: 20px;
             display: flex;
             flex-direction: column;
-            justify-content: space-between;
-            gap: 10px;
+            gap: 12px;
             overflow: hidden;
             box-shadow: 0 16px 32px rgba(0, 0, 0, 0.72);
-            backface-visibility: hidden;
-            -webkit-backface-visibility: hidden;
-        }
-
-        .starpass-card-back {
-            transform: rotateY(180deg);
-            background: linear-gradient(145deg, #040b18 0%, #071936 100%);
         }
 
         .grid-bg {
@@ -138,6 +118,7 @@
             -webkit-mask-image: radial-gradient(circle at center, black 55%, transparent 95%);
             opacity: 0.85;
             z-index: 1;
+            pointer-events: none;
         }
 
         .club-watermark {
@@ -167,6 +148,7 @@
             height: 40%;
             background: radial-gradient(circle, rgba(195, 160, 89, 0.16) 0%, transparent 70%);
             z-index: 1;
+            pointer-events: none;
         }
 
         .card-header {
@@ -223,7 +205,7 @@
         /* カード内に埋め込んだブランドタイトル */
         .card-brand-banner {
             z-index: 2;
-            padding: 8px 12px;
+            padding: 9px 12px;
             border-radius: 10px;
             background: rgba(197, 160, 89, 0.08);
             border: 1px solid rgba(195, 160, 89, 0.28);
@@ -362,72 +344,6 @@
             text-align: center;
             padding: 4px 0;
             font-style: italic;
-        }
-
-        /* 🛡️ カード裏面の専用デザイン */
-        .back-content-wrapper {
-            z-index: 2;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            justify-content: flex-start;
-        }
-
-        .back-section-title {
-            font-size: 11px;
-            font-weight: 700;
-            color: var(--lucero-gold-light);
-            letter-spacing: 1px;
-            border-left: 2px solid var(--lucero-gold);
-            padding-left: 6px;
-        }
-
-        .credo-box {
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(195, 160, 89, 0.2);
-            border-radius: 8px;
-            padding: 10px 12px;
-        }
-
-        .credo-text-en {
-            font-family: 'Urbanist', sans-serif;
-            font-size: 13px;
-            font-weight: 800;
-            color: #ffffff;
-            font-style: italic;
-            letter-spacing: 0.7px;
-            line-height: 1.3;
-        }
-
-        .credo-text-ja {
-            font-size: 10px;
-            color: var(--text-sub);
-            margin-top: 4px;
-            line-height: 1.4;
-            font-weight: 500;
-        }
-
-        .rules-list {
-            display: flex;
-            flex-direction: column;
-            gap: 5px;
-            font-size: 10px;
-            color: var(--text-sub);
-            padding-left: 2px;
-            line-height: 1.35;
-        }
-
-        .rules-list li {
-            list-style: none;
-            position: relative;
-            padding-left: 11px;
-        }
-
-        .rules-list li::before {
-            content: "・";
-            position: absolute;
-            left: 0;
-            color: var(--lucero-gold);
         }
 
         .card-footer {
@@ -829,8 +745,8 @@
     </div>
 
     <main>
-        <!-- 🔄 会員証反転コンテナ -->
-        <div class="card-container" id="cardContainer" onclick="toggleCardFlip()">
+        <!-- 会員証コンテナ -->
+        <div class="card-container" id="cardContainer">
             <div class="card-inner" id="cardInner">
 
                 <!-- 💳 【表面】 -->
@@ -890,42 +806,11 @@
                     </div>
                 </div>
 
-                <!-- 💳 【裏面】 -->
-                <div class="starpass-card-back">
-                    <div class="grid-bg"></div>
-
-                    <div class="back-content-wrapper">
-                        <!-- クラブクレド -->
-                        <div class="back-section-title">CLUB CREDO</div>
-                        <div class="credo-box">
-                            <div class="credo-text-en">"Brillamos como las Estrellas"</div>
-                            <div class="credo-text-ja">ひとりひとりが星々のように輝く</div>
-                        </div>
-
-                        <!-- 利用規約・注意事項 -->
-                        <div class="back-section-title">TERMS OF USE</div>
-                        <ul class="rules-list">
-                            <li>本証はLUCERO京都の公式デジタル会員証です。</li>
-                            <li>加盟店クーポンは1店舗につき1日1回まで利用可能です。</li>
-                            <li>スクリーンショット等でのクーポン利用は固くお断りします。必ず本アプリの確認画面を店員に提示してください。</li>
-                            <li>アスリートとして規律ある行動を心がけましょう。</li>
-                        </ul>
-                    </div>
-
-                    <div class="card-footer">
-                        <div class="pass-title" style="color: var(--text-sub);">BACKSIDE</div>
-                        <div class="club-auth">
-                            LUCERO KYOTO<br>
-                            MANAGEMENT OFFICE
-                        </div>
-                    </div>
-                </div>
-
             </div>
         </div>
 
         <div class="info-box" id="infoBoxText">
-            ℹ️ カードをタップすると裏面に切り替わります。行きたい店舗をタップするとクーポンと詳細が開きます。
+            ℹ️ 行きたい店舗をタップするとクーポンと詳細が開きます。
         </div>
 
         <!-- 🏪 加盟店・クーポン選択セクション -->
@@ -985,9 +870,7 @@
 
     <script src="./auth.js"></script>
     <script>
-        const GAS_WEBAPP_URL = (typeof GAS_URL !== "undefined" && GAS_URL)
-            ? GAS_URL
-            : "https://script.google.com/macros/s/AKfycbzQGjquUqg9VC16qCh5oYiO7u7M8FKJVaIjjwgRa34fgVFGbXVdVpEAYXnIMKhMjvUlKw/exec";
+        const GAS_WEBAPP_URL = "https://script.google.com/macros/s/AKfycbysqy2E5yk-25BTQvs2h7nxRKuwpSS1MJshJRJeyRHzYAKhPTvKL61hob641Selvwd2Xw/exec";
 
         // フォールバック用初期マスタ（スプレッドシート読込失敗時のみ使用）
         let shopList = [
@@ -1006,7 +889,7 @@
 
         function extractUserFromStorage(storage) {
             if (!storage) return null;
-            const candidateKeys = ["lucero_portal_user", "portal_user", "loginUser", "user"];
+            const candidateKeys = ["lucero_staff_portal_user_v1", "lucero_portal_user", "portal_user", "loginUser", "user"];
             for (let i = 0; i < candidateKeys.length; i++) {
                 try {
                     const raw = storage.getItem(candidateKeys[i]);
@@ -1164,12 +1047,6 @@
             if (document.getElementById('cardCategory')) {
                 document.getElementById('cardCategory').innerText = "Lucero STAFF";
             }
-        }
-
-        // 会員証の3D反転
-        function toggleCardFlip() {
-            const container = document.getElementById('cardContainer');
-            if (container) container.classList.toggle('flipped');
         }
 
         // アコーディオン開閉
@@ -1471,33 +1348,27 @@
         }
         setInterval(updateClock, 50);
 
-        // ジャイロアニメーション
+        // 傾きアニメーション
         try {
             const container = document.getElementById('cardContainer');
             const inner = document.getElementById('cardInner');
             if (container && inner) {
                 container.addEventListener('mousemove', (e) => {
-                    if (container.classList.contains('flipped')) return;
                     const rect = container.getBoundingClientRect();
-                    const ax = -(rect.height / 2 - (e.clientY - rect.top)) / 15;
-                    const ay = ((e.clientX - rect.left) - rect.width / 2) / 15;
-                    inner.style.transform = `rotateX(${Math.max(-10, Math.min(10, ax))}deg) rotateY(${Math.max(-10, Math.min(10, ay))}deg)`;
+                    const ax = -(rect.height / 2 - (e.clientY - rect.top)) / 18;
+                    const ay = ((e.clientX - rect.left) - rect.width / 2) / 18;
+                    inner.style.transform = `rotateX(${Math.max(-8, Math.min(8, ax))}deg) rotateY(${Math.max(-8, Math.min(8, ay))}deg)`;
                 });
                 container.addEventListener('touchmove', (e) => {
-                    if (container.classList.contains('flipped')) return;
                     if (e.touches.length === 1) {
                         const rect = container.getBoundingClientRect();
-                        const ax = -(rect.height / 2 - (e.touches[0].clientY - rect.top)) / 15;
-                        const ay = ((e.touches[0].clientX - rect.left) - rect.width / 2) / 15;
-                        inner.style.transform = `rotateX(${Math.max(-10, Math.min(10, ax))}deg) rotateY(${Math.max(-10, Math.min(10, ay))}deg)`;
+                        const ax = -(rect.height / 2 - (e.touches[0].clientY - rect.top)) / 18;
+                        const ay = ((e.touches[0].clientX - rect.left) - rect.width / 2) / 18;
+                        inner.style.transform = `rotateX(${Math.max(-8, Math.min(8, ax))}deg) rotateY(${Math.max(-8, Math.min(8, ay))}deg)`;
                     }
                 });
                 const resetCard = () => {
-                    if (container.classList.contains('flipped')) {
-                        inner.style.transform = 'rotateY(180deg)';
-                    } else {
-                        inner.style.transform = 'rotateX(0deg) rotateY(0deg)';
-                    }
+                    inner.style.transform = 'rotateX(0deg) rotateY(0deg)';
                 };
                 container.addEventListener('mouseleave', resetCard);
                 container.addEventListener('touchend', resetCard);
