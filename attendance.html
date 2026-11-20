@@ -1,1 +1,612 @@
 
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lucero 勤怠管理システム</title>
+  <style>
+    :root {
+      --bg-color: #0d0f12;
+      --card-bg: #181b20;
+      --card-border: #2c313a;
+      --text-color: #e0e6ed;
+      --text-sub: #8b95a5;
+      --gold-primary: #f39c12;
+      --gold-hover: #d35400;
+      --gold-gradient: linear-gradient(135deg, #f39c12 0%, #f1c40f 100%);
+      --gold-glow: 0 0 12px rgba(243, 156, 18, 0.3);
+    }
+
+    body {
+      font-family: "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN", "Hiragino Sans", MeiYo, sans-serif;
+      margin: 0;
+      padding: 20px;
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+    }
+
+    .header-logo {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    .header-logo h1 {
+      font-size: 24px;
+      letter-spacing: 2px;
+      margin: 0;
+      background: var(--gold-gradient);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      text-transform: uppercase;
+      font-weight: 800;
+    }
+    .header-logo p {
+      margin: 5px 0 0 0;
+      font-size: 12px;
+      color: var(--text-sub);
+    }
+
+    .card {
+      background: var(--card-bg);
+      padding: 25px;
+      border-radius: 12px;
+      border: 1px solid var(--card-border);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+      margin-bottom: 25px;
+      width: 100%;
+      max-width: 550px;
+      box-sizing: border-box;
+    }
+    .card.wide {
+      max-width: 900px;
+    }
+    .card h2, .card h3 {
+      margin-top: 0;
+      font-size: 18px;
+      border-bottom: 2px solid var(--gold-primary);
+      padding-bottom: 8px;
+      color: #fff;
+    }
+
+    .hidden { display: none !important; }
+
+    label {
+      display: block;
+      margin-top: 15px;
+      font-size: 13px;
+      color: var(--text-sub);
+      font-weight: 600;
+    }
+    input[type="text"],
+    input[type="date"],
+    input[type="number"],
+    input[type="month"],
+    select,
+    textarea {
+      width: 100%;
+      padding: 12px;
+      margin-top: 6px;
+      box-sizing: border-box;
+      background-color: #0f1115;
+      border: 1px solid var(--card-border);
+      border-radius: 6px;
+      color: #fff;
+      font-size: 14px;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    input:focus, select:focus, textarea:focus {
+      outline: none;
+      border-color: var(--gold-primary);
+      box-shadow: var(--gold-glow);
+    }
+    textarea { resize: vertical; min-height: 80px; }
+
+    .checkbox-label {
+      display: flex;
+      align-items: center;
+      cursor: pointer;
+      color: var(--text-color);
+      margin-top: 15px;
+    }
+    .checkbox-label input {
+      width: auto;
+      margin-right: 10px;
+      accent-color: var(--gold-primary);
+    }
+
+    button {
+      background: var(--gold-gradient);
+      color: #000;
+      border: none;
+      border-radius: 6px;
+      font-size: 15px;
+      font-weight: bold;
+      padding: 12px;
+      margin-top: 20px;
+      width: 100%;
+      cursor: pointer;
+      transition: transform 0.1s, opacity 0.2s;
+      box-shadow: var(--gold-glow);
+    }
+    button:hover { opacity: 0.9; }
+    button:active { transform: scale(0.98); }
+    button:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    .btn-secondary {
+      background: #2c313a;
+      color: var(--text-color);
+      box-shadow: none;
+    }
+    .btn-secondary:hover { background: #3a414d; }
+
+    .btn-csv {
+      background: #27ae60;
+      color: #fff;
+      box-shadow: none;
+      margin-top: 10px;
+      font-size: 13px;
+      padding: 10px;
+    }
+    .btn-csv:hover { background: #219653; }
+
+    .menu-btn {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 20px;
+      margin-top: 15px;
+      background: #1e222a;
+      border: 1px solid var(--card-border);
+      color: #fff;
+      font-size: 15px;
+      text-align: left;
+      border-radius: 8px;
+      box-shadow: none;
+    }
+    .menu-btn:hover {
+      border-color: var(--gold-primary);
+      background: #252a34;
+    }
+
+    .nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      width: 100%;
+      max-width: 550px;
+      margin-bottom: 20px;
+      background: var(--card-bg);
+      padding: 12px 16px;
+      border-radius: 8px;
+      border: 1px solid var(--card-border);
+      box-sizing: border-box;
+    }
+    .nav.wide { max-width: 900px; }
+    .nav #userInfo { font-weight: bold; font-size: 14px; color: #fff; }
+    .nav-actions { display: flex; gap: 8px; align-items: center; }
+    .nav-link {
+      text-decoration: none;
+      background: rgba(243, 156, 18, 0.14);
+      border: 1px solid rgba(243, 156, 18, 0.4);
+      color: var(--gold-primary);
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: bold;
+    }
+    .nav button { width: auto; margin-top: 0; padding: 6px 12px; font-size: 12px; }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 15px;
+      font-size: 13px;
+    }
+    th, td {
+      border: 1px solid var(--card-border);
+      padding: 10px;
+      text-align: center;
+      white-space: nowrap;
+    }
+    th {
+      background-color: #21252d;
+      color: var(--gold-primary);
+    }
+    td { background-color: #121418; }
+
+    .summary-box {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+      gap: 10px;
+      margin-top: 15px;
+      margin-bottom: 20px;
+    }
+    .summary-card {
+      background: #0f1115;
+      border: 1px solid var(--card-border);
+      padding: 12px;
+      border-radius: 8px;
+      text-align: center;
+    }
+    .summary-card .num {
+      font-size: 20px;
+      font-weight: bold;
+      color: var(--gold-primary);
+      margin-top: 4px;
+    }
+    .summary-card .label {
+      font-size: 11px;
+      color: var(--text-sub);
+    }
+    .badge-corr {
+      background-color: #d35400;
+      color: #fff;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 10px;
+    }
+    .badge-normal {
+      background-color: #27ae60;
+      color: #fff;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 10px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="header-logo">
+    <h1>LUCERO ATTENDANCE</h1>
+    <p>勤怠管理システム（日給・稼働記録）</p>
+  </div>
+
+  <div id="appSection" style="width:100%; display:flex; flex-direction:column; align-items:center;">
+
+    <!-- 上部ナビゲーション -->
+    <div class="nav" id="mainNav">
+      <span id="userInfo">読込中...</span>
+      <div class="nav-actions">
+        <a href="./top.html" class="nav-link">← トップへ</a>
+        <button id="modeSwitchBtn" onclick="toggleAdminStaffView()" class="btn-secondary hidden">スタッフ画面へ</button>
+      </div>
+    </div>
+
+    <!-- 1. 手続き選択メニュー画面 (スタッフ用) -->
+    <div id="menuView" class="card">
+      <h2>MENU</h2>
+      <p style="font-size: 13px; color: var(--text-sub); margin-bottom: 20px;">ご希望の手続きを選択してください</p>
+
+      <button class="menu-btn" onclick="navigateTo('clockInSection')">
+        <span>⚽ 本日の出勤登録</span>
+        <span>➔</span>
+      </button>
+
+      <button class="menu-btn" onclick="navigateTo('corrSection')">
+        <span>📝 勤怠修正申請（打刻漏れ等）</span>
+        <span>➔</span>
+      </button>
+
+      <button class="menu-btn" onclick="navigateTo('historySection')">
+        <span>📊 自分の勤怠履歴を確認</span>
+        <span>➔</span>
+      </button>
+    </div>
+
+    <!-- 2-A. 出勤登録画面 -->
+    <div id="clockInSection" class="card hidden">
+      <button onclick="backToMenu()" class="btn-secondary" style="margin-top:0; margin-bottom:15px; width:auto; padding:6px 14px; font-size:12px;">← メニューに戻る</button>
+      <h3>○ 本日の出勤登録</h3>
+      <form id="clockInForm">
+        <label>区分を選択</label>
+        <select id="workType" onchange="toggleWorkFields('clockIn')">
+          <option value="練習">練習</option>
+          <option value="練習試合">練習試合</option>
+          <option value="公式戦">公式戦</option>
+          <option value="遠征・合宿">遠征・合宿</option>
+          <option value="イベント">イベント</option>
+        </select>
+
+        <!-- イベント用 -->
+        <div id="clockInEventGroup" class="hidden">
+          <label>イベント名</label>
+          <input type="text" id="eventName" placeholder="イベント名を入力してください">
+        </div>
+
+        <!-- 公式戦用 -->
+        <div id="clockInHqGroup" class="hidden">
+          <label class="checkbox-label">
+            <input type="checkbox" id="isHq" onchange="toggleHqDetails('clockIn')"> 本部運営を実施した
+          </label>
+          <div id="clockInHqDetails" class="hidden" style="background:#0f1115; padding:15px; border-radius:6px; margin-top:10px;">
+            <label>① 主審 試合数</label>
+            <input type="number" id="mainRef" value="0" min="0">
+            <label>② 副審 試合数</label>
+            <input type="number" id="subRef" value="0" min="0">
+            <label>③ 試合責任・会場責任 試合数</label>
+            <input type="number" id="resp" value="0" min="0">
+          </div>
+        </div>
+
+        <button type="button" id="clockInSubmitBtn" onclick="submitClockIn()">出勤登録を行う</button>
+      </form>
+    </div>
+
+    <!-- 2-B. 勤怠修正申請画面 -->
+    <div id="corrSection" class="card hidden">
+      <button onclick="backToMenu()" class="btn-secondary" style="margin-top:0; margin-bottom:15px; width:auto; padding:6px 14px; font-size:12px;">← メニューに戻る</button>
+      <h3>○ 勤怠修正申請（過去打刻漏れ等）</h3>
+      <form id="correctionForm">
+        <label>対象日（直近30日以内のみ選択可能）</label>
+        <input type="date" id="corrDate">
+        <label>区分を選択</label>
+        <select id="corrWorkType" onchange="toggleWorkFields('corr')">
+          <option value="練習">練習</option>
+          <option value="練習試合">練習試合</option>
+          <option value="公式戦">公式戦</option>
+          <option value="遠征・合宿">遠征・合宿</option>
+          <option value="イベント">イベント</option>
+        </select>
+
+        <div id="corrEventGroup" class="hidden">
+          <label>イベント名</label>
+          <input type="text" id="corrEventName" placeholder="イベント名を入力">
+        </div>
+
+        <div id="corrHqGroup" class="hidden">
+          <label class="checkbox-label">
+            <input type="checkbox" id="corrIsHq" onchange="toggleHqDetails('corr')"> 本部運営を実施した
+          </label>
+          <div id="corrHqDetails" class="hidden" style="background:#0f1115; padding:15px; border-radius:6px; margin-top:10px;">
+            <label>① 主審 試合数</label>
+            <input type="number" id="corrMainRef" value="0" min="0">
+            <label>② 副審 試合数</label>
+            <input type="number" id="corrSubRef" value="0" min="0">
+            <label>③ 試合責任・会場責任 試合数</label>
+            <input type="number" id="corrResp" value="0" min="0">
+          </div>
+        </div>
+
+        <label>修正の理由</label>
+        <textarea id="corrReason" placeholder="例：打刻漏れのため"></textarea>
+
+        <button type="button" id="corrSubmitBtn" onclick="submitCorrection()" class="btn-secondary" style="border:1px solid var(--gold-primary); color:var(--gold-primary);">修正申請を送信</button>
+      </form>
+    </div>
+
+    <!-- 2-C. 勤怠履歴画面 -->
+    <div id="historySection" class="card hidden">
+      <button onclick="backToMenu()" class="btn-secondary" style="margin-top:0; margin-bottom:15px; width:auto; padding:6px 14px; font-size:12px;">← メニューに戻る</button>
+      <h3>○ 勤怠履歴確認</h3>
+      <label>対象月を選択</label>
+      <input type="month" id="historyMonth" onchange="loadStaffHistory()">
+      <div id="historySummary" style="margin-top: 15px;"></div>
+    </div>
+
+    <!-- 3. 管理者専用画面 -->
+    <div id="adminView" class="card wide hidden">
+      <h3>○ スタッフ勤務履歴・集計（管理者モード）</h3>
+      <div style="display: flex; gap: 15px; align-items: flex-end; flex-wrap: wrap;">
+        <div style="flex: 1; min-width: 200px;">
+          <label>対象月を選択</label>
+          <input type="month" id="adminMonth" onchange="loadAdminData()">
+        </div>
+        <div style="flex: 1; min-width: 200px;">
+          <button onclick="downloadCSV()" class="btn-csv">📥 対象月のCSVを出力</button>
+        </div>
+      </div>
+
+      <div id="adminSummaryArea"></div>
+      <div id="adminTableContainer" style="overflow-x: auto; margin-top: 15px;"></div>
+    </div>
+
+  </div>
+
+  <script src="./auth.js"></script>
+  <script>
+    const ENDPOINT_URL = (typeof GAS_URL !== "undefined" && GAS_URL)
+      ? GAS_URL
+      : "https://script.google.com/macros/s/AKfycbysqy2E5yk-25BTQvs2h7nxRKuwpSS1MJshJRJeyRHzYAKhPTvKL61hob641Selvwd2Xw/exec";
+
+    let currentUser = null;
+    let currentAdminData = [];
+    let isAdminViewActive = false;
+
+    function initAttendanceApp() {
+      const user = typeof requireAuth === "function" ? requireAuth() : (typeof getLoginUser === "function" ? getLoginUser() : null);
+      if (!user) return;
+
+      currentUser = user;
+      document.getElementById("userInfo").innerText = `${currentUser.name} 様`;
+      setupCorrectionDateLimit();
+
+      if (currentUser.role === "admin") {
+        document.getElementById("modeSwitchBtn").classList.remove("hidden");
+        showAdminMode();
+      } else {
+        backToMenu();
+      }
+    }
+
+    function showAdminMode() {
+      isAdminViewActive = true;
+      document.getElementById("mainNav").classList.add("wide");
+      document.getElementById("menuView").classList.add("hidden");
+      document.getElementById("clockInSection").classList.add("hidden");
+      document.getElementById("corrSection").classList.add("hidden");
+      document.getElementById("historySection").classList.add("hidden");
+      document.getElementById("adminView").classList.remove("hidden");
+      document.getElementById("modeSwitchBtn").innerText = "スタッフ打刻へ";
+
+      const monthInput = document.getElementById("adminMonth");
+      if (!monthInput.value) {
+        const now = new Date();
+        monthInput.value = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
+      }
+      loadAdminData();
+    }
+
+    function toggleAdminStaffView() {
+      if (isAdminViewActive) {
+        isAdminViewActive = false;
+        document.getElementById("mainNav").classList.remove("wide");
+        document.getElementById("adminView").classList.add("hidden");
+        document.getElementById("modeSwitchBtn").innerText = "管理者集計へ";
+        backToMenu();
+      } else {
+        showAdminMode();
+      }
+    }
+
+    function getLocalTodayYmd() {
+      const d = new Date();
+      return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+    }
+
+    function setupCorrectionDateLimit() {
+      const dateInput = document.getElementById("corrDate");
+      if (!dateInput) return;
+
+      const today = new Date();
+      const maxDateStr = getLocalTodayYmd();
+
+      const minDate = new Date();
+      minDate.setDate(today.getDate() - 30);
+      const minDateStr = `${minDate.getFullYear()}-${String(minDate.getMonth() + 1).padStart(2, '0')}-${String(minDate.getDate()).padStart(2, '0')}`;
+
+      dateInput.min = minDateStr;
+      dateInput.max = maxDateStr;
+      dateInput.value = maxDateStr;
+    }
+
+    function navigateTo(sectionId) {
+      document.getElementById("menuView").classList.add("hidden");
+      document.getElementById("clockInSection").classList.add("hidden");
+      document.getElementById("corrSection").classList.add("hidden");
+      document.getElementById("historySection").classList.add("hidden");
+
+      const target = document.getElementById(sectionId);
+      if (target) target.classList.remove("hidden");
+
+      if (sectionId === 'corrSection') {
+        setupCorrectionDateLimit();
+      }
+
+      if (sectionId === 'historySection') {
+        const now = new Date();
+        document.getElementById("historyMonth").value = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
+        loadStaffHistory();
+      }
+    }
+
+    function backToMenu() {
+      document.getElementById("menuView").classList.remove("hidden");
+      document.getElementById("clockInSection").classList.add("hidden");
+      document.getElementById("corrSection").classList.add("hidden");
+      document.getElementById("historySection").classList.add("hidden");
+    }
+
+    function toggleWorkFields(prefix) {
+      const type = document.getElementById(prefix === 'clockIn' ? 'workType' : 'corrWorkType').value;
+      const eventGrp = document.getElementById(prefix === 'clockIn' ? 'clockInEventGroup' : 'corrEventGroup');
+      const hqGrp = document.getElementById(prefix === 'clockIn' ? 'clockInHqGroup' : 'corrHqGroup');
+
+      if (type === 'イベント') {
+        eventGrp.classList.remove('hidden');
+        hqGrp.classList.add('hidden');
+      } else if (type === '公式戦') {
+        eventGrp.classList.add('hidden');
+        hqGrp.classList.remove('hidden');
+      } else {
+        eventGrp.classList.add('hidden');
+        hqGrp.classList.add('hidden');
+      }
+    }
+
+    function toggleHqDetails(prefix) {
+      const isChecked = document.getElementById(prefix === 'clockIn' ? 'isHq' : 'corrIsHq').checked;
+      const details = document.getElementById(prefix === 'clockIn' ? 'clockInHqDetails' : 'corrHqDetails');
+      if (isChecked) details.classList.remove('hidden');
+      else details.classList.add('hidden');
+    }
+
+    function getDayType(dateStr) {
+      const parts = dateStr.split('-').map(Number);
+      const d = new Date(parts[0], parts[1] - 1, parts[2]);
+      const day = d.getDay();
+      return (day === 0 || day === 6) ? "土日" : "平日";
+    }
+
+    async function submitClockIn() {
+      const btn = document.getElementById("clockInSubmitBtn");
+      const today = getLocalTodayYmd();
+      const workType = document.getElementById("workType").value;
+      const isHq = workType === '公式戦' ? document.getElementById("isHq").checked : false;
+
+      const payload = {
+        action: "clockIn",
+        staffId: currentUser.id,
+        staffName: currentUser.name,
+        workDate: today,
+        workType: workType,
+        dayType: getDayType(today),
+        eventName: workType === 'イベント' ? document.getElementById("eventName").value.trim() : "",
+        isHeadquarters: isHq,
+        mainRefMatches: isHq ? Number(document.getElementById("mainRef").value || 0) : 0,
+        subRefMatches: isHq ? Number(document.getElementById("subRef").value || 0) : 0,
+        respMatches: isHq ? Number(document.getElementById("resp").value || 0) : 0
+      };
+
+      btn.disabled = true;
+      btn.innerText = "送信中...";
+      try {
+        const res = await sendToGas(payload);
+        if (res && res.status === "success") {
+          alert(res.message || "出勤登録が完了しました");
+          backToMenu();
+        } else {
+          alert((res && res.message) || "登録に失敗しました");
+        }
+      } finally {
+        btn.disabled = false;
+        btn.innerText = "出勤登録を行う";
+      }
+    }
+
+    async function submitCorrection() {
+      const btn = document.getElementById("corrSubmitBtn");
+      const corrDate = document.getElementById("corrDate").value;
+      const reason = document.getElementById("corrReason").value.trim();
+
+      if (!corrDate || !reason) {
+        alert("日付と理由を入力してください");
+        return;
+      }
+
+      const workType = document.getElementById("corrWorkType").value;
+      const isHq = workType === '公式戦' ? document.getElementById("corrIsHq").checked : false;
+
+      const payload = {
+        action: "requestCorrection",
+        staffId: currentUser.id,
+        staffName: currentUser.name,
+        workDate: corrDate,
+        workType: workType,
+        dayType: getDayType(corrDate),
+        eventName: workType === 'イベント' ? document.getElementById("corrEventName").value.trim() : "",
+        isHeadquarters: isHq,
+        mainRefMatches: isHq ? Number(document.getElementById("corrMainRef").value || 0) : 0,
+        subRefMatches: isHq ? Number(document.getElementById("corrSubRef").value || 0) : 0,
+        respMatches: isHq ? Number(document.getElementById("corrResp").value || 0) : 0,
+        correctionReason: reason
+      };
+
+      btn.disabled = true;
+      btn.innerText = "送信中...";
+      try {
+        const res = await 
