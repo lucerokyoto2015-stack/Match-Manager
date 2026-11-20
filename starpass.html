@@ -1028,14 +1028,14 @@
 
         function escapeHtml(str) {
             return String(str)
-                .replace(/&/g, "&")
-                .replace(/</g, "<")
-                .replace(/>/g, ">")
-                .replace(/"/g, """);
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;");
         }
 
         function initCard() {
-            getItem('lucero_starpass_name');
+            const savedName = localStorage.getItem('lucero_starpass_name');
             const displayName = (portalUser && portalUser.name) || savedName || "STAFF";
 
             if (document.getElementById('cardName')) {
@@ -1346,6 +1346,7 @@
             const ms = String(Math.floor(now.getMilliseconds() / 10)).padStart(2, '0');
             clockSerial.innerText = `${h}:${m}:${s}.${ms}`;
         }
+        updateClock();
         setInterval(updateClock, 50);
 
         // 傾きアニメーション
@@ -1375,7 +1376,11 @@
             }
         } catch (e) { console.error(e); }
 
-        window.addEventListener('DOMContentLoaded', startApp);
+        if (document.readyState === 'loading') {
+            window.addEventListener('DOMContentLoaded', startApp);
+        } else {
+            startApp();
+        }
     </script>
 </body>
 </html>
