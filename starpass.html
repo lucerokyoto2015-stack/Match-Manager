@@ -1035,8 +1035,7 @@
         }
 
         function initCard() {
-            alert("user=" + JSON.stringify(getLoginUser()) + " / cardName=" + document.getElementById("cardName")?.innerText);
-            const savedName = localStorage.getItem('lucero_starpass_name');
+            getItem('lucero_starpass_name');
             const displayName = (portalUser && portalUser.name) || savedName || "STAFF";
 
             if (document.getElementById('cardName')) {
