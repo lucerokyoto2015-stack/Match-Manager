@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="ja">
 <head>
@@ -60,9 +59,6 @@
       width: 100%;
       max-width: 550px;
       box-sizing: border-box;
-    }
-    .card.wide {
-      max-width: 900px;
     }
     .card h2, .card h3 {
       margin-top: 0;
@@ -143,16 +139,6 @@
     }
     .btn-secondary:hover { background: #3a414d; }
 
-    .btn-csv {
-      background: #27ae60;
-      color: #fff;
-      box-shadow: none;
-      margin-top: 10px;
-      font-size: 13px;
-      padding: 10px;
-    }
-    .btn-csv:hover { background: #219653; }
-
     .menu-btn {
       display: flex;
       align-items: center;
@@ -186,9 +172,7 @@
       border: 1px solid var(--card-border);
       box-sizing: border-box;
     }
-    .nav.wide { max-width: 900px; }
     .nav #userInfo { font-weight: bold; font-size: 14px; color: #fff; }
-    .nav-actions { display: flex; gap: 8px; align-items: center; }
     .nav-link {
       text-decoration: none;
       background: rgba(243, 156, 18, 0.14);
@@ -199,7 +183,6 @@
       font-size: 12px;
       font-weight: bold;
     }
-    .nav button { width: auto; margin-top: 0; padding: 6px 12px; font-size: 12px; }
 
     table {
       width: 100%;
@@ -219,30 +202,6 @@
     }
     td { background-color: #121418; }
 
-    .summary-box {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-      gap: 10px;
-      margin-top: 15px;
-      margin-bottom: 20px;
-    }
-    .summary-card {
-      background: #0f1115;
-      border: 1px solid var(--card-border);
-      padding: 12px;
-      border-radius: 8px;
-      text-align: center;
-    }
-    .summary-card .num {
-      font-size: 20px;
-      font-weight: bold;
-      color: var(--gold-primary);
-      margin-top: 4px;
-    }
-    .summary-card .label {
-      font-size: 11px;
-      color: var(--text-sub);
-    }
     .badge-corr {
       background-color: #d35400;
       color: #fff;
@@ -263,7 +222,7 @@
 
   <div class="header-logo">
     <h1>LUCERO ATTENDANCE</h1>
-    <p>勤怠管理システム（日給・稼働記録）</p>
+    <p>勤怠管理システム（稼働記録）</p>
   </div>
 
   <div id="appSection" style="width:100%; display:flex; flex-direction:column; align-items:center;">
@@ -271,37 +230,34 @@
     <!-- 上部ナビゲーション -->
     <div class="nav" id="mainNav">
       <span id="userInfo">読込中...</span>
-      <div class="nav-actions">
-        <a href="./top.html" class="nav-link">← トップへ</a>
-        <button id="modeSwitchBtn" onclick="toggleAdminStaffView()" class="btn-secondary hidden">スタッフ画面へ</button>
-      </div>
+      <a href="./top.html" class="nav-link">← トップへ</a>
     </div>
 
-    <!-- 1. 手続き選択メニュー画面 (スタッフ用) -->
+    <!-- 1. 手続き選択メニュー画面（全スタッフ共通） -->
     <div id="menuView" class="card">
       <h2>MENU</h2>
       <p style="font-size: 13px; color: var(--text-sub); margin-bottom: 20px;">ご希望の手続きを選択してください</p>
 
       <button class="menu-btn" onclick="navigateTo('clockInSection')">
-        <span>⚽ 本日の出勤登録</span>
-        <span>➔</span>
+        <span>本日の出勤登録</span>
+        <span>→</span>
       </button>
 
       <button class="menu-btn" onclick="navigateTo('corrSection')">
-        <span>📝 勤怠修正申請（打刻漏れ等）</span>
-        <span>➔</span>
+        <span>勤怠修正申請（登録漏れ等）</span>
+        <span>→</span>
       </button>
 
       <button class="menu-btn" onclick="navigateTo('historySection')">
-        <span>📊 自分の勤怠履歴を確認</span>
-        <span>➔</span>
+        <span>自分の勤怠履歴を確認</span>
+        <span>→</span>
       </button>
     </div>
 
     <!-- 2-A. 出勤登録画面 -->
     <div id="clockInSection" class="card hidden">
       <button onclick="backToMenu()" class="btn-secondary" style="margin-top:0; margin-bottom:15px; width:auto; padding:6px 14px; font-size:12px;">← メニューに戻る</button>
-      <h3>○ 本日の出勤登録</h3>
+      <h3>本日の出勤登録</h3>
       <form id="clockInForm">
         <label>区分を選択</label>
         <select id="workType" onchange="toggleWorkFields('clockIn')">
@@ -340,7 +296,7 @@
     <!-- 2-B. 勤怠修正申請画面 -->
     <div id="corrSection" class="card hidden">
       <button onclick="backToMenu()" class="btn-secondary" style="margin-top:0; margin-bottom:15px; width:auto; padding:6px 14px; font-size:12px;">← メニューに戻る</button>
-      <h3>○ 勤怠修正申請（過去打刻漏れ等）</h3>
+      <h3>勤怠修正申請（過去登録漏れ等）</h3>
       <form id="correctionForm">
         <label>対象日（直近30日以内のみ選択可能）</label>
         <input type="date" id="corrDate">
@@ -373,7 +329,7 @@
         </div>
 
         <label>修正の理由</label>
-        <textarea id="corrReason" placeholder="例：打刻漏れのため"></textarea>
+        <textarea id="corrReason" placeholder="例：登録漏れのため"></textarea>
 
         <button type="button" id="corrSubmitBtn" onclick="submitCorrection()" class="btn-secondary" style="border:1px solid var(--gold-primary); color:var(--gold-primary);">修正申請を送信</button>
       </form>
@@ -382,27 +338,10 @@
     <!-- 2-C. 勤怠履歴画面 -->
     <div id="historySection" class="card hidden">
       <button onclick="backToMenu()" class="btn-secondary" style="margin-top:0; margin-bottom:15px; width:auto; padding:6px 14px; font-size:12px;">← メニューに戻る</button>
-      <h3>○ 勤怠履歴確認</h3>
+      <h3>勤怠履歴確認</h3>
       <label>対象月を選択</label>
       <input type="month" id="historyMonth" onchange="loadStaffHistory()">
       <div id="historySummary" style="margin-top: 15px;"></div>
-    </div>
-
-    <!-- 3. 管理者専用画面 -->
-    <div id="adminView" class="card wide hidden">
-      <h3>○ スタッフ勤務履歴・集計（管理者モード）</h3>
-      <div style="display: flex; gap: 15px; align-items: flex-end; flex-wrap: wrap;">
-        <div style="flex: 1; min-width: 200px;">
-          <label>対象月を選択</label>
-          <input type="month" id="adminMonth" onchange="loadAdminData()">
-        </div>
-        <div style="flex: 1; min-width: 200px;">
-          <button onclick="downloadCSV()" class="btn-csv">📥 対象月のCSVを出力</button>
-        </div>
-      </div>
-
-      <div id="adminSummaryArea"></div>
-      <div id="adminTableContainer" style="overflow-x: auto; margin-top: 15px;"></div>
     </div>
 
   </div>
@@ -414,53 +353,48 @@
       : "https://script.google.com/macros/s/AKfycbysqy2E5yk-25BTQvs2h7nxRKuwpSS1MJshJRJeyRHzYAKhPTvKL61hob641Selvwd2Xw/exec";
 
     let currentUser = null;
-    let currentAdminData = [];
-    let isAdminViewActive = false;
+
+    function resolveUserSession() {
+      try {
+        if (typeof getLoginUser === "function") {
+          const u = getLoginUser();
+          if (u && (u.name || u.id)) return u;
+        }
+      } catch (e) {
+        console.error("getLoginUser error:", e);
+      }
+
+      const keys = ["lucero_staff_portal_user_v1", "lucero_user", "loginUser", "user"];
+      for (const store of [sessionStorage, localStorage]) {
+        for (const k of keys) {
+          try {
+            const raw = store.getItem(k);
+            if (!raw) continue;
+            const parsed = JSON.parse(raw);
+            if (parsed && (parsed.name || parsed.id)) return parsed;
+          } catch (e) {}
+        }
+      }
+      return null;
+    }
 
     function initAttendanceApp() {
-      const user = typeof requireAuth === "function" ? requireAuth() : (typeof getLoginUser === "function" ? getLoginUser() : null);
-      if (!user) return;
+      const user = resolveUserSession();
+      if (!user) {
+        document.getElementById("userInfo").innerText = "未ログイン";
+        window.location.replace("./index.html");
+        return;
+      }
 
-      currentUser = user;
+      currentUser = {
+        id: user.id || user.name,
+        name: user.name || user.id,
+        role: user.role || (user.rawRole === "管理者" ? "admin" : "staff")
+      };
+
       document.getElementById("userInfo").innerText = `${currentUser.name} 様`;
       setupCorrectionDateLimit();
-
-      if (currentUser.role === "admin") {
-        document.getElementById("modeSwitchBtn").classList.remove("hidden");
-        showAdminMode();
-      } else {
-        backToMenu();
-      }
-    }
-
-    function showAdminMode() {
-      isAdminViewActive = true;
-      document.getElementById("mainNav").classList.add("wide");
-      document.getElementById("menuView").classList.add("hidden");
-      document.getElementById("clockInSection").classList.add("hidden");
-      document.getElementById("corrSection").classList.add("hidden");
-      document.getElementById("historySection").classList.add("hidden");
-      document.getElementById("adminView").classList.remove("hidden");
-      document.getElementById("modeSwitchBtn").innerText = "スタッフ打刻へ";
-
-      const monthInput = document.getElementById("adminMonth");
-      if (!monthInput.value) {
-        const now = new Date();
-        monthInput.value = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
-      }
-      loadAdminData();
-    }
-
-    function toggleAdminStaffView() {
-      if (isAdminViewActive) {
-        isAdminViewActive = false;
-        document.getElementById("mainNav").classList.remove("wide");
-        document.getElementById("adminView").classList.add("hidden");
-        document.getElementById("modeSwitchBtn").innerText = "管理者集計へ";
-        backToMenu();
-      } else {
-        showAdminMode();
-      }
+      backToMenu();
     }
 
     function getLocalTodayYmd() {
@@ -609,4 +543,78 @@
       btn.disabled = true;
       btn.innerText = "送信中...";
       try {
-        const res = await 
+        const res = await sendToGas(payload);
+        if (res && res.status === "success") {
+          alert(res.message || "勤怠修正申請を送信しました");
+          backToMenu();
+        } else {
+          alert((res && res.message) || "申請に失敗しました");
+        }
+      } finally {
+        btn.disabled = false;
+        btn.innerText = "修正申請を送信";
+      }
+    }
+
+    async function sendToGas(payload) {
+      try {
+        const response = await fetch(ENDPOINT_URL, {
+          method: "POST",
+          headers: { "Content-Type": "text/plain" },
+          body: JSON.stringify(payload)
+        });
+        return await response.json();
+      } catch (e) {
+        console.error(e);
+        alert("通信エラーが発生しました");
+        return null;
+      }
+    }
+
+    async function loadStaffHistory() {
+      const summaryDiv = document.getElementById("historySummary");
+      const monthVal = document.getElementById("historyMonth").value;
+      if (!monthVal) return;
+
+      summaryDiv.innerHTML = "<p style='color:var(--text-sub);'>読み込み中...</p>";
+
+      const result = await sendToGas({
+        action: "getStaffHistory",
+        staffId: currentUser.id,
+        month: monthVal
+      });
+
+      if (result && result.status === "success" && result.data && result.data.length > 0) {
+        let html = `<p style="font-size:13px; color:var(--gold-primary); font-weight:bold;">出勤日数合計：${result.data.length} 日</p>
+        <div style="overflow-x:auto;"><table>
+          <thead>
+            <tr>
+              <th>日付</th>
+              <th>区分</th>
+              <th>平日/土日</th>
+              <th>イベント名 / 本部運営</th>
+              <th>申請種別</th>
+            </tr>
+          </thead>
+          <tbody>`;
+
+        result.data.forEach(row => {
+          let detail = "-";
+          if (row.workType === "イベント") {
+            detail = row.eventName || "-";
+          } else if (row.workType === "公式戦" && row.isHeadquarters) {
+            detail = `主審:${row.mainRefMatches} / 副審:${row.subRefMatches} / 責任:${row.respMatches}`;
+          }
+
+          const typeBadge = row.isCorrection ? '<span class="badge-corr">修正申請</span>' : '<span class="badge-normal">当日登録</span>';
+
+          html += `<tr>
+            <td>${row.workDate || ''}</td>
+            <td>${row.workType || ''}</td>
+            <td>${row.dayType || ''}</td>
+            <td>${detail}</td>
+            <td>${typeBadge}</td>
+          </tr>`;
+        });
+
+        html += `</tbody></table></div
